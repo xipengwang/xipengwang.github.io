@@ -6,18 +6,69 @@ excerpt_separator: <!--more-->
 comments: true
 ---
 <!--more-->
-Back in college, I felt Linear Algebra is so tedious and boring. What is the point of spending ten minutes inverting a
- matrix on a piece of paper? I realized how elegant it is after watching Prof.Gilbert Strang's Linear Algebra videos. So
- I highly recommend you to watch them. Here is a short interview of Gil. I hope you enjoy the beauty of SVD.
 
-<div class="ytcontainer">
-<iframe class="yt" src="https://www.youtube.com/embed/YPe5OP7Clv4" frameborder="0" allowfullscreen></iframe>
-</div>
-
-This post only covers I guess a minimal number of subjects of Linear Algebra required for autonomous robots. I will add
-more later if I realize I miss something.
+This post only covers I guess a minimal number of subjects of Linear Algebra
+required for autonomous robots. I might add more staff later.
 
 ---
+## Motivation
+
+Let me motivate you with two examples.
+
+#### ![robot]({{site.baseurl}}/images/robot.png) -- GPS localization
+There is a GPS receiver on your robot, it can get robot's $x$ and $y$
+positions at 1HZ, i.e. $x_o^{t_0}, y_o^{t_0}, \cdots, x_o^{t_n}, y_o^{t_n}$.
+Because there are noises, so even the robot doesn't move, it will not get
+exactly the same observations. Suppose you get $n$ observations, how do you
+figure out the best guess of your robot position? You probably think this is
+simple. But let's formulate it using Linear Algebra!
+
+![GPS localization!]({{site.baseurl}}/images/2021-01-29-autonomous-rotots-linear-algebra/gps_localization.png)
+
+If you only have one pair of observations, then you will have two equations like this:
+> $$
+x = x_o^{t_0} \\
+y = y_o^{t_0}
+$$
+
+If you have two pairs of observations, then you will have four equations like this:
+> $$
+x = x_o^{t_0} \\
+y = y_o^{t_0} \\
+x = x_o^{t_1} \\
+y = y_o^{t_1}
+$$
+
+If you have $n$ pairs of observations, then you ill have $2n$ equation like
+this:
+> $$
+x = x_o^{t_0} \\
+y = y_o^{t_0} \\
+\vdots \\
+x = x_o^{t_n} \\
+y = y_o^{t_n}
+$$
+
+Then we can write it into a matrix form and solve it.
+> $$
+\begin{bmatrix}
+1, 0 \\
+0, 1 \\
+\vdots, \vdots \\
+1, 0 \\
+0, 1
+\end{bmatrix} \begin{bmatrix}
+x \\
+y
+\end{bmatrix} = \begin{bmatrix}
+x_o^{t_0} \\
+y_o^{t_0} \\
+\vdots \\
+x_o^{t_n} \\
+x_o^{t_n}
+\end{bmatrix}
+$$
+
 
 ## Vectors
 
@@ -116,7 +167,7 @@ equations.**
 
 #### ![robot]({{site.baseurl}}/images/robot.png) -- Matrix Operations
 * Matrix multiplication
-> $A_{mm}B_{mm}$
+> $C_{mm} = A_{mn}B_{nm}$
 
 * Matrix times vector as a linear combination of all column vectors
 > $$
@@ -155,8 +206,43 @@ $$
 * Determinant and rank
 
 For matrix $A_{mm} = [\textbf{v}_1, \cdots, \textbf{v}_m]$,
-> $rank(A) = m \iff det(A) \neq 0 \iff \textbf{v}_1, \cdots, \textbf{v}_m\ are\ linear\ independent$
+> $A^{-1}\ exists \iff rank(A) = m \iff det(A) \neq 0 \iff \textbf{v}_1, \cdots, \textbf{v}_m\ are\ linear\ independent$
 > $rank(A) < m \iff det(A) = 0 \iff \textbf{v}_1, \cdots, \textbf{v}_m\ are \ linear\ dependent$
+
+* Geometry Interpretations
+
+All possible combinations of two independent vectors $\textbf{v}$ and $\textbf{w}$ in $\mathbb{R}^2$ form a
+two dimensional space. In other words, any vectors in $\mathbb{R}^2$ can be
+represented as a combination of $\textbf{v}$ and $\textbf{w}$. For example, possible
+orthogonal bases of $\mathbb{R}^2$ are:
+>$$
+\textbf{v} = \begin{bmatrix}1\\0 \end{bmatrix},
+\textbf{w} = \begin{bmatrix}0\\1 \end{bmatrix}
+$$
+
+Then $A_{22} = [\textbf{v}, \textbf{w}]$ will be a full rank matrix.
+
+Suppose we have three vectors $\textbf{u} \in \mathbb{R}^3 $,
+$\textbf{v} \in \mathbb{R}^3$ and $\textbf{w} \in \mathbb{R}^3$ as below,
+because of $\textbf{w} = \textbf{u} + \textbf{v}$, $A_{33} = [\textbf{u}, \textbf{v},
+\textbf{w}]$ will not  be a full rank matrix. Its rank is $2$ which is equal to
+the number of linear independent column vectors. We can easily see in this
+example that $\textbf{w}$ is redundant. All vectors in $x-y$ plane in a
+cartesian coordinate can be represented by $\textbf{u}$ and $\textbf{w}$.
+
+>$$
+\textbf{u} = \begin{bmatrix}1\\0\\0 \end{bmatrix}, \textbf{v} =
+\begin{bmatrix}0\\1\\0 \end{bmatrix}, \textbf{w} =
+\begin{bmatrix}1\\1\\0\end{bmatrix} $$
+
+TODO(Xipeng): Figures...
+
+![attention]({{site.baseurl}}/images/attention.gif) There are lots of concepts
+not mentioned in this post, e.g. nullspace, row space, column space,
+Orthogonality, Eigen values and vectors, etc. To know more, you can read [Linear Algebra for Everyone](http://math.mit.edu/~gs/everyone/).
+> Pop quiz: Which space is orthogonal to $A$'s nullspace? Column space $A\textbf{x}$
+> or row space $A^T\textbf{y}$?
+
 
 #### ![robot]({{site.baseurl}}/images/robot.png) -- Linear Equations in Matrix Form
 
@@ -180,6 +266,66 @@ $$
 
 ## Solve $A\textbf{x}=\textbf{b}$
 #### ![robot]({{site.baseurl}}/images/robot.png) -- How many solutions?
+How many solutions can linear equations have?
+> $$
+A_{mm}\textbf{x} = \textbf{b}
+$$
+
+* **If $A_{mm}$ is a full rank matrix (all columns are linear independent,
+  $det(A_{mm}) \neq 0$), then it will have a single unique solution.** Since the
+  column vectors form the bases of $\mathbb{R}^m$, so we can always find a combinations
+  of them to be equal to $\textbf{b}$. For example, the column vectors of an
+  identity matrix form the orthogonal bases. You can always find the unique
+  solution for the linear equations below as $\textbf{x} = [b_1, b_2, b_3]^T$
+> $$
+\begin{bmatrix}
+1, 0, 0\\
+0, 1, 0\\
+0, 0, 1
+\end{bmatrix} \textbf{x} =
+\begin{bmatrix}
+{b_1}\\ {b_2}\\ {b_3} \end{bmatrix}
+$$
+
+* **If $A_{mm}$ is not a full rank matrix, then it will have either no solution
+  or infinite solutions**. If vector $\textbf{b}$ is in the matrix $A_{mm}$'s
+  column space, then it will have infinite solutions. As in the example shown
+  below, $x_3$ can be any value as long as $x_1 = 1, x_2 = 1$. However, if $b =
+  [0,0,1]^T$, there won't be any solutions.
+> $$
+\begin{bmatrix}
+1, 0, 1\\
+0, 1, 1\\
+0, 0, 0
+\end{bmatrix} \textbf{x} =
+\begin{bmatrix}
+{2}\\ {2}\\ {0} \end{bmatrix}
+$$
+
+TODO(Xipeng): Figures...
+
 #### ![robot]({{site.baseurl}}/images/robot.png) -- Pseudo Inverse
+
+What could we do if there is no solutions to linear equations? Actually no
+matter whether there are solutions or not, we can formulate it as an
+minimization problem:
+> $$\textbf{x} = \underset{x\in \mathbb{R}^n}{\operatorname{argmin}}f(\textbf{x}) =
+\underset{x\in \mathbb{R}^n}{\operatorname{argmin}}\|A_{mn}\textbf{x} - \textbf{b}\|^2$$
+
+By setting $\frac{\partial f(\textbf{x})}{\partial \textbf{x}} = 0$, we can get:
+> $$ A_{mn}^T A_{mn} \textbf{x} = A_{mn}^T \textbf{b} \\
+A'_{nn}\textbf{x} = \textbf{b}',\ {A'_{nn}}^T = A'_{nn}$$
+
+![attention]({{site.baseurl}}/images/attention.gif) As you can see, we get $A'_{nn}$
+as a symmetric square matrix! This is why we only discussed square matrices in
+this post.
+
+If $A'_{nn}$ is a full rank matrix, we can get a unique solution:
+> $$\textbf{x} = {A'_{nn}}^{-1} \textbf{b}' = {(A_{mn}^T A_{mn})}^{-1} A_{mn}^T \textbf{b} $$
+
+> Pop quiz: What if $A'_{nn}$ is not a full rank matrix? When will this happen?
+
 #### ![robot]({{site.baseurl}}/images/robot.png) -- Cholesky Decomposition
 #### ![robot]({{site.baseurl}}/images/robot.png) -- Singular Value Decomposition (SVD)
+
+What could we do if $A_{mn}^T A_{mn}$ is not a full rank matrix? When will this happen?
