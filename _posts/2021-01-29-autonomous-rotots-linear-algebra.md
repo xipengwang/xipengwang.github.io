@@ -3,6 +3,7 @@ layout: post
 title: Autonomous Robots - Linear Algebra
 tag: AutonomousRobotsBook
 excerpt_separator: <!--more-->
+last_modified_at: 2019-02-03
 ---
 <!--more-->
 

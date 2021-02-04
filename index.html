@@ -13,6 +13,10 @@ layout: default
           {{ post.title }}</a>
       </h1>
       <a href="{{ site.baseurl }}{{ post.url }}" class="read-more">{{ post.date | date: "%B %e, %Y" }}</a>
+      {% if post.last_modified_at%}
+      <a href="{{ site.baseurl }}{{ post.url }}" class="read-more">------ Last modified
+        on {{ post.last_modified_at | date: "%B %e, %Y" }}</a>
+      {% endif %}
     </article>
   {% endfor %}
 </div>
