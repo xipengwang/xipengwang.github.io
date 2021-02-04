@@ -3,7 +3,6 @@ layout: post
 title: Autonomous Robots - Linear Algebra
 tag: AutonomousRobotsBook
 excerpt_separator: <!--more-->
-comments: true
 ---
 <!--more-->
 
@@ -21,7 +20,7 @@ positions at 1HZ, i.e. $x_o^{t_0}, y_o^{t_0}, \cdots, x_o^{t_n}, y_o^{t_n}$.
 Because there are noises, so even the robot doesn't move, it will not get
 exactly the same observations. Suppose you get $n$ observations, how do you
 figure out the best guess of your robot position? You probably think this is
-simple. But let's formulate it using Linear Algebra!
+simple -- use average. But let's formulate it using Linear Algebra!
 
 ![GPS localization!]({{site.baseurl}}/images/2021-01-29-autonomous-rotots-linear-algebra/gps_localization.png)
 
@@ -69,6 +68,43 @@ x_o^{t_n}
 \end{bmatrix}
 $$
 
+#### ![robot]({{site.baseurl}}/images/robot.png) -- Line fitting
+
+There is a Lidar on your robot. It sends out three beams $a, b, c$ and get the
+range between Lidar and the wall $r_a, r_b, r_c$. If the beam angle is known, we
+can end points positions $x_a, y_a, y_b, y_b, x_c, y_c$. So how do we fit a line
+using three points given the fact that a 2D line only has 2 degree of freedom.
+
+> Why do we need to fit a line? You will have a more compact representation of
+> the world than using raw points.
+
+![GPS localization!]({{site.baseurl}}/images/2021-01-29-autonomous-rotots-linear-algebra/line_fitting.png)
+
+Suppose we parameterize a 2D line as $y = \lambda x + \rho$, then
+>$$
+y_a = \lambda x_a + \rho \\
+y_b = \lambda x_b + \rho \\
+y_c = \lambda x_c + \rho
+$$
+
+> Pop Quiz: How many observations? How many unknowns?
+
+Write the equations in matrix form:
+> $$
+\begin{bmatrix}
+x_a, 1 \\
+x_b, 1 \\
+x_c, 1
+\end{bmatrix}
+\begin{bmatrix}
+\lambda \\
+\rho
+\end{bmatrix} = \begin{bmatrix}
+y_a \\
+y_b \\
+y_c
+\end{bmatrix}
+$$
 
 ## Vectors
 
