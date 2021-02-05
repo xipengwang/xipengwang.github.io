@@ -3,12 +3,15 @@ layout: post
 title: Autonomous Robots - Linear Algebra
 tag: AutonomousRobotsBook
 excerpt_separator: <!--more-->
-last_modified_at: 2019-02-03
+last_modified_at: 2019-02-05
 ---
 <!--more-->
 
 This post only covers I guess a minimal number of subjects of Linear Algebra
 required for autonomous robots. I might add more staff later.
+
+* TOC
+{:toc}
 
 ---
 ## Motivation
@@ -363,6 +366,59 @@ If $A'_{nn}$ is a full rank matrix, we can get a unique solution:
 > Pop quiz: What if $A'_{nn}$ is not a full rank matrix? When will this happen?
 
 #### ![robot]({{site.baseurl}}/images/robot.png) -- Cholesky Decomposition
+
+Cholesky decomposition $A_{mm} = L_{mm}L_{mm}^T$ ($L_{mm}$ is a lower triangular
+matrix) is a special version of [LU decomposition](https://en.wikipedia.org/wiki/LU_decomposition), which can only
+be applied on symmetric matrices. Solving $A\textbf{x} = \textbf{b}$ is equal to
+solving $L\textbf{y} = \textbf{b}$ and $L^T\textbf{x} = \textbf{y}$.
+
+Given a triangular matrix equations, we can solve it using forward or backward
+substitution.
+
+> $$
+\begin{bmatrix}
+a_{11}, 0_{12}, 0_{13} \\
+a_{21}, a_{22}, 0_{23} \\
+a_{31}, a_{32}, a_{33}
+\end{bmatrix} \begin{bmatrix}
+x_1 \\
+x_2 \\
+x_3
+\end{bmatrix} = \begin{bmatrix}
+b_1 \\
+b_2 \\
+b_3
+\end{bmatrix}
+$$
+
+> $$
+x_1 = \frac{b_1}{a_{11}} \\
+x_2 = \frac{b_2 - a_{21}x_1}{a_22} \\
+x_3 = \frac{b_3 - a_{31}x_1 - a_{32}x_2}{a_33} \\
+$$
+
+
 #### ![robot]({{site.baseurl}}/images/robot.png) -- Singular Value Decomposition (SVD)
 
-What could we do if $A_{mn}^T A_{mn}$ is not a full rank matrix? When will this happen?
+What could we do if $A_{mn}^T A_{mn}$ is not a full rank matrix (when
+$rank(A_{mn}) < n$) ?
+
+ * First method: Find all independent columns, and solve the new linear equations only contain
+ these independent columns. The $\textbf{x}$ variable corresponding to the rest
+ of dependent columns will be set as 0. I don't think you will find this answer
+ on any textbook, but I feel this is the most intuitive method. All dependent
+ columns are redundant since they can be expressed as combinations of other
+ independent columns. Thus, we don't really need them.
+
+ * Second method: $\textbf{x} = VZU^T\textbf{b}$, where $A = U\Sigma V^T$,
+ > $$
+ z_i=\begin{cases}
+    \frac{1}{\sigma_i}, & \text{if $\sigma_i \neq 0$}.\\
+    0, & \text{otherwise}.
+  \end{cases}
+ $$
+
+ > Pop Quiz: The second method is essentially the same as the first one. Hint:
+ > some $z_i = 0 \text{ when $\sigma_i = 0$}$
+
+ > Pop Quiz: What is QR decomposition?
