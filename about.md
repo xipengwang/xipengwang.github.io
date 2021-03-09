@@ -3,10 +3,16 @@ layout: page
 title: About
 permalink: /about/
 ---
-Xipeng Wang is a Ph.D. student in Computer Science Engineering at University of
-Michigan, advised by Professor Edwin Olson. His research interests lie in
-theoretical and experimental large-scale mapping and localization for ground
-vehicles. Before coming to UM, he received his B.Eng. from Xi'an Jiao Tong
-University, China.
+Xipeng Wang received his PhD from University of Michigan in 2019 for his
+work in robust and efficient robot localization and mapping. He advisor was
+[Edwin Olson](https://april.eecs.umich.edu/people/ebolson/)(Professor, CEO
+of [May Mobility](https://maymobility.com/)).  During his time as
+a PhD student in [APRIL](https://april.eecs.umich.edu/) lab, he developed
+several open source localization and mapping algorithm ([AprilSAM](https://github.com/xipengwang/AprilSAM),
+[FLAG](https://github.com/xipengwang/FLAG),
+[MOSS](https://github.com/xipengwang/MOSS)) applied on ground robots served for
+[transportation](http://www-personal.umich.edu/~xipengw/projects.html) or
+[exploration](http://www-personal.umich.edu/~xipengw/projects.html) purposes.
+
 ### More about me
-[xipengwang.xyz](https://www.xipengwang.xyz)
+[xipengwang.xyz](http://www-personal.umich.edu/~xipengw/)
