@@ -1,5 +1,5 @@
 ---
-layout: page
+layout: old_post
 title: Autonoums Robots
 ---
 ---

@@ -1,22 +1,19 @@
 ---
 layout: default
+description: Robotic, Math, Machine Learning, etc.
 ---
 
-<div class="posts">
-  {% for post in site.posts %}
-    <article class="post">
-      <h1><a href="{{ site.baseurl }}{{ post.url }}">
-          {% if post.tag == "AutonomousRobotsBook" %}
-          <img src="{{site.baseurl}}/images/robot.png", alt="AutonomousRobotsBook">
-          {% else %}
-          {% endif %}
-          {{ post.title }}</a>
-      </h1>
-      <a href="{{ site.baseurl }}{{ post.url }}" class="read-more">{{ post.date | date: "%B %e, %Y" }}</a>
-      {% if post.last_modified_at%}
-      <a href="{{ site.baseurl }}{{ post.url }}" class="read-more">------ Last modified
-        on {{ post.last_modified_at | date: "%B %e, %Y" }}</a>
-      {% endif %}
-    </article>
-  {% endfor %}
+<div class="clearfix">
+	<a href="{% post_url 2021-04-29-hello_robot %}">
+		<img class="rounded-circle img-fluid float-left mr-2 img-padding"
+				 src="/index_images/robot.jpeg" alt="Hello Robot" width="140" height="140">
+	</a>
+	<h2>Robots, Robots, Everywhere!</h2>
+	<p> On the ground, in the air, robots, robots, everywhere! Up in space, beneath
+		the seas, robots make discoveries. </p>
+</div>
+<div class="text-center">
+	<a class="btn btn-outline-primary" href="{% post_url 2021-04-29-hello_robot
+	%}" role="button">Learn more about robots</a>
+	<br>
 </div>

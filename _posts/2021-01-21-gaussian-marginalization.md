@@ -1,6 +1,7 @@
 ---
 layout: post
 title: A Simple Connection Between Schur Complement Trick and Marginalization+Conditioning of Gaussian Distribution
+tag: Legacy
 ---
 ![Gaussian Marginalization and Conditioning]({{site.baseurl}}/images/2021-01-21-gaussian-marginalization/gaussian.png)
 

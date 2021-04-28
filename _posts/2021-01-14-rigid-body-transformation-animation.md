@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Rigid Body Animation
+tag: Legacy
 ---
 ![Rigid Body Animation]({{site.baseurl}}/images/2021-01-14-rigid-body-transformation-animation/rigid_body_transformation.gif)
 

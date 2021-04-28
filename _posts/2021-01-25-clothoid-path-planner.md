@@ -1,6 +1,7 @@
 ---
 layout: post
 title: A Simple Clothoid Path Planning Algorithm Using Tree Search
+tag: Legacy
 ---
 
 ![planner with obstacles]({{site.baseurl}}/images/2021-01-25-clothoid-path-planner/planner_with_obstacles.png)

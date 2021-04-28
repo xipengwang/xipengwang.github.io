@@ -6,40 +6,20 @@
     {% include meta.html %}
 
     <link rel="stylesheet" type="text/css" href="{{ site.baseurl }}/style.css" />
-    <link href="/css/bootstrap.min.css" rel="stylesheet">
-	  <!-- Custom styles for this template -->
-	  <link href="/css/notebook.min.css" rel="stylesheet">
-	  <link href="/css/main.min.css" rel="stylesheet">
-	  <link href="/css/syntax.min.css" rel="stylesheet">
-    <link href="/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="alternate" type="application/rss+xml" title="{{ site.name }} - {{ site.description }}" href="{{ site.baseurl }}/feed.xml" />
 
-    <script src="/js/jquery-3.3.1.min.js"></script>
-    <script src="/js/input_exapand_collapse.js"></script>
-    <script src="/js/bootstrap.min.js"></script>
-
-    <!-- Loading mathjax macro -->
-	  <!-- Load mathjax -->
-	  <script type="text/javascript" async
-		        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
-	  </script>
-    <!-- MathJax configuration -->
     <script type="text/x-mathjax-config">
       MathJax.Hub.Config({
           tex2jax: {
-              inlineMath: [ ['$','$'], ["\\(","\\)"] ],
-              displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
-              processEscapes: true,
-              processEnvironments: true
-          },
-          // Center justify equations in code and markdown cells. Elsewhere
-          // we use CSS to left justify single line equations in code cells.
-          displayAlign: 'center',
-          "HTML-CSS": {
-              styles: {'.MathJax_Display': {"margin": 0}},
-              linebreaks: { automatic: true }
+              inlineMath: [['$','$'], ['\\(','\\)']],
+              processEscapes: true
           }
       });
     </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
+            type="text/javascript"></script>
+    <script src="/js/input_exapand_collapse.js"></script>
+
   </head>
 
   <body>

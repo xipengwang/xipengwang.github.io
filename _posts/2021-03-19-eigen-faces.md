@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Eigen faces are cool [WIP] (template matching, linear classificaton, etc)
+tag: Legacy
 ---
 
 In [Covariance visualization]({% post_url 2021-03-08-covariance-visualization
