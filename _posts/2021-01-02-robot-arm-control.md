@@ -1,5 +1,6 @@
 ---
 layout: post
+tag: Legacy
 title: Basic robot arm control inspired by a lego toy
 ---
 <div class="ytcontainer">

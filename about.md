@@ -1,7 +1,6 @@
 ---
-layout: page
+layout: old_post
 title: About
-permalink: /about/
 ---
 Xipeng Wang received his PhD from University of Michigan in 2019 for his
 work in robust and efficient robot localization and mapping. He advisor was

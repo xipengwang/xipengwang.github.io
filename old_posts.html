@@ -1,0 +1,25 @@
+---
+layout: old_post
+---
+
+<div class="posts">
+  {% for post in site.posts %}
+  {% if post.tag == "Legacy" %}
+    <article class="post">
+      <h1><a href="{{ site.baseurl }}{{ post.url }}">
+          {% if post.tag == "AutonomousRobotsBook" %}
+          <img src="{{site.baseurl}}/images/robot.png", alt="AutonomousRobotsBook">
+          {% else %}
+          {% endif %}
+          {{ post.title }}</a>
+      </h1>
+      <a href="{{ site.baseurl }}{{ post.url }}" class="read-more">{{ post.date | date: "%B %e, %Y" }}</a>
+      {% if post.last_modified_at%}
+      <a href="{{ site.baseurl }}{{ post.url }}" class="read-more">------ Last modified
+        on {{ post.last_modified_at | date: "%B %e, %Y" }}</a>
+      {% endif %}
+    </article>
+  {% else %}
+  {% endif %}
+  {% endfor %}
+</div>
