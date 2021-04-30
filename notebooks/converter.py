@@ -8,6 +8,7 @@ Example useage:
 ```
 """
 import os
+import sys
 from pathlib import Path
 import argparse
 from nbconvert import HTMLExporter
@@ -150,6 +151,12 @@ def add_jekyll_header(html_str, layout, title, description):
     ])
     return '\n'.join([header, html_str])
 
+def add_notebook_link(nbpath, html_str):
+    filename = os.path.basename(nbpath)
+    file_link = f'<div> This blog is converted from '+ \
+        f'<a href="https://github.com/xipengwang/xipengwang.github.io/tree/master/notebooks/{filename}">{filename}</a></div>'
+    return '\n'.join([html_str, file_link])
+
 
 def save_conversion(html_str, nbpath, date):
     """
@@ -185,6 +192,7 @@ def main():
     html_str = soup.prettify()
     html_str = add_jekyll_header(
         html_str, args.layout, title, args.description)
+    html_str = add_notebook_link(args.nbpath, html_str)
     save_conversion(html_str, args.nbpath, args.date)
 
 
