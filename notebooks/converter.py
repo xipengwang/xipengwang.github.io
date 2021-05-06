@@ -31,6 +31,10 @@ parser.add_argument(
     default='notebook',
     help='Layout template name to use as Jekyll layout for blogpost.')
 parser.add_argument(
+    '--tag', type=str,
+    default='Notebook',
+    help='Layout template name to use as Jekyll layout for blogpost.')
+parser.add_argument(
     '--description', type=str,
     help='Description of the blogpost.')
 
@@ -127,7 +131,7 @@ def add_table_class(soup):
             'table', 'table-sm', 'table-hover', 'w-auto', 'text-right']
 
 
-def add_jekyll_header(html_str, layout, title, description):
+def add_jekyll_header(html_str, layout, title, tag, description):
     """
     Add the Jekyll header to the html strings.
 
@@ -145,7 +149,7 @@ def add_jekyll_header(html_str, layout, title, description):
         f'layout: {layout}',
         f'title: {title}',
         f'description: {description}',
-        'tag: Notebook',
+        f'tag: {tag}',
         '---',
         ''
     ])
@@ -191,7 +195,7 @@ def main():
     add_table_class(soup)
     html_str = soup.prettify()
     html_str = add_jekyll_header(
-        html_str, args.layout, title, args.description)
+        html_str, args.layout, title, args.tag, args.description)
     html_str = add_notebook_link(args.nbpath, html_str)
     save_conversion(html_str, args.nbpath, args.date)
 

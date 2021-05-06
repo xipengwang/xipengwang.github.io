@@ -1,5 +1,6 @@
 ---
 layout: post
+tag: Legacy
 title: Gradient Descent [WIP] (Condition number of hessian, Gaussian Newton, etc)
 ---
 
