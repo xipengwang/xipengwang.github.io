@@ -32,8 +32,7 @@ parser.add_argument(
     help='Layout template name to use as Jekyll layout for blogpost.')
 parser.add_argument(
     '--tag', type=str,
-    default='Notebook',
-    help='Layout template name to use as Jekyll layout for blogpost.')
+    choices=['ML', 'PaperReading', 'Robotics', 'Notebook', 'Book'])
 parser.add_argument(
     '--description', type=str,
     help='Description of the blogpost.')
