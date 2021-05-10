@@ -1,6 +1,6 @@
 ---
 layout: notebook
-title: Machine Learning Study Notes
+title: Machine Learning Notes - Backpropagation
 description: Machine Learning Notes - gradient descent, backpropagation
 tag: ML
 ---
@@ -10,12 +10,20 @@ tag: ML
  </div>
  <div class="inner_cell">
   <div class="text_cell_render border-box-sizing rendered_html">
-   <p>
-    This post contains notes of using backpropagation for gradient decent based optimization.
-   </p>
-   <p>
-    This post is one of an ongoing series on machine learning studies:
-   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h2 id="A-List-of-Related-Posts">
+    A List of Related Posts
+    <a class="anchor-link" href="#A-List-of-Related-Posts">
+     ¶
+    </a>
+   </h2>
    <ol>
     <li>
      <a href="{% post_url 2021-05-04-machine-learning-pytorch %}">
@@ -33,6 +41,212 @@ tag: ML
      </a>
     </li>
    </ol>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h2 id="Backpropagation-Introduction">
+    Backpropagation Introduction
+    <a class="anchor-link" href="#Backpropagation-Introduction">
+     ¶
+    </a>
+   </h2>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h2 id="Chain-Rule">
+    Chain Rule
+    <a class="anchor-link" href="#Chain-Rule">
+     ¶
+    </a>
+   </h2>
+   $$
+y = f_1(x) \\
+L = f_2(y)
+$$
+   <p>
+    Chain rule:
+   </p>
+   $$
+\frac{\partial{L}}{\partial{y}} = \frac{\partial{f_2(y)}}{\partial{y}} \\
+\frac{\partial{L}}{\partial{x}} = \frac{\partial{L}}{\partial{y}}\frac{\partial{y}}{\partial{x}} = \frac{\partial{f_2(y)}}{\partial{y}} \frac{\partial{f_1(x)}}{\partial{x}}
+$$
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+ <div class="input">
+  <div class="prompt input_prompt">
+   In [4]:
+  </div>
+  <div class="inner_cell">
+   <div class="input_area collapsed">
+    <div class="collapse_expand_button fa fa-1x fa-minus-square-o">
+    </div>
+    <div class="highlight hl-ipython3">
+     <pre><span></span><span class="c1"># Chain Rule</span>
+
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">5</span><span class="p">],</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">x</span>
+<span class="n">L</span> <span class="o">=</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">y</span>
+<span class="n">dL</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">dy</span> <span class="o">=</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">dL</span>
+<span class="n">dx</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">dy</span>
+<span class="n">L</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'dL/dx: </span><span class="si">{</span><span class="n">dx</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Pytorch autograd </span><span class="si">{</span><span class="n">x</span><span class="o">.</span><span class="n">grad</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+
+<span class="c1">#</span>
+</pre>
+    </div>
+   </div>
+  </div>
+ </div>
+ <div class="output_wrapper">
+  <div class="output">
+   <div class="output_area">
+    <div class="prompt">
+    </div>
+    <div class="output_subarea output_stream output_stdout output_text">
+     <pre>dL/dx: 6
+Pytorch autograd tensor([6.], dtype=torch.float64)
+</pre>
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   $$
+\begin{bmatrix}
+y_1 \\
+y_2
+\end{bmatrix} = f(\begin{bmatrix}
+x_1 \\
+x_2 \\
+x_3
+\end{bmatrix}) = \begin{bmatrix}
+f_{1}(x_1, x_2, x_3) \\
+f_{2}(x_1, x_2, x_3)
+\end{bmatrix}\\
+L = g(\begin{bmatrix}
+y_1 \\
+y_2
+\end{bmatrix}) \\ 
+$$
+   <p>
+    Chain rule:
+   </p>
+   $$
+\frac{\partial{L}}{\partial{y}} = \begin{bmatrix} 
+    \frac{\partial{g(y)}}{\partial{y_1}} \\ 
+    \frac{\partial{g(y)}}{\partial{y_2}} \\ 
+\end{bmatrix}\\
+\frac{\partial{L}}{\partial{x}} = J_x^y \frac{\partial{L}}{\partial{y}} =
+\begin{bmatrix} 
+    \frac{\partial{f_1(x)}}{\partial{x_1}}, \frac{\partial{f_2(x)}}{\partial{x_1}}\\ 
+    \frac{\partial{f_1(x)}}{\partial{x_2}}, \frac{\partial{f_2(x)}}{\partial{x_2}}\\ 
+    \frac{\partial{f_1(x)}}{\partial{x_3}}, \frac{\partial{f_2(x)}}{\partial{x_3}}
+\end{bmatrix} \frac{\partial{L}}{\partial{y}}
+$$
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+ <div class="input">
+  <div class="prompt input_prompt">
+   In [8]:
+  </div>
+  <div class="inner_cell">
+   <div class="input_area collapsed">
+    <div class="collapse_expand_button fa fa-1x fa-minus-square-o">
+    </div>
+    <div class="highlight hl-ipython3">
+     <pre><span></span><span class="c1"># Gradients with respect to a vector</span>
+
+<span class="c1"># Chain Rule</span>
+
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+<span class="n">L</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<span class="n">dL</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">dy</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="n">dx</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">]])</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">dy</span><span class="p">)</span>
+<span class="n">L</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'dL/dx: </span><span class="si">{</span><span class="n">dx</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Pytorch autograd </span><span class="si">{</span><span class="n">x</span><span class="o">.</span><span class="n">grad</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+
+<span class="c1">#</span>
+</pre>
+    </div>
+   </div>
+  </div>
+ </div>
+ <div class="output_wrapper">
+  <div class="output">
+   <div class="output_area">
+    <div class="prompt">
+    </div>
+    <div class="output_subarea output_stream output_stdout output_text">
+     <pre>dL/dx: tensor([1, 3, 2])
+Pytorch autograd tensor([1., 3., 2.], dtype=torch.float64)
+</pre>
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h2 id="Local-Gradient">
+    Local Gradient
+    <a class="anchor-link" href="#Local-Gradient">
+     ¶
+    </a>
+   </h2>
+   <p>
+    ... ---&gt; $\textbf{x}$ ---&gt; $f(\textbf{x})$ ---&gt; $\textbf{y}$ ---&gt; ... ---&gt; L
+   </p>
+   $$
+\frac{\partial{L}}{\partial{\textbf{x}}} = J^{\textbf{y}}_\textbf{x}\frac{\partial{L}}{\partial{\textbf{y}}} 
+$$
+   <p>
+    $J^{\textbf{y}}_\textbf{x}$ is a Jacobian matrix, and it has the same number of rows as $\textbf{x}$
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h2 id="Common-Computation-Blocks---Forward-and-Backward-Pass">
+    Common Computation Blocks - Forward and Backward Pass
+    <a class="anchor-link" href="#Common-Computation-Blocks---Forward-and-Backward-Pass">
+     ¶
+    </a>
+   </h2>
   </div>
  </div>
 </div>

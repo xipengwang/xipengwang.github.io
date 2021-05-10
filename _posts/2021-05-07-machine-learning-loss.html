@@ -1,6 +1,6 @@
 ---
 layout: notebook
-title: Machine Learning Study Notes
+title: Machine Learning Notes - Loss functions
 description: Machine Learning Notes - loss functions, hinge loss(svm loss), softmax loss
 tag: ML
 ---
@@ -10,12 +10,20 @@ tag: ML
  </div>
  <div class="inner_cell">
   <div class="text_cell_render border-box-sizing rendered_html">
-   <p>
-    This post contains notes of building a neural network with Cross Entroy (Softmax) loss and Hinge loss.
-   </p>
-   <p>
-    This post is one of an ongoing series on machine learning studies:
-   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h2 id="A-List-of-Related-Posts">
+    A List of Related Posts
+    <a class="anchor-link" href="#A-List-of-Related-Posts">
+     ¶
+    </a>
+   </h2>
    <ol>
     <li>
      <a href="{% post_url 2021-05-04-machine-learning-pytorch %}">
@@ -41,9 +49,29 @@ tag: ML
  </div>
  <div class="inner_cell">
   <div class="text_cell_render border-box-sizing rendered_html">
+   <h2 id="Loss-Introduction">
+    Loss Introduction
+    <a class="anchor-link" href="#Loss-Introduction">
+     ¶
+    </a>
+   </h2>
    <p>
     Given an input $X$ and a model parameterized by $\theta$, we would like to minimize a loss function $L(X; \theta)$ by adjusting model parameter $\theta$. The optimization can usually be done using gradient decent, Guassian Netwon, etc.
    </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h2 id="Mean-Square-Loss">
+    Mean Square Loss
+    <a class="anchor-link" href="#Mean-Square-Loss">
+     ¶
+    </a>
+   </h2>
   </div>
  </div>
 </div>
@@ -137,6 +165,12 @@ tag: ML
  </div>
  <div class="inner_cell">
   <div class="text_cell_render border-box-sizing rendered_html">
+   <h2 id="Hinge-Loss">
+    Hinge Loss
+    <a class="anchor-link" href="#Hinge-Loss">
+     ¶
+    </a>
+   </h2>
    <p>
     For classification, we want the predicted score with the correct class label as large as possible. Hinge Loss is shown below. $s_c$ is the loss of the correct class and $s_i$ is a loss of an incorrect class.
 $$
@@ -237,6 +271,12 @@ Pytorch Hinge loss is 1.4209
  </div>
  <div class="inner_cell">
   <div class="text_cell_render border-box-sizing rendered_html">
+   <h2 id="Cross-Entropy-Loss">
+    Cross Entropy Loss
+    <a class="anchor-link" href="#Cross-Entropy-Loss">
+     ¶
+    </a>
+   </h2>
    <p>
     Another common loss function used for classification is Cross Entropy loss. The cross-entropy of the distribution $q$ relative to a distribution $p$ over a given set is defined as:
 $$
