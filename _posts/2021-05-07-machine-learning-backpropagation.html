@@ -86,7 +86,7 @@ $$
 <div class="cell border-box-sizing code_cell rendered">
  <div class="input">
   <div class="prompt input_prompt">
-   In [4]:
+   In [45]:
   </div>
   <div class="inner_cell">
    <div class="input_area collapsed">
@@ -169,7 +169,7 @@ $$
 <div class="cell border-box-sizing code_cell rendered">
  <div class="input">
   <div class="prompt input_prompt">
-   In [8]:
+   In [46]:
   </div>
   <div class="inner_cell">
    <div class="input_area collapsed">
@@ -244,6 +244,438 @@ $$
    <h2 id="Common-Computation-Blocks---Forward-and-Backward-Pass">
     Common Computation Blocks - Forward and Backward Pass
     <a class="anchor-link" href="#Common-Computation-Blocks---Forward-and-Backward-Pass">
+     ¶
+    </a>
+   </h2>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h3 id="Vector-dot-product">
+    Vector dot product
+    <a class="anchor-link" href="#Vector-dot-product">
+     ¶
+    </a>
+   </h3>
+   <p>
+    Forward pass:
+$$
+z = x^Ty
+$$
+   </p>
+   <p>
+    Backward pass:
+$$
+\frac{\partial{L}}{\partial{x}} = \frac{\partial{L}}{\partial{z}}y \\
+\frac{\partial{L}}{\partial{y}} = \frac{\partial{L}}{\partial{z}}x
+$$
+Where $[x]_{nx1}, [y]_{nx1}$
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+ <div class="input">
+  <div class="prompt input_prompt">
+   In [47]:
+  </div>
+  <div class="inner_cell">
+   <div class="input_area collapsed">
+    <div class="collapse_expand_button fa fa-1x fa-minus-square-o">
+    </div>
+    <div class="highlight hl-ipython3">
+     <pre><span></span><span class="c1"># Vector dot product</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+<span class="n">z</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+<span class="n">z</span><span class="o">.</span><span class="n">retain_grad</span><span class="p">()</span>
+<span class="n">L</span> <span class="o">=</span> <span class="n">z</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<span class="n">L</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Pytorch autograd dz: </span><span class="si">{</span><span class="n">z</span><span class="o">.</span><span class="n">grad</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Pytorch autograd dx: </span><span class="si">{</span><span class="n">x</span><span class="o">.</span><span class="n">grad</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Pytorch autograd dy: </span><span class="si">{</span><span class="n">y</span><span class="o">.</span><span class="n">grad</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+
+<span class="n">dx</span> <span class="o">=</span> <span class="n">z</span><span class="o">.</span><span class="n">grad</span> <span class="o">*</span> <span class="n">y</span>
+<span class="k">assert</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">dx</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">grad</span><span class="p">))</span>
+<span class="n">dy</span> <span class="o">=</span> <span class="n">z</span><span class="o">.</span><span class="n">grad</span> <span class="o">*</span> <span class="n">x</span>
+<span class="k">assert</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">dy</span><span class="p">,</span> <span class="n">y</span><span class="o">.</span><span class="n">grad</span><span class="p">)))</span>
+<span class="c1">#</span>
+</pre>
+    </div>
+   </div>
+  </div>
+ </div>
+ <div class="output_wrapper">
+  <div class="output">
+   <div class="output_area">
+    <div class="prompt">
+    </div>
+    <div class="output_subarea output_stream output_stdout output_text">
+     <pre>Pytorch autograd dz: 1.0
+Pytorch autograd dx: tensor([3., 2., 1.], dtype=torch.float64)
+Pytorch autograd dy: tensor([1., 2., 3.], dtype=torch.float64)
+</pre>
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h3 id="Vector-product">
+    Vector product
+    <a class="anchor-link" href="#Vector-product">
+     ¶
+    </a>
+   </h3>
+   <p>
+    Forward pass:
+$$
+Z = xy
+$$
+   </p>
+   <p>
+    Backward pass:
+$$
+\frac{\partial{L}}{\partial{x}} = \frac{\partial{L}}{\partial{Z}}y^T \\
+\frac{\partial{L}}{\partial{y}} = x^T\frac{\partial{L}}{\partial{Z}}
+$$
+Where $[x]_{mx1}, [y]_{1xn}, [Z]_{mxn}$
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+ <div class="input">
+  <div class="prompt input_prompt">
+   In [48]:
+  </div>
+  <div class="inner_cell">
+   <div class="input_area collapsed">
+    <div class="collapse_expand_button fa fa-1x fa-minus-square-o">
+    </div>
+    <div class="highlight hl-ipython3">
+     <pre><span></span><span class="c1"># Vector product</span>
+
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">z</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+<span class="n">x</span><span class="o">.</span><span class="n">retain_grad</span><span class="p">()</span>
+<span class="n">y</span><span class="o">.</span><span class="n">retain_grad</span><span class="p">()</span>
+<span class="n">z</span><span class="o">.</span><span class="n">retain_grad</span><span class="p">()</span>
+<span class="n">L</span> <span class="o">=</span> <span class="n">z</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<span class="n">L</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Pytorch autograd dz:</span><span class="se">\n</span><span class="s1"> </span><span class="si">{</span><span class="n">z</span><span class="o">.</span><span class="n">grad</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Pytorch autograd dx:</span><span class="se">\n</span><span class="s1"> </span><span class="si">{</span><span class="n">x</span><span class="o">.</span><span class="n">grad</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Pytorch autograd dy:</span><span class="se">\n</span><span class="s1"> </span><span class="si">{</span><span class="n">y</span><span class="o">.</span><span class="n">grad</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+
+<span class="n">dx</span> <span class="o">=</span> <span class="n">z</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+<span class="k">assert</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">dx</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">grad</span><span class="p">))</span>
+<span class="n">dy</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">z</span><span class="o">.</span><span class="n">grad</span><span class="p">)</span>
+<span class="k">assert</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">dy</span><span class="p">,</span> <span class="n">y</span><span class="o">.</span><span class="n">grad</span><span class="p">)))</span>
+<span class="c1">#</span>
+</pre>
+    </div>
+   </div>
+  </div>
+ </div>
+ <div class="output_wrapper">
+  <div class="output">
+   <div class="output_area">
+    <div class="prompt">
+    </div>
+    <div class="output_subarea output_stream output_stdout output_text">
+     <pre>Pytorch autograd dz:
+ tensor([[1., 1.],
+        [1., 1.],
+        [1., 1.]], dtype=torch.float64)
+Pytorch autograd dx:
+ tensor([[5.],
+        [5.],
+        [5.]], dtype=torch.float64)
+Pytorch autograd dy:
+ tensor([[6., 6.]], dtype=torch.float64)
+</pre>
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h3 id="Vector-&amp;-Matrix-product">
+    Vector &amp; Matrix product
+    <a class="anchor-link" href="#Vector-&amp;-Matrix-product">
+     ¶
+    </a>
+   </h3>
+   <p>
+    Forward pass:
+$$
+Z = Wx
+$$
+   </p>
+   <p>
+    Backward pass:
+$$
+\frac{\partial{L}}{\partial{x}} = W^T\frac{\partial{L}}{\partial{Z}} \\
+\frac{\partial{L}}{\partial{W}} = \frac{\partial{L}}{\partial{Z}}x^T
+$$
+Where $[x]_{Dx1}, [W]_{CxD}, [z]_{Cx1}$
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+ <div class="input">
+  <div class="prompt input_prompt">
+   In [49]:
+  </div>
+  <div class="inner_cell">
+   <div class="input_area collapsed">
+    <div class="collapse_expand_button fa fa-1x fa-minus-square-o">
+    </div>
+    <div class="highlight hl-ipython3">
+     <pre><span></span><span class="c1"># Vector product</span>
+
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">w</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">]],</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">z</span> <span class="o">=</span> <span class="n">w</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="n">x</span><span class="o">.</span><span class="n">retain_grad</span><span class="p">()</span>
+<span class="n">w</span><span class="o">.</span><span class="n">retain_grad</span><span class="p">()</span>
+<span class="n">z</span><span class="o">.</span><span class="n">retain_grad</span><span class="p">()</span>
+<span class="n">L</span> <span class="o">=</span> <span class="n">z</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<span class="n">L</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Pytorch autograd dz:</span><span class="se">\n</span><span class="s1"> </span><span class="si">{</span><span class="n">z</span><span class="o">.</span><span class="n">grad</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Pytorch autograd dx:</span><span class="se">\n</span><span class="s1"> </span><span class="si">{</span><span class="n">x</span><span class="o">.</span><span class="n">grad</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Pytorch autograd dy:</span><span class="se">\n</span><span class="s1"> </span><span class="si">{</span><span class="n">w</span><span class="o">.</span><span class="n">grad</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+
+<span class="n">dx</span> <span class="o">=</span> <span class="n">w</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">z</span><span class="o">.</span><span class="n">grad</span><span class="p">)</span>
+<span class="k">assert</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">dx</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">grad</span><span class="p">)))</span>
+
+<span class="n">dw</span> <span class="o">=</span> <span class="n">z</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+<span class="k">assert</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">dw</span><span class="p">,</span> <span class="n">w</span><span class="o">.</span><span class="n">grad</span><span class="p">))</span>
+<span class="c1">#</span>
+</pre>
+    </div>
+   </div>
+  </div>
+ </div>
+ <div class="output_wrapper">
+  <div class="output">
+   <div class="output_area">
+    <div class="prompt">
+    </div>
+    <div class="output_subarea output_stream output_stdout output_text">
+     <pre>Pytorch autograd dz:
+ tensor([[1.],
+        [1.]], dtype=torch.float64)
+Pytorch autograd dx:
+ tensor([[3.],
+        [3.]], dtype=torch.float64)
+Pytorch autograd dy:
+ tensor([[1., 2.],
+        [1., 2.]], dtype=torch.float64)
+</pre>
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h3 id="Matrix-&amp;-Matrix-product">
+    Matrix &amp; Matrix product
+    <a class="anchor-link" href="#Matrix-&amp;-Matrix-product">
+     ¶
+    </a>
+   </h3>
+   <p>
+    Forward pass:
+$$
+Z = XW
+$$
+   </p>
+   <p>
+    Backward pass:
+$$
+\frac{\partial{L}}{\partial{X}} = \frac{\partial{L}}{\partial{Z}}W^T \\
+\frac{\partial{L}}{\partial{W}} = X^T\frac{\partial{L}}{\partial{Z}}
+$$
+Where $[x]_{NxD}, [W]_{DxC}, [z]_{NxC}$
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+ <div class="input">
+  <div class="prompt input_prompt">
+   In [50]:
+  </div>
+  <div class="inner_cell">
+   <div class="input_area collapsed">
+    <div class="collapse_expand_button fa fa-1x fa-minus-square-o">
+    </div>
+    <div class="highlight hl-ipython3">
+     <pre><span></span><span class="c1"># Vector product</span>
+
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">]],</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">w</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]],</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">z</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+<span class="n">x</span><span class="o">.</span><span class="n">retain_grad</span><span class="p">()</span>
+<span class="n">w</span><span class="o">.</span><span class="n">retain_grad</span><span class="p">()</span>
+<span class="n">z</span><span class="o">.</span><span class="n">retain_grad</span><span class="p">()</span>
+<span class="n">L</span> <span class="o">=</span> <span class="n">z</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<span class="n">L</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Pytorch autograd dz:</span><span class="se">\n</span><span class="s1"> </span><span class="si">{</span><span class="n">z</span><span class="o">.</span><span class="n">grad</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Pytorch autograd dx:</span><span class="se">\n</span><span class="s1"> </span><span class="si">{</span><span class="n">x</span><span class="o">.</span><span class="n">grad</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Pytorch autograd dy:</span><span class="se">\n</span><span class="s1"> </span><span class="si">{</span><span class="n">w</span><span class="o">.</span><span class="n">grad</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+
+<span class="n">dw</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">z</span><span class="o">.</span><span class="n">grad</span><span class="p">)</span>
+<span class="k">assert</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">dw</span><span class="p">,</span> <span class="n">w</span><span class="o">.</span><span class="n">grad</span><span class="p">)))</span>
+
+<span class="n">dx</span> <span class="o">=</span> <span class="n">z</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">w</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+<span class="k">assert</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">dx</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">grad</span><span class="p">))</span>
+<span class="c1">#</span>
+</pre>
+    </div>
+   </div>
+  </div>
+ </div>
+ <div class="output_wrapper">
+  <div class="output">
+   <div class="output_area">
+    <div class="prompt">
+    </div>
+    <div class="output_subarea output_stream output_stdout output_text">
+     <pre>Pytorch autograd dz:
+ tensor([[1., 1., 1.],
+        [1., 1., 1.]], dtype=torch.float64)
+Pytorch autograd dx:
+ tensor([[6., 6., 6.],
+        [6., 6., 6.]], dtype=torch.float64)
+Pytorch autograd dy:
+ tensor([[4., 4., 4.],
+        [4., 4., 4.],
+        [4., 4., 4.]], dtype=torch.float64)
+</pre>
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h3 id="Softmax">
+    Softmax
+    <a class="anchor-link" href="#Softmax">
+     ¶
+    </a>
+   </h3>
+   <p>
+    Forward pass:
+$$
+p_i = \frac{e^{s_i}}{\sum_i{e^{s_i}}} \\
+t = \sum_i{e^{s_i}}
+$$
+   </p>
+   <p>
+    Backward pass:
+$$
+\frac{\partial{L}}{\partial{s}} = J^p_s\frac{\partial{L}}{\partial{p}} \\
+J^{p_i}_{s_j} = -p_ip_j \ (i \neq j)\\
+J^{p_i}_{s_i} = p_i(1-p_i)
+$$
+Where $[s]_{Cx1}, [p]_{Cx1}$
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+ <div class="input">
+  <div class="prompt input_prompt">
+   In [51]:
+  </div>
+  <div class="inner_cell">
+   <div class="input_area collapsed">
+    <div class="collapse_expand_button fa fa-1x fa-minus-square-o">
+    </div>
+    <div class="highlight hl-ipython3">
+     <pre><span></span><span class="c1"># Vector product</span>
+
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="n">s</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]],</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">s_exp</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+<span class="n">t</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">s_exp</span><span class="p">)</span>
+<span class="n">p</span> <span class="o">=</span> <span class="n">s_exp</span> <span class="o">/</span> <span class="n">t</span>
+<span class="n">s</span><span class="o">.</span><span class="n">retain_grad</span><span class="p">()</span>
+<span class="n">p</span><span class="o">.</span><span class="n">retain_grad</span><span class="p">()</span>
+<span class="c1"># log likelihood</span>
+<span class="n">L</span> <span class="o">=</span> <span class="o">-</span><span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">p</span><span class="p">))</span>
+<span class="n">L</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Pytorch autograd dp:</span><span class="se">\n</span><span class="s1"> </span><span class="si">{</span><span class="n">p</span><span class="o">.</span><span class="n">grad</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Pytorch autograd ds:</span><span class="se">\n</span><span class="s1"> </span><span class="si">{</span><span class="n">s</span><span class="o">.</span><span class="n">grad</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+
+<span class="n">J</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">p</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+<span class="n">J</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="c1"># i = 0, i = 0</span>
+<span class="n">J</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>    <span class="c1"># i = 0, j = 1</span>
+<span class="n">J</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>     <span class="c1"># i = 1, j = 0</span>
+<span class="n">J</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="c1"># i = 0, i = 1</span>
+<span class="n">ds</span> <span class="o">=</span> <span class="n">J</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">grad</span><span class="p">)</span>
+
+<span class="k">assert</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">grad</span><span class="p">))</span>
+<span class="c1">#</span>
+</pre>
+    </div>
+   </div>
+  </div>
+ </div>
+ <div class="output_wrapper">
+  <div class="output">
+   <div class="output_area">
+    <div class="prompt">
+    </div>
+    <div class="output_subarea output_stream output_stdout output_text">
+     <pre>Pytorch autograd dp:
+ tensor([[-3.7183],
+        [-1.3679]], dtype=torch.float64)
+Pytorch autograd ds:
+ tensor([[-0.4621],
+        [ 0.4621]], dtype=torch.float64)
+</pre>
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h2 id="Computational-Graph">
+    Computational Graph
+    <a class="anchor-link" href="#Computational-Graph">
      ¶
     </a>
    </h2>
