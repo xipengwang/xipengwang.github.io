@@ -548,6 +548,7 @@ tensor([4, 7, 2])
 <span class="n">x</span><span class="p">[</span><span class="n">x</span> <span class="o">&lt;=</span> <span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="nb">print</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">After modifying with a mask:'</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
 <span class="c1">#</span>
 </pre>
     </div>
@@ -1042,11 +1043,13 @@ tensor([ 6., 15.])
    In [151]:
   </div>
   <div class="inner_cell">
-   <div class="input_area">
+   <div class="input_area collapsed">
     <div class="collapse_expand_button fa fa-1x fa-minus-square-o">
     </div>
     <div class="highlight hl-ipython3">
-     <pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span> <span class="p">[</span><span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">],</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">12</span><span class="p">]])</span>
+     <pre><span></span><span class="c1"># Tensor Broadcasting</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span> <span class="p">[</span><span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">],</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">12</span><span class="p">]])</span>
 <span class="n">v</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
 <span class="nb">print</span><span class="p">(</span><span class="s1">'Here is x (before broadcasting):'</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
@@ -1062,6 +1065,8 @@ tensor([ 6., 15.])
 <span class="nb">print</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">Here is vv (after broadcasting):'</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">vv</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s1">'vv.shape: '</span><span class="p">,</span> <span class="n">vv</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+<span class="c1">#</span>
 </pre>
     </div>
    </div>
@@ -1555,7 +1560,7 @@ Cuda is not available.
    In [156]:
   </div>
   <div class="inner_cell">
-   <div class="input_area">
+   <div class="input_area collapsed">
     <div class="collapse_expand_button fa fa-1x fa-minus-square-o">
     </div>
     <div class="highlight hl-ipython3">
@@ -1571,6 +1576,8 @@ Cuda is not available.
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'b requires_grad: </span><span class="si">{</span><span class="n">b</span><span class="o">.</span><span class="n">requires_grad</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
 <span class="n">b</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'z grad: </span><span class="se">\n</span><span class="s1"> </span><span class="si">{</span><span class="n">z</span><span class="o">.</span><span class="n">grad</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+
+<span class="c1">#</span>
 </pre>
     </div>
    </div>
