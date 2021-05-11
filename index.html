@@ -5,6 +5,26 @@ description: Robotic, Math, Machine Learning, etc.
 
 
 <div class="clearfix">
+	<a href="{% post_url 2021-05-11-paper-reading-mixture-models-for-least-square-optimization %}">
+		<img class="rounded-circle img-fluid float-left mr-2 img-padding"
+				 src="/index_images/huber-loss.png" alt="huber loss" width="140" height="140">
+	</a>
+	<h2>Robust Loss Functions for Least Square Optimization</h2>
+	<p> In most robotics applications, maximizing posterior distribution is
+		converted into a least square problem under the assumption that residuals
+		follow Gaussian distribution. However, errors are not Gaussian distributed
+		in practice. This makes the naive least square
+		formulation not very robust to outliers with large residuals. In this post, we
+		will first explore robust kernel approachs, then try to model residuals using
+		Gaussian mixtures. </p>
+</div>
+<div class="text-center">
+	<a class="btn btn-outline-primary" href="{% post_url 2021-05-11-paper-reading-mixture-models-for-least-square-optimization%}"
+		 role="button">Learn more about robust kernels for least square problems</a>
+	<br>
+</div>
+
+<div class="clearfix">
 	<a href="{% post_url 2021-05-03-machine-learning-summary %}">
 		<img class="rounded-circle img-fluid float-left mr-2 img-padding"
 				 src="/index_images/ml_study.png" alt="ML study" width="140" height="140">
