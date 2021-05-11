@@ -2,7 +2,7 @@ CONVERTER=./converter.py
 
 .PHONY: all
 
-all: hello-robot ml
+all: hello-robot ml paper-reading blog
 
 
 hello-robot:
@@ -24,3 +24,15 @@ machine-learning-loss:
 machine-learning-backpropagation:
 	$(CONVERTER) --nbpath machine-learning-backpropagation.ipynb --date 2021-05-07 \
 		--description "Machine Learning Notes - gradient descent, backpropagation" --tag ML
+
+paper-reading: mixture-models-for-least-square-optimization
+
+mixture-models-for-least-square-optimization:
+	$(CONVERTER) --nbpath paper-reading-mixture-models-for-least-square-optimization.ipynb --date 2021-05-11 \
+		--description "Paper Reading - Gaussian mixture models and robust kernels for least square optimization" --tag PaperReading
+
+blog: expectation–maximization
+
+expectation–maximization:
+	$(CONVERTER) --nbpath expectation–maximization.ipynb --date 2021-05-10 \
+		--description "Paper Reading - Gaussian mixture models and robust kernels for least square optimization" --tag Notebook
