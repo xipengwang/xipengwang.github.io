@@ -86,7 +86,7 @@ $$
 <div class="cell border-box-sizing code_cell rendered">
  <div class="input">
   <div class="prompt input_prompt">
-   In [45]:
+   In [1]:
   </div>
   <div class="inner_cell">
    <div class="input_area collapsed">
@@ -169,7 +169,7 @@ $$
 <div class="cell border-box-sizing code_cell rendered">
  <div class="input">
   <div class="prompt input_prompt">
-   In [46]:
+   In [2]:
   </div>
   <div class="inner_cell">
    <div class="input_area collapsed">
@@ -281,7 +281,7 @@ Where $[x]_{nx1}, [y]_{nx1}$
 <div class="cell border-box-sizing code_cell rendered">
  <div class="input">
   <div class="prompt input_prompt">
-   In [47]:
+   In [3]:
   </div>
   <div class="inner_cell">
    <div class="input_area collapsed">
@@ -356,7 +356,7 @@ Where $[x]_{mx1}, [y]_{1xn}, [Z]_{mxn}$
 <div class="cell border-box-sizing code_cell rendered">
  <div class="input">
   <div class="prompt input_prompt">
-   In [48]:
+   In [4]:
   </div>
   <div class="inner_cell">
    <div class="input_area collapsed">
@@ -415,6 +415,10 @@ Pytorch autograd dy:
  </div>
  <div class="inner_cell">
   <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    <a id="backpropagation-section-vector-matrix-product">
+    </a>
+   </p>
    <h3 id="Vector-&amp;-Matrix-product">
     Vector &amp; Matrix product
     <a class="anchor-link" href="#Vector-&amp;-Matrix-product">
@@ -441,7 +445,7 @@ Where $[x]_{Dx1}, [W]_{CxD}, [z]_{Cx1}$
 <div class="cell border-box-sizing code_cell rendered">
  <div class="input">
   <div class="prompt input_prompt">
-   In [49]:
+   In [5]:
   </div>
   <div class="inner_cell">
    <div class="input_area collapsed">
@@ -526,7 +530,7 @@ Where $[x]_{NxD}, [W]_{DxC}, [z]_{NxC}$
 <div class="cell border-box-sizing code_cell rendered">
  <div class="input">
   <div class="prompt input_prompt">
-   In [50]:
+   In [6]:
   </div>
   <div class="inner_cell">
    <div class="input_area collapsed">
@@ -586,6 +590,10 @@ Pytorch autograd dy:
  </div>
  <div class="inner_cell">
   <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    <a id="backpropagation-section-softmax">
+    </a>
+   </p>
    <h3 id="Softmax">
     Softmax
     <a class="anchor-link" href="#Softmax">
@@ -603,8 +611,10 @@ $$
     Backward pass:
 $$
 \frac{\partial{L}}{\partial{s}} = J^p_s\frac{\partial{L}}{\partial{p}} \\
-J^{p_i}_{s_j} = -p_ip_j \ (i \neq j)\\
-J^{p_i}_{s_i} = p_i(1-p_i)
+\begin{cases}
+-p_ip_j &amp;\text{$i \neq j$}\\
+p_i(1-p_i) &amp;\text{otherwise}
+\end{cases}
 $$
 Where $[s]_{Cx1}, [p]_{Cx1}$
    </p>
@@ -614,7 +624,7 @@ Where $[s]_{Cx1}, [p]_{Cx1}$
 <div class="cell border-box-sizing code_cell rendered">
  <div class="input">
   <div class="prompt input_prompt">
-   In [51]:
+   In [7]:
   </div>
   <div class="inner_cell">
    <div class="input_area collapsed">
@@ -673,12 +683,371 @@ Pytorch autograd ds:
  </div>
  <div class="inner_cell">
   <div class="text_cell_render border-box-sizing rendered_html">
-   <h2 id="Computational-Graph">
-    Computational Graph
-    <a class="anchor-link" href="#Computational-Graph">
+   <h2 id="Computation-Graph">
+    Computation Graph
+    <a class="anchor-link" href="#Computation-Graph">
      ¶
     </a>
    </h2>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h3 id="Introduction">
+    Introduction
+    <a class="anchor-link" href="#Introduction">
+     ¶
+    </a>
+   </h3>
+   <p>
+    The idea of computation graph is to divide the whole computation into small blocks. During the forward pass, we calculate the block outputs and record the outputs for calculating gradients in backward pass. In the backward pass, we calculate the gradients. This is exactly the same idea of the chain rule, but make it more clear when apply the chain rule.
+   </p>
+   <p>
+    For example, if we have a computation chain is like $ L = (2x + 3y)z$, where $x=1$, $y =2$, $z=3$, we can break it down as:
+$$
+a = 2x \\
+b = 3y \\
+c = a+b \\
+L = cz
+$$
+   </p>
+   <p>
+    In the forward pass, we get:
+$$
+a = 2x = 2 \\
+b = 3y = 6\\
+c = a+b = 8\\
+L = cz = 24
+$$
+   </p>
+   <p>
+    In the backward pass, we get:
+$$
+\frac{\partial{L}}{\partial{L}} = 1 \\
+\frac{\partial{L}}{\partial{z}} = \frac{\partial{L}}{\partial{L}}\frac{\partial{L}}{\partial{z}} = 1\times8=8
+\frac{\partial{L}}{\partial{c}} = \frac{\partial{L}}{\partial{L}}\frac{\partial{L}}{\partial{c}} = 1\times3=3
+\frac{\partial{L}}{\partial{a}} = \frac{\partial{c}}{\partial{a}}\frac{\partial{L}}{\partial{c}} = 1\times3=3
+\frac{\partial{L}}{\partial{b}} = \frac{\partial{c}}{\partial{b}}\frac{\partial{L}}{\partial{c}} = 1\times3=3
+\frac{\partial{L}}{\partial{x}} = \frac{\partial{a}}{\partial{x}}\frac{\partial{L}}{\partial{a}} = 2\times3=6
+\frac{\partial{L}}{\partial{y}} = \frac{\partial{b}}{\partial{y}}\frac{\partial{L}}{\partial{b}} = 3\times3=9
+$$
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h3 id="Cross-Entropy-Loss">
+    Cross Entropy Loss
+    <a class="anchor-link" href="#Cross-Entropy-Loss">
+     ¶
+    </a>
+   </h3>
+   <p>
+    The mathematical expression of Cross Entropy Loss is described
+    <a href="{% post_url 2021-05-07-machine-learning-loss %}#loss-section-cross-entropy-loss">
+     here
+    </a>
+    .
+   </p>
+   <p>
+    A computation graph is shown as below that $[]$ are the outputs of block operation $()$.
+   </p>
+   <p>
+    $[W]_{C \times D}$ -\
+   </p>
+   <pre><code>     \
+
+     (Wx) -&gt; [s]_{Cx1} -&gt; (softmax(s)) -&gt; [p]_{Cx1} -&gt; (cross_entropy_loss(p, label=c)) -&gt; [loss]_{1x1}
+
+     / 
+
+</code></pre>
+   <p>
+    $[x]_{D \times 1}$ -/
+   </p>
+   <p>
+    Consider a single case that $[W]_{3x2}$, $[x]_{2x1}$ and correct label index is $0$.
+   </p>
+   <p>
+    For the forward pass, we can get:
+$$
+[s]_{3x1} = Wx \\
+[p]_{3x1} = softmax(s) \\
+p_s = p[0] = \begin{bmatrix}1, 0, 0\end{bmatrix}p\\
+L = -log(p_s)
+$$
+   </p>
+   <p>
+    For the backward pass, we can derive the intermediate gradients one by one.
+$$
+\frac{\partial{L}}{\partial{L}} = 1 \\
+\frac{\partial{L}}{\partial{p_s}} = -\frac{1}{p_s} \\
+\frac{\partial{L}}{\partial{p}} = -\frac{1}{p_s} \begin{bmatrix}1 \\ 0\\ 0\end{bmatrix} = \begin{bmatrix}-\frac{1}{p_s} \\ 0\\ 0\end{bmatrix} 
+$$
+Based on
+    <a href="#backpropagation-section-softmax">
+     Softmax
+    </a>
+    :
+   </p>
+   $$
+\frac{\partial{L}}{\partial{s}} = J^p_s\frac{\partial{L}}{\partial{p}} = 
+\begin{bmatrix} 
+&amp;p_0(1-p_0), &amp;-p_0p_1, &amp;-p_0p_2 \\
+&amp;-p_1p_0, &amp;p_1(1-p_1), &amp;-p_1p_2\\
+&amp;-p_2p_0, &amp;-p_2p_1, &amp;p_2(1-p_2)
+\end{bmatrix}
+\begin{bmatrix}-\frac{1}{p_s} \\ 0\\ 0\end{bmatrix} = 
+\begin{bmatrix}p_0-1 \\ p_1\\ p_2\end{bmatrix}
+$$
+   <p>
+    Based on
+    <a href="#backpropagation-section-vector-matrix-product">
+     Vector &amp; Matrix product
+    </a>
+    :
+$$
+\frac{\partial{L}}{\partial{W}} = \frac{\partial{L}}{\partial{s}}x^T \\
+\frac{\partial{L}}{\partial{x}} = W^T\frac{\partial{L}}{\partial{s}} \\
+$$
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+ <div class="input">
+  <div class="prompt input_prompt">
+   In [33]:
+  </div>
+  <div class="inner_cell">
+   <div class="input_area collapsed">
+    <div class="collapse_expand_button fa fa-1x fa-minus-square-o">
+    </div>
+    <div class="highlight hl-ipython3">
+     <pre><span></span><span class="c1"># Cross Entropy Loss</span>
+
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="n">torch</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="n">precision</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+
+<span class="n">W</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">requires_grad</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">requires_grad</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+<span class="n">c</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="c1"># Forward</span>
+<span class="n">s</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">W</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+<span class="n">s</span><span class="o">.</span><span class="n">retain_grad</span><span class="p">()</span>
+<span class="c1"># Numeric trick to prevent overflow of using exp().</span>
+<span class="n">exp_s</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">s</span> <span class="o">-</span> <span class="n">torch</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">s</span><span class="p">))</span> 
+<span class="n">p</span> <span class="o">=</span> <span class="n">exp_s</span> <span class="o">/</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">exp_s</span><span class="p">)</span>
+<span class="n">loss</span> <span class="o">=</span> <span class="o">-</span><span class="n">torch</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="n">c</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="se">\n</span><span class="s1">Probabily distribution</span><span class="se">\n</span><span class="s1"> </span><span class="si">{</span><span class="n">p</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="se">\n</span><span class="s1">Cross entropy loss is </span><span class="si">{</span><span class="n">loss</span><span class="si">:</span><span class="s1">.4f</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+
+<span class="c1"># Backward</span>
+<span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+<span class="n">ds</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">]])</span>
+<span class="n">dW</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+<span class="n">dx</span> <span class="o">=</span> <span class="n">W</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">ds</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="se">\n</span><span class="s1">Gradients of s: </span><span class="se">\n</span><span class="s1"> </span><span class="si">{</span><span class="n">ds</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+<span class="k">assert</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">grad</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="se">\n</span><span class="s1">Gradients of W: </span><span class="se">\n</span><span class="s1"> </span><span class="si">{</span><span class="n">dW</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+<span class="k">assert</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">dW</span><span class="p">,</span> <span class="n">W</span><span class="o">.</span><span class="n">grad</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="se">\n</span><span class="s1">Gradients of x: </span><span class="se">\n</span><span class="s1"> </span><span class="si">{</span><span class="n">dx</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+
+<span class="c1">#</span>
+</pre>
+    </div>
+   </div>
+  </div>
+ </div>
+ <div class="output_wrapper">
+  <div class="output">
+   <div class="output_area">
+    <div class="prompt">
+    </div>
+    <div class="output_subarea output_stream output_stdout output_text">
+     <pre>
+Probabily distribution
+ tensor([0.3123, 0.3998, 0.2879], grad_fn=&lt;DivBackward0&gt;)
+
+Cross entropy loss is 1.1637
+
+Gradients of s: 
+ tensor([-0.6877,  0.3998,  0.2879])
+
+Gradients of W: 
+ tensor([[ 0.0610, -0.4353],
+        [-0.0355,  0.2530],
+        [-0.0255,  0.1822]], grad_fn=&lt;MmBackward&gt;)
+
+Gradients of x: 
+ tensor([-0.8365,  0.0016], grad_fn=&lt;MvBackward&gt;)
+</pre>
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h3 id="Hinge--Loss">
+    Hinge  Loss
+    <a class="anchor-link" href="#Hinge--Loss">
+     ¶
+    </a>
+   </h3>
+   <p>
+    The mathematical expression of Cross Entropy Loss is described
+    <a href="{% post_url 2021-05-07-machine-learning-loss %}#loss-section-hinge-loss">
+     here
+    </a>
+    .
+   </p>
+   <p>
+    A computation graph is shown as below that $[]$ are the outputs of block operation $()$.
+   </p>
+   <p>
+    $[W]_{C \times D}$ -\
+   </p>
+   <pre><code>     \
+
+     (Wx)-&gt;[s]_{Cx1}-&gt;(s_i-s_c+1, 0)-&gt;[t]-&gt;(max(t, 0)) -&gt;[z] -&gt;(sum(z)) -&gt;[loss]_{1x1}
+
+     / 
+
+</code></pre>
+   <p>
+    $[x]_{D \times 1}$ -/
+   </p>
+   <p>
+    Consider a single case that $[W]_{3x2}$, $[x]_{2x1}$ and correct label index is $0$.
+   </p>
+   <p>
+    For the forward pass, we can get:
+$$
+[s]_{3x1} = Wx \\
+[t]_{3x1} = \begin{bmatrix}0 \\
+s_1-s_0+1\\
+s_2-s_0+1\end{bmatrix} \\
+[z]_{3x1} = \begin{bmatrix}0 \\ 
+m(s_1-s_0+1) \\ 
+n(s_2-s_0+1)
+\end{bmatrix} \\
+L = z_1 + z_2
+$$
+Where $m=0$ if $s_1-s_0+1&lt;=0$, otherwise $m=1$, $n=0$ if $s_2-s_0+1&lt;=0$, otherwise $n=1$.
+   </p>
+   <p>
+    For the backward pass, we can derive the intermediate gradients one by one.
+$$
+\frac{\partial{L}}{\partial{L}} = 1 \\
+\frac{\partial{L}}{\partial{z}} = \begin{bmatrix}0 \\ 1\\ 1\end{bmatrix} \\
+\frac{\partial{L}}{\partial{t}} = J^z_t\frac{\partial{L}}{\partial{z}}=  \begin{bmatrix}
+&amp;0, &amp;0, &amp;0 \\ 
+&amp;0, &amp;m, &amp;0 \\
+&amp;0, &amp;0, &amp;n
+\end{bmatrix} \begin{bmatrix}0 \\ 1\\ 1\end{bmatrix} = \begin{bmatrix}0 \\ m \\ n\end{bmatrix} \\
+\frac{\partial{L}}{\partial{s}} = J^t_s\frac{\partial{L}}{\partial{t}} = 
+\begin{bmatrix}
+&amp;0, &amp;-1, &amp;-1 \\ 
+&amp;0, &amp;1, &amp;0 \\
+&amp;0, &amp;0, &amp;1
+\end{bmatrix}
+\begin{bmatrix}0 \\ m \\ n\end{bmatrix} = \begin{bmatrix}-(m+n) \\ m \\ n\end{bmatrix}
+$$ 
+Based on
+    <a href="#backpropagation-section-vector-matrix-product">
+     Vector &amp; Matrix product
+    </a>
+    :
+$$
+\frac{\partial{L}}{\partial{W}} = \frac{\partial{L}}{\partial{s}}x^T \\
+\frac{\partial{L}}{\partial{x}} = W^T\frac{\partial{L}}{\partial{s}} \\
+$$
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+ <div class="input">
+  <div class="prompt input_prompt">
+   In [54]:
+  </div>
+  <div class="inner_cell">
+   <div class="input_area collapsed">
+    <div class="collapse_expand_button fa fa-1x fa-minus-square-o">
+    </div>
+    <div class="highlight hl-ipython3">
+     <pre><span></span><span class="c1"># Cross Entropy Loss</span>
+
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="n">torch</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="n">precision</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+
+<span class="n">W</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">],</span> <span class="p">[</span><span class="mf">3.</span><span class="p">,</span> <span class="mf">4.</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">]],</span> <span class="n">requires_grad</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">2.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">],</span>  <span class="n">requires_grad</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+<span class="n">c</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="c1"># Forward</span>
+<span class="n">s</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">W</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+<span class="n">s</span><span class="o">.</span><span class="n">retain_grad</span><span class="p">()</span>
+<span class="n">t</span> <span class="o">=</span> <span class="n">s</span><span class="o">-</span><span class="n">s</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span>
+<span class="n">t</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">z</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">m</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">n</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">loss</span> <span class="o">=</span> <span class="n">z</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">z</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'\Hinge loss is </span><span class="si">{</span><span class="n">loss</span><span class="si">:</span><span class="s1">.4f</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+
+<span class="c1"># Backward</span>
+<span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+<span class="n">ds</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="o">-</span><span class="n">m</span><span class="o">-</span><span class="n">n</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">n</span><span class="p">])</span>
+<span class="n">dW</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+<span class="n">dx</span> <span class="o">=</span> <span class="n">W</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">ds</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="se">\n</span><span class="s1">Gradients of s: </span><span class="se">\n</span><span class="s1"> </span><span class="si">{</span><span class="n">ds</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+<span class="k">assert</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">grad</span><span class="p">))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="se">\n</span><span class="s1">Gradients of W: </span><span class="se">\n</span><span class="s1"> </span><span class="si">{</span><span class="n">dW</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+<span class="k">assert</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">dW</span><span class="p">,</span> <span class="n">W</span><span class="o">.</span><span class="n">grad</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="se">\n</span><span class="s1">Gradients of x: </span><span class="se">\n</span><span class="s1"> </span><span class="si">{</span><span class="n">dx</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+
+<span class="c1">#</span>
+</pre>
+    </div>
+   </div>
+  </div>
+ </div>
+ <div class="output_wrapper">
+  <div class="output">
+   <div class="output_area">
+    <div class="prompt">
+    </div>
+    <div class="output_subarea output_stream output_stdout output_text">
+     <pre>\Hinge loss is 9.0000
+
+Gradients of s: 
+ tensor([-2.,  1.,  1.])
+
+Gradients of W: 
+ tensor([[-4., -2.],
+        [ 2.,  1.],
+        [ 2.,  1.]], grad_fn=&lt;MmBackward&gt;)
+
+Gradients of x: 
+ tensor([2., 3.], grad_fn=&lt;MvBackward&gt;)
+</pre>
+    </div>
+   </div>
   </div>
  </div>
 </div>
