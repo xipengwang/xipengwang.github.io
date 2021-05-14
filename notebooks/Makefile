@@ -9,7 +9,8 @@ hello-robot:
 	$(CONVERTER) --nbpath hello_robot.ipynb --date 2021-04-29 \
 		--description "Robots, robots, everywhere. Bayesian Recursive Filtering. Gaussian Distribution" --tag Notebook
 
-ml: machine-learning-summary machine-learning-pytorch machine-learning-loss machine-learning-backpropagation
+ml: machine-learning-summary machine-learning-pytorch machine-learning-loss machine-learning-backpropagation \
+	machine-learning-gradient-descent
 
 machine-learning-summary:
 	$(CONVERTER) --nbpath machine-learning-summary.ipynb --date 2021-05-03 \
@@ -24,6 +25,9 @@ machine-learning-loss:
 machine-learning-backpropagation:
 	$(CONVERTER) --nbpath machine-learning-backpropagation.ipynb --date 2021-05-07 \
 		--description "Machine Learning Notes - gradient descent, backpropagation" --tag ML
+machine-learning-gradient-descent:
+	$(CONVERTER) --nbpath machine-learning-gradient-descent.ipynb --date 2021-05-13 \
+		--description "Machine Learning Notes - gradient descent, SGD, Momentum, RMSProp, Adam" --tag ML
 
 paper-reading: paper-reading-mixture-models-for-least-square-optimization
 

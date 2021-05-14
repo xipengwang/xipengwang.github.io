@@ -40,6 +40,11 @@ tag: ML
       Backpropagation(this)
      </a>
     </li>
+    <li>
+     <a href="{% post_url 2021-05-13-machine-learning-gradient-descent %}">
+      Gradient Descent
+     </a>
+    </li>
    </ol>
   </div>
  </div>
@@ -86,7 +91,7 @@ $$
 <div class="cell border-box-sizing code_cell rendered">
  <div class="input">
   <div class="prompt input_prompt">
-   In [1]:
+   In [56]:
   </div>
   <div class="inner_cell">
    <div class="input_area collapsed">
@@ -169,7 +174,7 @@ $$
 <div class="cell border-box-sizing code_cell rendered">
  <div class="input">
   <div class="prompt input_prompt">
-   In [2]:
+   In [57]:
   </div>
   <div class="inner_cell">
    <div class="input_area collapsed">
@@ -281,7 +286,7 @@ Where $[x]_{nx1}, [y]_{nx1}$
 <div class="cell border-box-sizing code_cell rendered">
  <div class="input">
   <div class="prompt input_prompt">
-   In [3]:
+   In [58]:
   </div>
   <div class="inner_cell">
    <div class="input_area collapsed">
@@ -356,7 +361,7 @@ Where $[x]_{mx1}, [y]_{1xn}, [Z]_{mxn}$
 <div class="cell border-box-sizing code_cell rendered">
  <div class="input">
   <div class="prompt input_prompt">
-   In [4]:
+   In [59]:
   </div>
   <div class="inner_cell">
    <div class="input_area collapsed">
@@ -445,7 +450,7 @@ Where $[x]_{Dx1}, [W]_{CxD}, [z]_{Cx1}$
 <div class="cell border-box-sizing code_cell rendered">
  <div class="input">
   <div class="prompt input_prompt">
-   In [5]:
+   In [60]:
   </div>
   <div class="inner_cell">
    <div class="input_area collapsed">
@@ -530,7 +535,7 @@ Where $[x]_{NxD}, [W]_{DxC}, [z]_{NxC}$
 <div class="cell border-box-sizing code_cell rendered">
  <div class="input">
   <div class="prompt input_prompt">
-   In [6]:
+   In [61]:
   </div>
   <div class="inner_cell">
    <div class="input_area collapsed">
@@ -624,7 +629,7 @@ Where $[s]_{Cx1}, [p]_{Cx1}$
 <div class="cell border-box-sizing code_cell rendered">
  <div class="input">
   <div class="prompt input_prompt">
-   In [7]:
+   In [62]:
   </div>
   <div class="inner_cell">
    <div class="input_area collapsed">
@@ -728,12 +733,12 @@ $$
     In the backward pass, we get:
 $$
 \frac{\partial{L}}{\partial{L}} = 1 \\
-\frac{\partial{L}}{\partial{z}} = \frac{\partial{L}}{\partial{L}}\frac{\partial{L}}{\partial{z}} = 1\times8=8
-\frac{\partial{L}}{\partial{c}} = \frac{\partial{L}}{\partial{L}}\frac{\partial{L}}{\partial{c}} = 1\times3=3
-\frac{\partial{L}}{\partial{a}} = \frac{\partial{c}}{\partial{a}}\frac{\partial{L}}{\partial{c}} = 1\times3=3
-\frac{\partial{L}}{\partial{b}} = \frac{\partial{c}}{\partial{b}}\frac{\partial{L}}{\partial{c}} = 1\times3=3
-\frac{\partial{L}}{\partial{x}} = \frac{\partial{a}}{\partial{x}}\frac{\partial{L}}{\partial{a}} = 2\times3=6
-\frac{\partial{L}}{\partial{y}} = \frac{\partial{b}}{\partial{y}}\frac{\partial{L}}{\partial{b}} = 3\times3=9
+\frac{\partial{L}}{\partial{z}} = \frac{\partial{L}}{\partial{L}}\frac{\partial{L}}{\partial{z}} = 1\times8=8\\
+\frac{\partial{L}}{\partial{c}} = \frac{\partial{L}}{\partial{L}}\frac{\partial{L}}{\partial{c}} = 1\times3=3\\
+\frac{\partial{L}}{\partial{a}} = \frac{\partial{c}}{\partial{a}}\frac{\partial{L}}{\partial{c}} = 1\times3=3\\
+\frac{\partial{L}}{\partial{b}} = \frac{\partial{c}}{\partial{b}}\frac{\partial{L}}{\partial{c}} = 1\times3=3\\
+\frac{\partial{L}}{\partial{x}} = \frac{\partial{a}}{\partial{x}}\frac{\partial{L}}{\partial{a}} = 2\times3=6\\
+\frac{\partial{L}}{\partial{y}} = \frac{\partial{b}}{\partial{y}}\frac{\partial{L}}{\partial{b}} = 3\times3=9\\
 $$
    </p>
   </div>
@@ -825,7 +830,7 @@ $$
 <div class="cell border-box-sizing code_cell rendered">
  <div class="input">
   <div class="prompt input_prompt">
-   In [33]:
+   In [63]:
   </div>
   <div class="inner_cell">
    <div class="input_area collapsed">
@@ -876,20 +881,20 @@ $$
     <div class="output_subarea output_stream output_stdout output_text">
      <pre>
 Probabily distribution
- tensor([0.3123, 0.3998, 0.2879], grad_fn=&lt;DivBackward0&gt;)
+ tensor([0.0391, 0.6168, 0.3442], grad_fn=&lt;DivBackward0&gt;)
 
-Cross entropy loss is 1.1637
+Cross entropy loss is 3.2429
 
 Gradients of s: 
- tensor([-0.6877,  0.3998,  0.2879])
+ tensor([-0.9609,  0.6168,  0.3442])
 
 Gradients of W: 
- tensor([[ 0.0610, -0.4353],
-        [-0.0355,  0.2530],
-        [-0.0255,  0.1822]], grad_fn=&lt;MmBackward&gt;)
+ tensor([[-0.9903,  0.2445],
+        [ 0.6356, -0.1569],
+        [ 0.3547, -0.0876]], grad_fn=&lt;MmBackward&gt;)
 
 Gradients of x: 
- tensor([-0.8365,  0.0016], grad_fn=&lt;MvBackward&gt;)
+ tensor([ 2.1871, -0.7751], grad_fn=&lt;MvBackward&gt;)
 </pre>
     </div>
    </div>
@@ -982,7 +987,7 @@ $$
 <div class="cell border-box-sizing code_cell rendered">
  <div class="input">
   <div class="prompt input_prompt">
-   In [54]:
+   In [64]:
   </div>
   <div class="inner_cell">
    <div class="input_area collapsed">

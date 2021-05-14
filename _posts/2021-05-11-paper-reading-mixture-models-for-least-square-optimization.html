@@ -824,7 +824,7 @@ $$
     Note that a normalization factor $\gamma$ is required in order to ensure that a max mixture integrates to $1$. However, for maximizing log-likelihood, it is just added as a constant ($-log(\gamma)$). So it won't affect the final solution of $x^*$:
    </p>
    $$
-x^* = \underset{x}{\operatorname{argmax}} \sum_i{log(\frac{w^i_{k^*}}{\gamma^i}\eta_i e^{-\frac{1}{2}(\mu^i_{k^*})^T{\Sigma^i_{k^*}}^{-1}(\mu^i_{k^*})}}) = \underset{x}{\operatorname{argmax}} \sum_i{log(e^{-\frac{1}{2}(\mu^i_{k^*})^T{\Sigma^i_{k^*}}^{-1}(\mu^i_{k^*})}})
+x^* = \underset{x}{\operatorname{argmax}} \sum_i{log(\frac{w^i_{k^*}}{\gamma^i}\eta_i e^{-\frac{1}{2}(\mu^i_{k^*})^T{\Sigma^i_{k^*}}^{-1}(\mu^i_{k^*})})} = \underset{x}{\operatorname{argmax}} \sum_i{log(e^{-\frac{1}{2}(\mu^i_{k^*})^T{\Sigma^i_{k^*}}^{-1}(\mu^i_{k^*})})}
 $$
    <p>
     I general max-mixture is a very good approximation to sum-mixture. I think a good practice is that when you define mixture model of the residuals, check how close the max-mixture matches the sum-mixture.
@@ -914,6 +914,23 @@ $$
 "/>
     </div>
    </div>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h3 id="Sum-Mixture-Model">
+    Sum-Mixture Model
+    <a class="anchor-link" href="#Sum-Mixture-Model">
+     ¶
+    </a>
+   </h3>
+   $$
+x^* = \underset{x}{\operatorname{argmax}} \sum_i{log(w_i\eta_i e^{-\frac{1}{2}(\mu_i)^T{\Sigma^i_{k^*}}^{-1}(\mu_i)})}
+$$
   </div>
  </div>
 </div>
