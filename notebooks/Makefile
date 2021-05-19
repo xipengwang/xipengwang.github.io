@@ -2,12 +2,16 @@ CONVERTER=./converter.py
 
 .PHONY: all
 
-all: hello-robot ml paper-reading blog
+all: hello-robot ml paper-reading blog cooking
 
 
 hello-robot:
 	$(CONVERTER) --nbpath hello_robot.ipynb --date 2021-04-29 \
 		--description "Robots, robots, everywhere. Bayesian Recursive Filtering. Gaussian Distribution" --tag Notebook
+
+cooking:
+		$(CONVERTER) --nbpath cooking.ipynb --date 2021-04-29 \
+			--description "Love delicious food..." --tag Notebook
 
 ml: machine-learning-summary machine-learning-pytorch machine-learning-loss machine-learning-backpropagation \
 	machine-learning-gradient-descent
