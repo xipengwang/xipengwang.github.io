@@ -39,8 +39,12 @@ paper-reading-mixture-models-for-least-square-optimization:
 	$(CONVERTER) --nbpath paper-reading-mixture-models-for-least-square-optimization.ipynb --date 2021-05-11 \
 		--description "Paper Reading - Gaussian mixture models and robust kernels for least square optimization" --tag PaperReading
 
-blog: expectation–maximization
+blog: expectation–maximization factor-graphs
 
 expectation–maximization:
 	$(CONVERTER) --nbpath expectation–maximization.ipynb --date 2021-05-10 \
 		--description "Expectation maximization" --tag Notebook
+
+factor-graph:
+	$(CONVERTER) --nbpath factor-graph.ipynb --date 2021-05-24 \
+		--description "Factor graph - Square-root SAM, iSAM, iSAM2, AprilSAM" --tag Notebook
