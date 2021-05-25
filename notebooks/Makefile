@@ -2,7 +2,7 @@ CONVERTER=./converter.py
 
 .PHONY: all
 
-all: hello-robot ml paper-reading blog cooking
+all: hello-robot ml paper-reading blog cooking book
 
 
 hello-robot:
@@ -48,3 +48,13 @@ expectation–maximization:
 factor-graph:
 	$(CONVERTER) --nbpath factor-graph.ipynb --date 2021-05-24 \
 		--description "Factor graph - Square-root SAM, iSAM, iSAM2, AprilSAM" --tag Notebook
+
+book: autonomous-robots-summary autobot-linear-algebra
+
+autonomous-robots-summary:
+	$(CONVERTER) --nbpath autonomous-robots-summary.ipynb --date 2021-05-24 \
+		--description "Autonomous robots" --tag Book
+
+autobot-linear-algebra:
+	$(CONVERTER) --nbpath autobot-linear-algebra.ipynb --date 2021-05-24 \
+		--description "Autonomous robots - Linear algebra" --tag Book
