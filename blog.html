@@ -20,6 +20,28 @@ description: Robotic, Math, Machine Learning, etc.
 </div>
 
 <div class="clearfix">
+	<a href="{% post_url 2021-05-25-grid-mapping %}">
+		<img class="rounded-circle img-fluid float-left mr-2 img-padding"
+				 src="/index_images/semantic-map.png" alt="semantic map" width="140" height="140">
+	</a>
+	<h2>Grid Mapping: From Occupancy Map to Semantic Map</h2>
+	<p>
+		Grid mapping is an idea that divides continuous world into discretized cells
+		or voxels. The occupancy grid map is designed to represent occupancy state
+		of map cells. It is very useful for path planning as it shows free spaces.
+		However, unlike robot vacuums, self-driving vehicle must follow rules that
+		don't allow cars go on any free areas. Then a cell should represent more
+		classes than pure a binary state. In such case, we call it semantic grid map.
+	</p>
+</div>
+<div class="text-center">
+	<a class="btn btn-outline-primary" href="{% post_url 2021-05-25-grid-mapping%}"
+		 role="button">Learn more about grid mapping</a>
+	<br>
+</div>
+
+
+<div class="clearfix">
 	<a href="{% post_url 2021-05-24-factor-graph %}">
 		<img class="rounded-circle img-fluid float-left mr-2 img-padding"
 				 src="/index_images/factor-graph.png" alt="factor-graph" width="140" height="140">
