@@ -60,5 +60,5 @@ autonomous-robots-summary:
 		--description "Autonomous robots" --tag Book
 
 autobot-linear-algebra:
-	$(CONVERTER) --nbpath autobot-linear-algebra.ipynb --date 2021-05-24 \
+	$(CONVERTER) --nbpath autobot-linear-algebra.ipynb --date 2021-05-28 \
 		--description "Autonomous robots - Linear algebra" --tag Book
