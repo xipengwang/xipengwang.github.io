@@ -1,0 +1,198 @@
+---
+layout: notebook
+title: Mutual Information
+description: Entropy, Cross Entropy, Conditional Entropy, Joint Entropy, Mutual Information
+tag: Notebook
+---
+
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h2 id="Entropy">
+    Entropy
+    <a class="anchor-link" href="#Entropy">
+     ¶
+    </a>
+   </h2>
+   $$
+H(x) = -\sum_i{p(x_i)log(p(x_i))}
+$$
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h2 id="Conditional-Entropy">
+    Conditional Entropy
+    <a class="anchor-link" href="#Conditional-Entropy">
+     ¶
+    </a>
+   </h2>
+   $$
+\begin{align}
+H(x|y) =&amp; -\sum_{i,j}{p(x_i, y_j)log{p(x_i|y_j)}} \\
+=&amp; -\sum_{i,j}{p(x_i, y_j)log{\frac{p(x_i,y_j)}{p(y_j)}}}
+\end{align}
+$$
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h2 id="Joint-Entropy">
+    Joint Entropy
+    <a class="anchor-link" href="#Joint-Entropy">
+     ¶
+    </a>
+   </h2>
+   $$
+H(x, y) = -\sum_{i,j}{p(x_i, y_j)log(p(x_i, y_j))}
+$$
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h2 id="Mutual-Information">
+    Mutual Information
+    <a class="anchor-link" href="#Mutual-Information">
+     ¶
+    </a>
+   </h2>
+   $$
+MI(x, y) = -\sum_{i,j}{p(x_i, y_j)log(\frac{p(x_i)p(y_j)}{p(x_i, y_j)})}
+$$
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h2 id="Cross-Entropy">
+    Cross Entropy
+    <a class="anchor-link" href="#Cross-Entropy">
+     ¶
+    </a>
+   </h2>
+   $$
+H(p, q) = -\sum{p(x)log(q(x))} 
+$$
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h2 id="Kullback–Leibler-divergence">
+    Kullback–Leibler divergence
+    <a class="anchor-link" href="#Kullback–Leibler-divergence">
+     ¶
+    </a>
+   </h2>
+   <p>
+    $p$ is the true distribution while $q$ is the approximation.
+$$
+D_{KL}(p \| q) = -\sum p(x) log(\frac{q(x)}{p(x)})
+$$
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h2 id="Connections">
+    Connections
+    <a class="anchor-link" href="#Connections">
+     ¶
+    </a>
+   </h2>
+   <blockquote>
+    $$
+H(X,Y) = H(X) + H(Y|X) = H(Y) + H(X|Y)
+$$$$
+MI(X,Y) = H(X) + H(Y) - H(X,Y) = H(X) - H(X|Y) = H(Y) - H(Y|X)
+$$$$
+MI(X,Y) = D_{KL}(p(x,y) \| p(x)p(y))
+$$$$
+H(p, q) = H(p) + D_{KL}(p \| q)
+$$
+   </blockquote>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+ <div class="input">
+  <div class="prompt input_prompt">
+   In [4]:
+  </div>
+  <div class="inner_cell">
+   <div class="input_area collapsed">
+    <div class="collapse_expand_button fa fa-1x fa-minus-square-o">
+    </div>
+    <div class="highlight hl-ipython3">
+     <pre><span></span><span class="c1"># Some examples</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="c1"># prob</span>
+<span class="n">p_x0</span> <span class="o">=</span> <span class="mf">0.3</span>
+<span class="n">p_x1</span> <span class="o">=</span> <span class="mf">0.7</span>
+
+<span class="n">p_y0</span> <span class="o">=</span> <span class="mf">0.4</span>
+<span class="n">p_y1</span> <span class="o">=</span> <span class="mf">0.6</span>
+
+<span class="c1"># conditional prob</span>
+<span class="n">p_x0_y0</span> <span class="o">=</span> <span class="mf">0.5</span>
+<span class="n">p_x1_y0</span> <span class="o">=</span> <span class="mf">0.5</span>
+<span class="n">p_x0_y1</span> <span class="o">=</span> <span class="mf">0.3</span>
+<span class="n">p_x1_y1</span> <span class="o">=</span> <span class="mf">0.7</span> 
+
+
+<span class="c1"># joint prob</span>
+<span class="n">p_x0y0</span> <span class="o">=</span> <span class="n">p_y0</span> <span class="o">*</span> <span class="n">p_x0_y0</span>
+<span class="n">p_x1y0</span> <span class="o">=</span> <span class="n">p_y0</span> <span class="o">*</span> <span class="n">p_x1_y0</span>
+<span class="n">p_x0y1</span> <span class="o">=</span> <span class="n">p_y1</span> <span class="o">*</span> <span class="n">p_x0_y1</span>
+<span class="n">p_x1y1</span> <span class="o">=</span> <span class="n">p_y1</span> <span class="o">*</span> <span class="n">p_x1_y1</span>
+
+<span class="n">H_x</span> <span class="o">=</span> <span class="o">-</span><span class="n">p_x0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">p_x0</span><span class="p">)</span> <span class="o">-</span> <span class="n">p_x1</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">p_x1</span><span class="p">)</span>
+<span class="n">H_y</span> <span class="o">=</span> <span class="o">-</span><span class="n">p_y0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">p_y0</span><span class="p">)</span> <span class="o">-</span> <span class="n">p_y1</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">p_y1</span><span class="p">)</span>
+
+<span class="n">H_x_y</span> <span class="o">=</span> <span class="o">-</span><span class="n">p_x0y0</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">p_x0_y0</span><span class="p">)</span> <span class="o">-</span> <span class="n">p_x1y0</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">p_x1_y0</span><span class="p">)</span> <span class="o">-</span> <span class="n">p_x0y1</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">p_x0_y1</span><span class="p">)</span> <span class="o">-</span> <span class="n">p_x1y1</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">p_x1_y1</span><span class="p">)</span>
+<span class="n">H_xy</span> <span class="o">=</span> <span class="o">-</span><span class="n">p_x0y0</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">p_x0y0</span><span class="p">)</span> <span class="o">-</span> <span class="n">p_x1y0</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">p_x1y0</span><span class="p">)</span> <span class="o">-</span> <span class="n">p_x0y1</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">p_x0y1</span><span class="p">)</span> <span class="o">-</span> <span class="n">p_x1y1</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">p_x1y1</span><span class="p">)</span>
+
+<span class="k">assert</span><span class="p">(</span><span class="n">H_xy</span> <span class="o">==</span> <span class="n">H_y</span> <span class="o">+</span> <span class="n">H_x_y</span><span class="p">)</span>
+
+<span class="c1">#</span>
+</pre>
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+
+<div> This blog is converted from <a href="https://github.com/xipengwang/xipengwang.github.io/tree/master/notebooks/mutual-information.ipynb">mutual-information.ipynb</a></div>
