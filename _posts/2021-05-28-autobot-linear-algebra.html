@@ -24,6 +24,22 @@ tag: Book
      ¶
     </a>
    </h2>
+   <p>
+    Let's think a problem about fitting a 2D polynomial line:
+$$
+\begin{bmatrix}
+1, x_0, x_0^2, x_0^3, \cdots x_0^n \\
+1, x_1, x_1^2, x_1^3, \cdots x_1^n \\
+\vdots \\
+1, x_m, x_m^2, x_m^3, \cdots x_m^n \\
+\end{bmatrix} 
+\begin{bmatrix} \beta_0 \\ \beta_1\\ \vdots \\ \beta_n\end{bmatrix} = 
+\begin{bmatrix} y_0 \\ y_1\\ \vdots \\ y_m\end{bmatrix}
+$$
+   </p>
+   <p>
+    $(x_i, y_i)$ are observed points and $\beta_i$ are coefficients for the polynomial function. How do we solve this equation to find the best $\beta$?
+   </p>
   </div>
  </div>
 </div>
@@ -81,7 +97,7 @@ $$
 <div class="cell border-box-sizing code_cell rendered">
  <div class="input">
   <div class="prompt input_prompt">
-   In [29]:
+   In [139]:
   </div>
   <div class="inner_cell">
    <div class="input_area collapsed">
@@ -119,7 +135,7 @@ $$
   <div class="output">
    <div class="output_area">
     <div class="prompt output_prompt">
-     Out[29]:
+     Out[139]:
     </div>
     <div class="output_text output_subarea output_execute_result">
      <pre>[]</pre>
@@ -1280,14 +1296,16 @@ $$
 <div class="cell border-box-sizing code_cell rendered">
  <div class="input">
   <div class="prompt input_prompt">
-   In [138]:
+   In [140]:
   </div>
   <div class="inner_cell">
    <div class="input_area collapsed">
     <div class="collapse_expand_button fa fa-1x fa-minus-square-o">
     </div>
     <div class="highlight hl-ipython3">
-     <pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+     <pre><span></span><span class="c1"># Use SVD to solve linear equations</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">math</span>
 
 <span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span>
