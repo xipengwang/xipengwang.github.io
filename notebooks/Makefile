@@ -14,7 +14,7 @@ cooking:
 			--description "Love delicious food..." --tag Notebook
 
 ml: machine-learning-summary machine-learning-pytorch machine-learning-loss machine-learning-backpropagation \
-	machine-learning-gradient-descent
+	machine-learning-gradient-descent machine-learning-learning-rate-scheduling
 
 machine-learning-summary:
 	$(CONVERTER) --nbpath machine-learning-summary.ipynb --date 2021-05-03 \
@@ -32,6 +32,10 @@ machine-learning-backpropagation:
 machine-learning-gradient-descent:
 	$(CONVERTER) --nbpath machine-learning-gradient-descent.ipynb --date 2021-05-13 \
 		--description "Machine Learning Notes - gradient descent, SGD, Momentum, RMSProp, Adam" --tag ML
+machine-learning-learning-rate-scheduling:
+	$(CONVERTER) --nbpath machine-learning-learning-rate-scheduling.ipynb --date 2021-06-12 \
+		--description "Machine Learning Notes - learning rate scheduler" --tag ML
+
 
 paper-reading: paper-reading-mixture-models-for-least-square-optimization
 
