@@ -1,0 +1,1040 @@
+---
+layout: notebook
+title: Inertial Navigation System
+description: Inertial Navigation System
+tag: Notebook
+---
+
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h2 id="Coordinate-Frames">
+    Coordinate Frames
+    <a class="anchor-link" href="#Coordinate-Frames">
+     ¶
+    </a>
+   </h2>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    <strong>
+     The body frame b
+    </strong>
+    is the coordinate frame of the moving IMU. Its origin is located in the center of the accelerometer triad and it is aligned to the casing. All the inertial measurements are resolved in this frame.
+   </p>
+   <p>
+    <strong>
+     The local navigation frame n
+    </strong>
+    is a local geographic frame in which we want to navigate. We are interested in the position and orientation of the
+    <strong>
+     b-frame
+    </strong>
+    with respect to this
+    <strong>
+     n-frame
+    </strong>
+    .
+   </p>
+   <p>
+    <strong>
+     The inertial frame i
+    </strong>
+    is a stationary frame. The IMU measures linear acceleration and angular velocity with respect to this frame. Its origin is located at the center of the earth and its axes are aligned with respect to the stars.
+   </p>
+   <p>
+    <strong>
+     The earth (ECEF) frame e
+    </strong>
+    coincides with the i-frame, but rotates with the earth. That is, it has its origin at the center of the earth and axes which are fixed with respect to the earth.
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h2 id="IMU-measurements">
+    IMU measurements
+    <a class="anchor-link" href="#IMU-measurements">
+     ¶
+    </a>
+   </h2>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h3 id="Angular-Velocity">
+    Angular Velocity
+    <a class="anchor-link" href="#Angular-Velocity">
+     ¶
+    </a>
+   </h3>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    The gyroscope measures the angular velocity of the body frame with respect to the inertial frame, expressed in the body frame denoted by $\omega_{ib}^b$ . 
+$$
+\begin{align}
+\omega_{ib}^b = R^{bn}(\omega_{ie}^n + \omega_{en}^n) + \omega_{nb}^b
+\end{align}
+$$
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    where $R^{bn}$ is a rotation matrix from local navigation frame to body frame. $\omega_{ie}^n$ is the earth rotating rate with respected to inertial frame expressed in local navigation frame, which is about $7.29*10^{−5}\ \text{rad/s}$. $\omega_{en}^n$ is 0 if the local navigation system is defined stationary on the earth.
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h3 id="Linear--Acceleration">
+    Linear  Acceleration
+    <a class="anchor-link" href="#Linear--Acceleration">
+     ¶
+    </a>
+   </h3>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    The accelerometer measures the specific force $a^b$ in the body frame.
+$$
+\begin{align}
+a_{ii}^b = R^{bn}(a_{ii}^n - g^n)
+\end{align}
+$$
+where $g$ is the gravity vector expressed in local navigation frame, and $a_{ii}^n$ is the linear acceleration expressed in local navigation frame.
+$$
+\begin{align}
+a_{ii}^n = R^{ni}a_{ii}^i
+\end{align}
+$$
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    The velocity and acceleration can be obtained by differentiation in a corresponding frame as:
+$$
+\begin{align}
+\frac{\partial}{\partial{t}}p^n|_n = v_n^n \\ 
+\frac{\partial}{\partial{t}}v^n|_n = a_{nn}^n \\
+\end{align}
+$$
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    <strong>
+     Concept Review
+    </strong>
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    Suppose we have a frame v is only rotating with respect to frame u, then in general we have:
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   $$
+\begin{align}
+\frac{\partial}{\partial{t}}x^u|_u &amp;= \frac{\partial}{\partial{t}}R^{uv}x^v|_u \\
+&amp;= R^{uv}\frac{\partial}{\partial{t}}x^v|_v + \frac{\partial}{\partial{t}}R^{uv}x^v \\
+&amp;= R^{uv}\frac{\partial}{\partial{t}}x^v|_v + [\omega_{uv}^{u}]_{\times}R^{uv}x^v \\
+&amp;= R^{uv}\frac{\partial}{\partial{t}}x^v|_v + [\omega_{uv}^{u}]_{\times}x^u
+\end{align}
+$$
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   $$
+\begin{align}
+\frac{\partial}{\partial{t}}x^u|_u &amp;= \frac{\partial}{\partial{t}}R^{uv}x^v|_u \\
+&amp;= R^{uv}\frac{\partial}{\partial{t}}x^v|_v + \frac{\partial}{\partial{t}}R^{uv}x^v \\
+&amp;= R^{uv}\frac{\partial}{\partial{t}}x^v|_v + R^{uv}[\omega_{uv}^{v}]_{\times}x^v \\
+&amp;= R^{uv}(\frac{\partial}{\partial{t}}x^v|_v + [\omega_{uv}^{v}]_{\times}x^v)
+\end{align}
+$$
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    Suppose we have a frame v is rotating and moving with respect to frame u, then in general we have:
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   $$
+\begin{align}
+\frac{\partial}{\partial{t}}x^u|_u &amp;= \frac{\partial}{\partial{t}}(R^{uv}x^v+r_{uv}^u)|_u \\
+&amp;= R^{uv}\frac{\partial}{\partial{t}}x^v|_v + \frac{\partial}{\partial{t}}R^{uv}x^v + \frac{\partial}{\partial{t}}r_{uv}^u|_u\\
+&amp;= R^{uv}\frac{\partial}{\partial{t}}x^v|_v + R^{uv}[\omega_{uv}^{v}]_{\times}x^v + \frac{\partial}{\partial{t}}r_{uv}^u|_u\\
+&amp;= R^{uv}(\frac{\partial}{\partial{t}}x^v|_v + [\omega_{uv}^{v}]_{\times}x^v) + \frac{\partial}{\partial{t}}r_{uv}^u|_u
+\end{align}
+$$
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    where $\frac{\partial}{\partial{t}}r_{uv}^u|_u$ is the moving speed, $\omega_{uv}^{v}$ is angular velocity expressed in the moving frame $v$.
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    So suppose b frame, e.g. earth frame, is rotating with respect g frame, e.g. inertial frame, but without any translation, given $v = [\omega]_{\times}r $, then for a point $p$ in frame b, we have its velocity and acceleration expressed in frame g as:
+$$
+\begin{align}
+v^g_{g} &amp;= R^{gb}(v^b_{b} +[\omega_{gb}^b]_{\times}r_{o^{b}p}^b) \\
+a^g_{gg} &amp;= R^{gb}(a^b_{bb} + \dot{\omega}_{gb}^b + 2[\omega_{gb}^b]_{\times}v^b_{b} + [\omega_{gb}^b]_{\times}([\omega_{gb}^b]_{\times}r_{o^{b}p}^b))
+\end{align}
+$$
+where $\dot{\omega}_{gb}^b$ is angular acceleration, $2[\omega_{gb}^b]_{\times}v^b_{b}$ is Coriolis acceleration, $[\omega_{gb}^b]_{\times}([\omega_{gb}^b]_{\times}r_{o^{b}p}^b$ is Centripetal acceleration.
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    Since earth frame is only rotating around the inertial frame, so we can get:
+$$
+\begin{align}
+v_{i}^i &amp;= R^{ie}(v_e^e +  [\omega_{ie}^e]_{\times}r_{o^{e}p}^e)\\
+&amp;=v^i_e + [\omega_{ie}^i]_{\times}r_{o^{e}p}^i\\
+a_{ii}^i &amp;= R^{ie}(a_{ee}^e + + \dot{\omega}_{ie}^e + 2[\omega_{ie}^e]_{\times}v^e_{e} + [\omega_{ie}^e]_{\times}([\omega_{ie}^e]_{\times}r_{o^{e}p}^e))\\
+&amp;= a^i_{ee} + 0 + 2[\omega_{ie}^i]_{\times}v_e^i + [\omega_{ie}^i]_{\times}([\omega_{ie}^i]_{\times}r_{o^{e}p}^i)
+\end{align}
+$$
+where we assume the angular velocity of the earth is constant, i.e. $\dot{\omega}_{ie}^e = 0$
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    Similarly, we can get the velocity and acceleration relation between earth frame and navigation frame where we assume navigation frame is stationary with respect to the earth frame, i.e. $[\omega_{en}^n] = 0$: 
+$$
+\begin{align}
+v_{e}^e &amp;= R^{en}(v_n^n +  [\omega_{en}^n]_{\times}r_{o^{n}p}^n)\\
+&amp;=v^e_n \\
+v_e^n &amp;= R^{ne}v_n^e = v_n^n \\
+a_{ee}^e &amp;= R^{en}(a_{nn}^n + + \dot{\omega}_{en}^e + 2[\omega_{en}^n]_{\times}v^n_{n} + [\omega_{en}^n]_{\times}([\omega_{en}^n]_{\times}r_{o^{n}p}^n))\\
+&amp;= a^e_{nn} \\
+a_{ee}^n &amp;= R^{ne}a_{nn}^e = a_{nn}^n
+\end{align}
+$$
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    Because we have:
+$$
+\begin{align}
+v_e^n &amp;= R^{ne}v_n^e = v_n^n \\
+a_{ee}^n &amp;= R^{ne}a_{nn}^e = a_{nn}^n
+\end{align}
+$$
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    <strong>
+     Finally, we get an important equation:
+    </strong>
+    $$
+\begin{align}
+a_{ii}^n &amp;= R^{ni}a_{ii}^i \\
+&amp; = R^{ni}(a^i_{ee} + 0 + 2[\omega_{ie}^i]_{\times}v_e^i + [\omega_{ie}^i]_{\times}([\omega_{ie}^i]_{\times}r_{o^{e}p}^i)) \\
+&amp; = a^n_{ee} + 2[\omega_{ie}^n]_{\times}v_e^n + [\omega_{ie}^n]_{\times}([\omega_{ie}^n]_{\times}r_{o^{e}p}^n)\\
+&amp; = a^n_{nn} + 2[\omega_{ie}^n]_{\times}v_n^n + [\omega_{ie}^n]_{\times}([\omega_{ie}^n]_{\times}r_{o^{e}p}^n)
+\end{align}
+$$
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    Recall that we have the measurement model as:
+ $$
+\begin{align}
+a^b = R^{bn}(a_{ii}^n - g^n)
+\end{align}
+$$
+So we can get a correlation between the measurement $a^b$ and the acceleration state $a^n_{nn}$ in local navigation frame.
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    Normally, because Centrifugal acceleration is small in the order of $10^{−2}\ m/s^2$ given earth rotation is about $7.29*10^{−5}\ \text{rad}/s$. For Coriolis acceleration, when car travel 80 miles per hour, it is in the order of $10^{−3}\ m/s^2$.
+    <strong>
+     So we can normally use
+    </strong>
+    $a_{ii}^n = a_{nn}^n$
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    <strong>
+     So we have the measurement model as:
+    </strong>
+    Recall that we have the measurement model as:
+$$
+\begin{align}
+a^b = R^{bn}(a_{nn}^n - g^n)
+\end{align}
+$$
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h3 id="Measurement-Model">
+    Measurement Model
+    <a class="anchor-link" href="#Measurement-Model">
+     ¶
+    </a>
+   </h3>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h4 id="Gyroscope-measurement-models">
+    Gyroscope measurement models
+    <a class="anchor-link" href="#Gyroscope-measurement-models">
+     ¶
+    </a>
+   </h4>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    The gyroscope measures the angular velocity $\omega^{b}_{ib} $ at each time instance $t$, but its measurements are corrupted by a slowly time-varying bias $\delta_{\omega,t}$, and noise $e_{\omega,t}$:
+$$
+\begin{align}
+y_{\omega,t} = \omega^{b}_{ib,t} + \delta_{\omega,t}^b + e_{\omega,t}^b
+\end{align}
+$$
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    where $e_{\omega,t}^b \sim \mathcal{N}(0, \Sigma_{\omega})$. If the gyroscope is properly calibrated, we can think that measurements in three gyroscope axes are independent.
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    The gyroscope bias $\delta_{\omega,t}^b$ is slowly time-varying:
+$$
+\begin{align}
+\delta_{\omega,t+1}^b = \delta_{\omega,t}^b + e_{\delta_{\omega},t}^b
+\end{align}
+$$
+where $e_{\delta_{\omega},t}^b \sim \mathcal{N}(0, \Sigma_{\delta_{\omega}})$
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    From previous section we have $\omega_{ib}^b = R^{bn}(\omega_{ie}^n + \omega_{en}^n) + \omega_{nb}^b$. If we assume local navigation frame is stationary and neglect earth rotation, we can get:
+$$
+\begin{align}
+\omega_{ib}^b = \omega_{nb}^b
+\end{align}
+$$
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    Then we can get
+    <strong>
+     gyroscope measurement model
+    </strong>
+    as:
+$$
+\begin{align}
+y_{\omega,t} = \omega^{b}_{nb,t} + \delta_{\omega,t}^b + e_{\omega,t}^b
+\end{align}
+$$
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h4 id="Accelerometer-measurement-models">
+    Accelerometer measurement models
+    <a class="anchor-link" href="#Accelerometer-measurement-models">
+     ¶
+    </a>
+   </h4>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    The accelerometer measures the acceleration $a^{b}_{ii} $ at each time instance $t$, but its measurements are corrupted by a slowly time-varying bias $\delta_{a,t}$, and noise $e_{a,t}$:
+$$
+\begin{align}
+y_{a,t} = a^{b}_{ii,t} + \delta_{a,t}^b + e_{a,t}^b
+\end{align}
+$$
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    where $e_{a,t}^b \sim \mathcal{N}(0, \Sigma_{a})$. If the gyroscope is properly calibrated, we can think that measurements in three gyroscope axes are independent.
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    The accelerometer bias $\delta_{a,t}^b$ is slowly time-varying:
+$$
+\begin{align}
+\delta_{a,t+1}^b = \delta_{a,t}^b + e_{\delta_{a},t}^b
+\end{align}
+$$
+where $e_{\delta_{a},t}^b \sim \mathcal{N}(0, \Sigma_{\delta_{a}})$
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    As we discussed in the previous section that we have $a_{ii}^b = R^{bn}(a_{ii}^n - g^n)$, then
+$$
+\begin{align}
+y_{a,t} = a^{b}_{ii,t} + \delta_{a,t}^b + e_{a,t}^b
+\end{align}
+$$
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    If we neglect Centrifugal acceleration and Coriolis acceleration, we have $a_{ii}^n = a_{nn}^n$, the we can get
+    <strong>
+     accelerometer measurement model
+    </strong>
+    as:
+$$
+\begin{align}
+y_{a,t} = R^{bn}(a_{nn}^n - g^n) + \delta_{a,t}^b + e_{a,t}^b
+\end{align}
+$$
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h2 id="State-and-Dynamics">
+    State and Dynamics
+    <a class="anchor-link" href="#State-and-Dynamics">
+     ¶
+    </a>
+   </h2>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    Recall that we have two measurement models: 
+$$
+\begin{align}
+y_{\omega,t} &amp;= \omega^{b}_{nb,t} + \delta_{\omega,t}^b + e_{\omega,t}^b \\
+y_{a,t} &amp;= R^{bn}(a_{nn}^n - g^n) + \delta_{a,t}^b + e_{a,t}^b
+\end{align}
+$$
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h3 id="Constant-Acceleration-Model">
+    Constant Acceleration Model
+    <a class="anchor-link" href="#Constant-Acceleration-Model">
+     ¶
+    </a>
+   </h3>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    We can have a state vector as $x_t = (p_t^n, v_{n,t}^n, a_{nn,t}^n, \delta_{a,t}^b, q^{nb}_t, \omega^b_{nb, t}, \delta_{\omega,t}^b )$.
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    Assume that acceleration is constant and angular velocity is constant, we can get:
+$$
+\begin{align}
+p_{t+1}^n   &amp;= p_t^n + T v_{n,t}^n + \frac{T^2}{2}a_{nn,t}^n \\
+v_{n,t+1}^n &amp;= v_{n,t}^n + T a_{nn,t}^n \\
+a_{nn,t+1}^n &amp;= a_{nn,t} + e_{a,t} \\
+\delta_{a,t+1}^b &amp;= \delta_{a,t}^b + e_{\delta_{a},t}^b \\
+q^{nb}_{t+1} &amp;= q^{nb}_t  \odot Exp_q(\frac{T}{2}\omega^b_{nb, t}) = R^{nb}_t Exp_R(T\omega^b_{nb, t})\\
+\omega^b_{nb, t+1} &amp;= \omega^b_{nb, t} + e_{\omega,t} \\
+\delta_{\omega,t+1}^b &amp;= \delta_{\omega,t}^b + e_{\delta_{\omega},t}^b
+\end{align}
+$$
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    where $e_{a,t} \sim \mathcal{N}(0, \Sigma_{a})$, $e_{\omega,t} \sim \mathcal{N}(0, \Sigma_{\omega})$. $Exp()$ is an exponential operation as:
+$$
+\begin{align}
+Exp_q(\eta) &amp;= (cos(\|\eta\|), \frac{\eta}{\|\eta\|}sin(\|\eta\|)))^T \\
+Exp_R(\eta) &amp;= \mathcal{I}_3 + sin(\|\eta\|)[\frac{\eta}{\|\eta\|}]_{\times} + (1-cos(\|\eta\|)[\frac{\eta}{\|\eta\|}]_{\times}^2 
+\end{align}
+$$
+    <strong>
+     Note
+    </strong>
+    for an angle axis vector described as $(\alpha, \textbf{n})$, it is equal to $Exp_q(\frac{\alpha}{2}\textbf{n})$ and $Exp_R(\alpha\textbf{n})$.
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h3 id="Inertial-Measurements-Driven-Model">
+    Inertial Measurements Driven Model
+    <a class="anchor-link" href="#Inertial-Measurements-Driven-Model">
+     ¶
+    </a>
+   </h3>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    Instead of modeling $a_{nn,t}^n$ and $\omega^b_{nb, t}$ in the state vector, we could use IMU's measurements $y_{\omega,t}$ and $y_{a,t}$ to update the state. Hence, the state vector will be $(p_t^n, v_{n,t}^n, \delta_{a,t}^b, q^{nb}_t,  \delta_{\omega,t}^b )$
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   $$
+\begin{align}
+p_{t+1}^n   &amp;= p_t^n + T v_{n,t}^n + \frac{T^2}{2}(q_t^{nb}(y_{a,t}-\delta_{a,t}^b-e_{a,t}^b)+g^n) \\
+v_{n,t+1}^n &amp;= v_{n,t}^n + T (q_t^{nb}(y_{a,t}-\delta_{a,t}^b-e_{a,t}^b)+g^n) \\
+\delta_{a,t+1}^b &amp;= \delta_{a,t}^b + e_{\delta_{a},t}^b \\
+q^{nb}_{t+1} &amp;= q^{nb}_t  \odot Exp_q(\frac{T}{2}(y_{\omega, t} - \delta_{\omega,t}^b - e_{\omega,t}^b))\\
+\delta_{\omega,t+1}^b &amp;= \delta_{\omega,t}^b + e_{\delta_{\omega},t}^b
+\end{align}
+$$
+   <p>
+    Note $(q_t^{nb}(y_{a,t}-\delta_{a,t}^b-e_{a,t}^b)+g^n)$ could be simplified as $(q_t^{nb}(y_{a,t}-\delta_{a,t}^b)-e_{a,t}^b+g^n)$ if we consider $e_{a,t}$ have same noise for three axes as $\sim \mathcal{N}(0, \sigma_a^2\mathcal{I}_3)$.
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h2 id="State-Estimation">
+    State Estimation
+    <a class="anchor-link" href="#State-Estimation">
+     ¶
+    </a>
+   </h2>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h3 id="Factor-Graph-based-Optimization">
+    Factor Graph based Optimization
+    <a class="anchor-link" href="#Factor-Graph-based-Optimization">
+     ¶
+    </a>
+   </h3>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    Firstly we will define the cost function to minimize along with the variables we want to optimize over. For position and orientation estimation of INS, if we use state vector as $(p_t^n, v_{n,t}^n, \delta_{a,t}^b, q^{nb}_t,  \delta_{\omega,t}^b )$, we can define the optimization problem as:
+$$
+\begin{align}
+\hat{x}
+    <em>
+     {0:N} = \underset{x
+    </em>
+    {0:N}}{\operatorname{argmin}} 
+|e
+    <em>
+     {p,0}|
+    </em>
+    {\Sigma^{-1}_{p^n_0}}
+   </p>
+   <ul>
+    <li>
+     |e
+     <em>
+      {v,0}|
+     </em>
+     {\Sigma^{-1}_{v^n_0}}
+    </li>
+    <li>
+     |e
+     <em>
+      {q,0}|
+     </em>
+     {\Sigma^{-1}_{q^{nb}_0}}
+    </li>
+    <li>
+     |e
+     <em>
+      {p,a,t}|
+     </em>
+     {\Sigma^{-1}_{e_a}}
+    </li>
+    <li>
+     |e
+     <em>
+      {v,a,t}|
+     </em>
+     {\Sigma^{-1}_{e_a}}
+    </li>
+    <li>
+     |e
+     <em>
+      {\omega,t}|
+     </em>
+     {\Sigma^{-1}
+     <em>
+      {e
+     </em>
+     {\omega}}}
+    </li>
+    <li>
+     |e
+     <em>
+      {\delta
+     </em>
+     {\omega},t}|
+     <em>
+      {\Sigma^{-1}
+     </em>
+     {\delta_{\omega}}}
+    </li>
+    <li>
+     |e
+     <em>
+      {\delta
+     </em>
+     {a},t}|
+     <em>
+      {\Sigma^{-1}
+     </em>
+     {\delta_{a}}}
+    </li>
+    <li>
+     |e
+     <em>
+      {m,t}|
+     </em>
+     {\Sigma^{-1}_{e_m}}
+\end{align}
+$$
+    </li>
+   </ul>
+   <p>
+    <strong>
+     Note:
+    </strong>
+    we could optimize over state deviation, e.g. orientation deviation $\eta^{nb}$ instead of orientation $q^{nb}$.
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    Prior errors:
+$$
+\begin{align}
+e_{p,0} &amp;= p^n_0 - y_{p,0} \\
+e_{v,0} &amp;= v^n_0 - y_{v,0} \\
+e_{q,0} &amp;= Log(q^{nb}_0 \odot y_{q, 0})
+\end{align}
+$$
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    IMU dynamics errors:
+$$
+\begin{align}
+e_{p,a,t} &amp;= \frac{2}{T^2}(p^n_{t+1} - p^n_{t} - T v^n_{n,t}) - g^n - q^{bn} \odot(y_{a,t}-\delta_{a,t}^b) \\
+e_{v,a,t} &amp;= \frac{1}{T}(v^n_{t+1}-v^n_{t}) - g^n - q^{bn} \odot(y_{a,t}-\delta_{a,t}^b)  \\
+e_{\omega,t} &amp;= \frac{2}{T}Log(q_t^{bn} \odot q_{t+1}^{nb}) - y_{\omega,t} + \delta_{\omega,t}
+\end{align}
+$$
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    Bias errors:
+$$
+\begin{align}
+e_{\delta_{\omega},t} &amp;= \delta_{a,t+1}^b - \delta_{a,t}^b\\
+e_{\delta_{a},t} &amp;= \delta_{\omega,t+1}^b - \delta_{\omega,t}^b
+\end{align}
+$$
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    Measurement errors:
+   </p>
+   <ul>
+    <li>
+     Position measurements
+    </li>
+   </ul>
+   $$
+\begin{align}
+e_{m,t} &amp;= p^n_t - y_{p,t}
+\end{align}
+$$
+   <ul>
+    <li>
+     Velocity measurements from wheel-encoder
+    </li>
+   </ul>
+   $$
+\begin{align}
+e_{m,t} &amp;= R^{vb}R^{bn}v^n_{n,t} - y_{v,t}
+\end{align}
+$$
+   <ul>
+    <li>
+     Zero angular velocity
+$$
+\begin{align}
+e_{m,t} &amp;= Log(q_t^{bn} \odot q_{t+1}^{nb})
+\end{align}
+$$
+    </li>
+    <li>
+     Zero linear velocity
+$$
+\begin{align}
+e_{m,t} &amp;= v_t^n
+\end{align}
+$$
+    </li>
+    <li>
+     Zero acceleration 
+$$
+\begin{align}
+e_{m,t} &amp;= v_{t+1}^n - v_t^n
+\end{align}
+$$
+    </li>
+   </ul>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    I think a challenge to use IMU measurements driven model is that additional measurements might arrive at different freuqency than IMU measurements. We could interpolate the measurements for batch optimization since we have complete information for the whole time.
+    <strong>
+     TODO: IMU Preintegration on Manifold for Efficient Visual-Inertial Maximum-a-Posteriori Estimation
+    </strong>
+   </p>
+   <p>
+    Alternatively, if we use constant acceleration model, we could handle different measurements easily. However, I think a challenge is to set proper covariance for transition model given different transition time.
+    <strong>
+     TODO: how does open source system work?
+    </strong>
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h3 id="Extended-Kalman-Filter-based-Filtering">
+    Extended Kalman Filter based Filtering
+    <a class="anchor-link" href="#Extended-Kalman-Filter-based-Filtering">
+     ¶
+    </a>
+   </h3>
+  </div>
+ </div>
+</div>
+
+<div> This blog is converted from <a href="https://github.com/xipengwang/xipengwang.github.io/tree/master/notebooks/inertial-navigation-system.ipynb">inertial-navigation-system.ipynb</a></div>

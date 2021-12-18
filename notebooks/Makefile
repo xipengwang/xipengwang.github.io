@@ -57,6 +57,11 @@ grid-mapping:
 	$(CONVERTER) --nbpath grid-mapping.ipynb --date 2021-05-25 \
 		--description "Grid map, Occupancy grid map, Semantic map" --tag Notebook
 
+inertial-navigation:
+	$(CONVERTER) --nbpath inertial-navigation-system.ipynb --date 2021-12-15 \
+		--description "Inertial Navigation System" --tag Notebook
+
+
 mutual-information:
 		$(CONVERTER) --nbpath mutual-information.ipynb --date 2021-06-03 \
 			--description "Entropy, Cross Entropy, Conditional Entropy, Joint Entropy, Mutual Information" --tag Notebook
