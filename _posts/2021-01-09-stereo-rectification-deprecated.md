@@ -1,6 +1,6 @@
 ---
 layout: post
-tag: Legacy
+tag: Legacy-Deprecated
 title: Stereo Rectification for two cameras are mounted on top of each other not side by side
 ---
 ![Stereo Rectification]({{site.baseurl}}/images/2021-01-09-stereo-rectification/stereo.png)

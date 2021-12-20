@@ -65,6 +65,10 @@ rigid-body-transformation:
 	$(CONVERTER) --nbpath rigid-body-transformation.ipynb --date 2021-12-18 \
 		--description "Rigid Body Transformation" --tag Notebook
 
+stereo-rectification:
+	$(CONVERTER) --nbpath stereo-rectification.ipynb --date 2021-12-19 \
+		--description "Stereo rectification" --tag Notebook
+
 
 mutual-information:
 		$(CONVERTER) --nbpath mutual-information.ipynb --date 2021-06-03 \
