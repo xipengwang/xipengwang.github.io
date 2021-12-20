@@ -1,0 +1,696 @@
+---
+layout: notebook
+title: Rigid Body Transformation
+description: Rigid Body Transformation
+tag: Notebook
+---
+
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    Suppose we have a rigid body frame $b$ rotating and translating in a fix world frame $w$, the transformation from $b$ to $w$ is $T^{wb} = T_{trans}T_{rot}$, then we have the following properties:
+   </p>
+   <ul>
+    <li>
+     $RR^{wb}$ rotates rigid body orientation $R^{wb}$ in $w$ frame
+    </li>
+    <li>
+     <p>
+      $R^{wb}R$ rotates rigid body orientation $R^{wb}$ in $b$ frame
+     </p>
+    </li>
+    <li>
+     <p>
+      $TT^{wb}$ rotates and translate rigid body pose $T^{wb}$ in $w$ frame
+     </p>
+     <ul>
+      <li>
+       $T_{trans}T_{rot}T^{wb}$ rotates and translate rigid body pose $T^{wb}$ in $w$ frame
+      </li>
+     </ul>
+    </li>
+    <li>
+     $T^{wb}T$ rotates and translate rigid body pose $T^{wb}$ in $b$ frame
+     <ul>
+      <li>
+       $T^{wb}T_{trans}T_{rot}$ rotates and translate rigid body pose $T^{wb}$ in $b$ frame
+      </li>
+     </ul>
+    </li>
+   </ul>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+ <div class="input">
+  <div class="prompt input_prompt">
+   In [ ]:
+  </div>
+  <div class="inner_cell">
+   <div class="input_area collapsed">
+    <div class="collapse_expand_button fa fa-1x fa-minus-square-o">
+    </div>
+    <div class="highlight hl-ipython3">
+     <pre><span></span><span class="c1"># k3d plot helper functions</span>
+
+<span class="kn">import</span> <span class="nn">k3d</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+
+<span class="k">class</span> <span class="nc">XYZ_RBG_Axes</span><span class="p">():</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plot</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="mh">0xffff00</span><span class="p">,</span> <span class="n">axis_length</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">axis_length</span> <span class="o">=</span> <span class="n">axis_length</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot</span> <span class="o">=</span> <span class="n">plot</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">R</span> <span class="o">=</span> <span class="n">R</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">t</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="n">origin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">t</span>
+        <span class="n">x_axis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">((</span><span class="n">origin</span><span class="p">,</span> <span class="n">origin</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">axis_length</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]))</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">)),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">y_axis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">((</span><span class="n">origin</span><span class="p">,</span> <span class="n">origin</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="n">axis_length</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]))</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">)),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">z_axis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">((</span><span class="n">origin</span><span class="p">,</span> <span class="n">origin</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="n">axis_length</span><span class="p">]))</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">)),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xline_plot</span> <span class="o">=</span> <span class="n">k3d</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">x_axis</span><span class="p">,</span> <span class="n">shader</span><span class="o">=</span><span class="s1">'mesh'</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="mh">0xff0000</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="o">+</span><span class="s1">'_xaxis'</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">yline_plot</span> <span class="o">=</span> <span class="n">k3d</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">y_axis</span><span class="p">,</span> <span class="n">shader</span><span class="o">=</span><span class="s1">'mesh'</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="mh">0x0000ff</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="o">+</span><span class="s1">'_yaxis'</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zline_plot</span> <span class="o">=</span> <span class="n">k3d</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">z_axis</span><span class="p">,</span> <span class="n">shader</span><span class="o">=</span><span class="s1">'mesh'</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="mh">0x00ff00</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="o">+</span><span class="s1">'_zaxis'</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xpoint</span> <span class="o">=</span> <span class="n">k3d</span><span class="o">.</span><span class="n">points</span><span class="p">(</span><span class="n">origin</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">axis_length</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]))</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span> <span class="n">point_size</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> 
+                                  <span class="n">shader</span><span class="o">=</span><span class="s1">'3d'</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="o">+</span><span class="s1">'_end_point_x'</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ypoint</span> <span class="o">=</span> <span class="n">k3d</span><span class="o">.</span><span class="n">points</span><span class="p">(</span><span class="n">origin</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="n">axis_length</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]))</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span> <span class="n">point_size</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> 
+                                  <span class="n">shader</span><span class="o">=</span><span class="s1">'3d'</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="o">+</span><span class="s1">'_end_point_y'</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zpoint</span> <span class="o">=</span> <span class="n">k3d</span><span class="o">.</span><span class="n">points</span><span class="p">(</span><span class="n">origin</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="n">axis_length</span><span class="p">]))</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span> <span class="n">point_size</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> 
+                                  <span class="n">shader</span><span class="o">=</span><span class="s1">'3d'</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="o">+</span><span class="s1">'_end_point_z'</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xline_plot</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">yline_plot</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">zline_plot</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xpoint</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ypoint</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">zpoint</span> 
+    <span class="k">def</span> <span class="nf">update_pose</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">R</span> <span class="o">=</span> <span class="n">R</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">t</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">origin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">t</span>
+        <span class="n">axis_length</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">axis_length</span>
+        <span class="n">x_axis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">((</span><span class="n">origin</span><span class="p">,</span> <span class="n">origin</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">axis_length</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]))</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">)),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">y_axis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">((</span><span class="n">origin</span><span class="p">,</span> <span class="n">origin</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="n">axis_length</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]))</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">)),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">z_axis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">((</span><span class="n">origin</span><span class="p">,</span> <span class="n">origin</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="n">axis_length</span><span class="p">]))</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">)),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xline_plot</span><span class="o">.</span><span class="n">vertices</span> <span class="o">=</span> <span class="n">x_axis</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xpoint</span><span class="o">.</span><span class="n">positions</span> <span class="o">=</span> <span class="n">origin</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">axis_length</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]))</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">yline_plot</span><span class="o">.</span><span class="n">vertices</span> <span class="o">=</span> <span class="n">y_axis</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ypoint</span><span class="o">.</span><span class="n">positions</span> <span class="o">=</span> <span class="n">origin</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="n">axis_length</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]))</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zline_plot</span><span class="o">.</span><span class="n">vertices</span> <span class="o">=</span> <span class="n">z_axis</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zpoint</span><span class="o">.</span><span class="n">positions</span> <span class="o">=</span> <span class="n">origin</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="n">axis_length</span><span class="p">]))</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+
+
+<span class="n">plot</span> <span class="o">=</span> <span class="n">k3d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">camera_auto_fit</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">grid</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="n">C0</span> <span class="o">=</span> <span class="n">XYZ_RBG_Axes</span><span class="p">(</span><span class="n">plot</span><span class="p">,</span> <span class="s1">'C0'</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">)))</span>
+<span class="n">C1</span> <span class="o">=</span> <span class="n">XYZ_RBG_Axes</span><span class="p">(</span><span class="n">plot</span><span class="p">,</span> <span class="s1">'C1'</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">)),</span> <span class="n">color</span><span class="o">=</span><span class="mh">0x00ffff</span><span class="p">,</span> <span class="n">axis_length</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">C2</span> <span class="o">=</span> <span class="n">XYZ_RBG_Axes</span><span class="p">(</span><span class="n">plot</span><span class="p">,</span> <span class="s1">'C2'</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">)),</span> <span class="n">color</span><span class="o">=</span><span class="mh">0xff00ff</span><span class="p">,</span> <span class="n">axis_length</span><span class="o">=</span><span class="mf">0.75</span><span class="p">)</span>
+
+<span class="n">r</span> <span class="o">=</span> <span class="mi">0</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span>
+<span class="n">p</span> <span class="o">=</span> <span class="mi">0</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span>
+<span class="n">y</span> <span class="o">=</span> <span class="mi">90</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span>
+<span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">([</span><span class="n">r</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">y</span><span class="p">])</span>
+<span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">([</span><span class="n">r</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">y</span><span class="p">])</span>
+<span class="n">R01_rpy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">-</span><span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span>
+                <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">]]])</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">c</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">0</span><span class="p">,</span> <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span>
+                              <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span>  <span class="mi">0</span><span class="p">],</span>
+                              <span class="p">[</span><span class="o">-</span><span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">0</span><span class="p">,</span> <span class="n">c</span><span class="p">[</span><span class="mi">1</span><span class="p">]]]))</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span>
+                                  <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">c</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="o">-</span><span class="n">s</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="mi">0</span><span class="p">],</span>
+                                            <span class="p">[</span><span class="n">s</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">c</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="mi">0</span><span class="p">],</span>
+                                            <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]))</span>
+
+<span class="k">def</span> <span class="nf">to_radian</span><span class="p">(</span><span class="n">deg</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">deg</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span>
+
+<span class="k">def</span> <span class="nf">skew</span><span class="p">(</span><span class="n">vector</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="n">vector</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">vector</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span>
+                     <span class="p">[</span><span class="n">vector</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="n">vector</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span>
+                     <span class="p">[</span><span class="o">-</span><span class="n">vector</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">vector</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">0</span><span class="p">]])</span>
+
+<span class="c1"># rodrigues formula rotation</span>
+<span class="k">def</span> <span class="nf">SO3</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">omega_</span><span class="p">):</span>
+    <span class="n">omega</span> <span class="o">=</span> <span class="n">omega_</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">omega_</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">+</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span> <span class="o">*</span> <span class="n">skew</span><span class="p">(</span><span class="n">omega</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">))</span> <span class="o">*</span> <span class="n">skew</span><span class="p">(</span><span class="n">omega</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">skew</span><span class="p">(</span><span class="n">omega</span><span class="p">))</span>
+   
+
+<span class="n">plot</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+
+<span class="c1">#</span>
+</pre>
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    In the following example, I will show you how to rotate the frame in $w$ and $b$ to the get same pose.
+For rotating in $w$, we first rotate yellow frame at origin around z-axis in w frame 45 degree to get the cyan coordinate. Then we will do 45 degree rotation around y and then around x. Finall we should get a pose $R_{wb^{'}} = R_{roll}R_{pitch}R_{yaw}I$ where $I$ is the identity matrix.
+For rotating in $b$, we should get a pose $R_{wb^{''}} = IR_{roll}R_{pitch}R_{yaw}$ where $I$ is the identity matrix.
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+ <div class="input">
+  <div class="prompt input_prompt">
+   In [55]:
+  </div>
+  <div class="inner_cell">
+   <div class="input_area collapsed">
+    <div class="collapse_expand_button fa fa-1x fa-minus-square-o">
+    </div>
+    <div class="highlight hl-ipython3">
+     <pre><span></span><span class="c1"># Display video</span>
+<span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">YouTubeVideo</span>
+<span class="n">YouTubeVideo</span><span class="p">(</span><span class="s1">'-6K4vX8zhkI'</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+<span class="c1">#</span>
+</pre>
+    </div>
+   </div>
+  </div>
+ </div>
+ <div class="output_wrapper">
+  <div class="output">
+   <div class="output_area">
+    <div class="prompt output_prompt">
+     Out[55]:
+    </div>
+    <div class="output_html rendered_html output_subarea output_execute_result">
+     <iframe allowfullscreen="" frameborder="0" height="300" src="https://www.youtube.com/embed/-6K4vX8zhkI" width="500">
+     </iframe>
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+ <div class="input">
+  <div class="prompt input_prompt">
+   In [ ]:
+  </div>
+  <div class="inner_cell">
+   <div class="input_area collapsed">
+    <div class="collapse_expand_button fa fa-1x fa-minus-square-o">
+    </div>
+    <div class="highlight hl-ipython3">
+     <pre><span></span><span class="c1"># rotate around z-axis in w -&gt; yaw</span>
+<span class="n">theta</span> <span class="o">=</span> <span class="n">to_radian</span><span class="p">(</span><span class="mf">90.0</span><span class="p">)</span>
+<span class="n">omega</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="n">steps</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">steps</span><span class="p">):</span>
+    <span class="n">R</span> <span class="o">=</span> <span class="n">SO3</span><span class="p">(</span><span class="n">theta</span> <span class="o">/</span> <span class="n">steps</span><span class="p">,</span> <span class="n">omega</span><span class="p">)</span>
+    <span class="n">C1</span><span class="o">.</span><span class="n">update_pose</span><span class="p">(</span><span class="n">R</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">C1</span><span class="o">.</span><span class="n">R</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]))</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.01</span><span class="p">)</span>
+<span class="c1">#</span>
+</pre>
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+ <div class="input">
+  <div class="prompt input_prompt">
+   In [ ]:
+  </div>
+  <div class="inner_cell">
+   <div class="input_area collapsed">
+    <div class="collapse_expand_button fa fa-1x fa-minus-square-o">
+    </div>
+    <div class="highlight hl-ipython3">
+     <pre><span></span><span class="c1"># rotate around y-axis in w -&gt; pitch</span>
+<span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">theta</span> <span class="o">=</span> <span class="n">to_radian</span><span class="p">(</span><span class="mf">45.0</span><span class="p">)</span>
+<span class="n">omega</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="n">steps</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">steps</span><span class="p">):</span>
+    <span class="n">R</span> <span class="o">=</span> <span class="n">SO3</span><span class="p">(</span><span class="n">theta</span> <span class="o">/</span> <span class="n">steps</span><span class="p">,</span> <span class="n">omega</span><span class="p">)</span>
+    <span class="n">C1</span><span class="o">.</span><span class="n">update_pose</span><span class="p">(</span><span class="n">R</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">C1</span><span class="o">.</span><span class="n">R</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]))</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.01</span><span class="p">)</span>   
+<span class="c1">#</span>
+</pre>
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+ <div class="input">
+  <div class="prompt input_prompt">
+   In [ ]:
+  </div>
+  <div class="inner_cell">
+   <div class="input_area collapsed">
+    <div class="collapse_expand_button fa fa-1x fa-minus-square-o">
+    </div>
+    <div class="highlight hl-ipython3">
+     <pre><span></span><span class="c1"># rotate around x-axis in w -&gt; roll</span>
+<span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">theta</span> <span class="o">=</span> <span class="n">to_radian</span><span class="p">(</span><span class="mf">45.0</span><span class="p">)</span>
+<span class="n">omega</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="n">steps</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">steps</span><span class="p">):</span>
+    <span class="n">R</span> <span class="o">=</span> <span class="n">SO3</span><span class="p">(</span><span class="n">theta</span> <span class="o">/</span> <span class="n">steps</span><span class="p">,</span> <span class="n">omega</span><span class="p">)</span>
+    <span class="n">C1</span><span class="o">.</span><span class="n">update_pose</span><span class="p">(</span><span class="n">R</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">C1</span><span class="o">.</span><span class="n">R</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]))</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.01</span><span class="p">)</span>
+<span class="c1">#</span>
+</pre>
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+ <div class="input">
+  <div class="prompt input_prompt">
+   In [ ]:
+  </div>
+  <div class="inner_cell">
+   <div class="input_area collapsed">
+    <div class="collapse_expand_button fa fa-1x fa-minus-square-o">
+    </div>
+    <div class="highlight hl-ipython3">
+     <pre><span></span><span class="c1"># rotate around x-axis in b -&gt; roll</span>
+<span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">theta</span> <span class="o">=</span> <span class="n">to_radian</span><span class="p">(</span><span class="mf">45.0</span><span class="p">)</span>
+<span class="n">omega</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="n">steps</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">steps</span><span class="p">):</span>
+    <span class="n">R</span> <span class="o">=</span> <span class="n">SO3</span><span class="p">(</span><span class="n">theta</span> <span class="o">/</span> <span class="n">steps</span><span class="p">,</span> <span class="n">omega</span><span class="p">)</span>
+    <span class="n">C2</span><span class="o">.</span><span class="n">update_pose</span><span class="p">(</span><span class="n">C2</span><span class="o">.</span><span class="n">R</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">R</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]))</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.01</span><span class="p">)</span>
+<span class="c1">#</span>
+</pre>
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+ <div class="input">
+  <div class="prompt input_prompt">
+   In [ ]:
+  </div>
+  <div class="inner_cell">
+   <div class="input_area collapsed">
+    <div class="collapse_expand_button fa fa-1x fa-minus-square-o">
+    </div>
+    <div class="highlight hl-ipython3">
+     <pre><span></span><span class="c1"># rotate around y-axis in b -&gt; pitch</span>
+<span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">theta</span> <span class="o">=</span> <span class="n">to_radian</span><span class="p">(</span><span class="mf">45.0</span><span class="p">)</span>
+<span class="n">omega</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="n">steps</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">steps</span><span class="p">):</span>
+    <span class="n">R</span> <span class="o">=</span> <span class="n">SO3</span><span class="p">(</span><span class="n">theta</span> <span class="o">/</span> <span class="n">steps</span><span class="p">,</span> <span class="n">omega</span><span class="p">)</span>
+    <span class="n">C2</span><span class="o">.</span><span class="n">update_pose</span><span class="p">(</span><span class="n">C2</span><span class="o">.</span><span class="n">R</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">R</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]))</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.01</span><span class="p">)</span>
+<span class="c1">#</span>
+</pre>
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+ <div class="input">
+  <div class="prompt input_prompt">
+   In [ ]:
+  </div>
+  <div class="inner_cell">
+   <div class="input_area collapsed">
+    <div class="collapse_expand_button fa fa-1x fa-minus-square-o">
+    </div>
+    <div class="highlight hl-ipython3">
+     <pre><span></span><span class="c1"># rotate around z-axis in b -&gt; yaw</span>
+<span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">theta</span> <span class="o">=</span> <span class="n">to_radian</span><span class="p">(</span><span class="mf">90.0</span><span class="p">)</span>
+<span class="n">omega</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="n">steps</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">steps</span><span class="p">):</span>
+    <span class="n">R</span> <span class="o">=</span> <span class="n">SO3</span><span class="p">(</span><span class="n">theta</span> <span class="o">/</span> <span class="n">steps</span><span class="p">,</span> <span class="n">omega</span><span class="p">)</span>
+    <span class="n">C2</span><span class="o">.</span><span class="n">update_pose</span><span class="p">(</span><span class="n">C2</span><span class="o">.</span><span class="n">R</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">R</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]))</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.01</span><span class="p">)</span>
+<span class="c1">#</span>
+</pre>
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+ <div class="input">
+  <div class="prompt input_prompt">
+   In [ ]:
+  </div>
+  <div class="inner_cell">
+   <div class="input_area collapsed">
+    <div class="collapse_expand_button fa fa-1x fa-minus-square-o">
+    </div>
+    <div class="highlight hl-ipython3">
+     <pre><span></span><span class="c1"># Create new k3d plots to demonstrate both rotation and translation.</span>
+
+<span class="n">plot</span> <span class="o">=</span> <span class="n">k3d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">camera_auto_fit</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">grid</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="n">C0</span> <span class="o">=</span> <span class="n">XYZ_RBG_Axes</span><span class="p">(</span><span class="n">plot</span><span class="p">,</span> <span class="s1">'C0'</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">)))</span>
+<span class="n">C1</span> <span class="o">=</span> <span class="n">XYZ_RBG_Axes</span><span class="p">(</span><span class="n">plot</span><span class="p">,</span> <span class="s1">'C1'</span><span class="p">,</span> <span class="n">SO3</span><span class="p">(</span><span class="n">to_radian</span><span class="p">(</span><span class="mi">90</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span> <span class="n">color</span><span class="o">=</span><span class="mh">0x00ffff</span><span class="p">,</span> <span class="n">axis_length</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">C2</span> <span class="o">=</span> <span class="n">XYZ_RBG_Axes</span><span class="p">(</span><span class="n">plot</span><span class="p">,</span> <span class="s1">'C2'</span><span class="p">,</span> <span class="n">SO3</span><span class="p">(</span><span class="n">to_radian</span><span class="p">(</span><span class="mi">90</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span> <span class="n">color</span><span class="o">=</span><span class="mh">0xff00ff</span><span class="p">,</span> <span class="n">axis_length</span><span class="o">=</span><span class="mf">0.75</span><span class="p">)</span>
+<span class="n">plot</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+<span class="c1">#</span>
+</pre>
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    Now we let's think about both rotation and translation. $TT_{wb}$ rotates $T_{wb}$ in $w$ frame
+while $T_{wb}T$ rotates $T_{wb}$ in $b$ frame. As shown in the video below, you won't get the same pose from $TT_{wb} and
+T_{wb}T$. Cyan represents rotations in $w$ frame and purple represents rotations in $b$ frame.
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    How do I animate a rigid body transformation? I actually break $T$ into two parts: $T =
+T_{trans}T_{rot}$. $T_{trans}$ is a pure translation and $T_{rot}$ is a pure rotation. So I can animate the rigid body transformation in two steps with a linear velocity and angular velocity separately.
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+ <div class="input">
+  <div class="prompt input_prompt">
+   In [56]:
+  </div>
+  <div class="inner_cell">
+   <div class="input_area collapsed">
+    <div class="collapse_expand_button fa fa-1x fa-minus-square-o">
+    </div>
+    <div class="highlight hl-ipython3">
+     <pre><span></span><span class="c1"># Display video</span>
+<span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">YouTubeVideo</span>
+<span class="n">YouTubeVideo</span><span class="p">(</span><span class="s1">'lpMTixuvteY'</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+<span class="c1">#</span>
+</pre>
+    </div>
+   </div>
+  </div>
+ </div>
+ <div class="output_wrapper">
+  <div class="output">
+   <div class="output_area">
+    <div class="prompt output_prompt">
+     Out[56]:
+    </div>
+    <div class="output_html rendered_html output_subarea output_execute_result">
+     <iframe allowfullscreen="" frameborder="0" height="300" src="https://www.youtube.com/embed/lpMTixuvteY" width="500">
+     </iframe>
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    Firstly, we will move the rigid body in $w$ frame, i.e. $T_{wb^{'}} = TT_{wb}$. In this case, we will do $T_{rot}$ first then $T_{trans}$.
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+ <div class="input">
+  <div class="prompt input_prompt">
+   In [ ]:
+  </div>
+  <div class="inner_cell">
+   <div class="input_area collapsed">
+    <div class="collapse_expand_button fa fa-1x fa-minus-square-o">
+    </div>
+    <div class="highlight hl-ipython3">
+     <pre><span></span><span class="c1"># Move rigid body in w frame</span>
+<span class="n">theta</span> <span class="o">=</span> <span class="n">to_radian</span><span class="p">(</span><span class="o">-</span><span class="mf">90.0</span><span class="p">)</span>
+<span class="n">omega</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">expected_R</span> <span class="o">=</span> <span class="n">SO3</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">omega</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">C1</span><span class="o">.</span><span class="n">R</span><span class="p">)</span> 
+<span class="n">expected_t</span> <span class="o">=</span> <span class="n">SO3</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">omega</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">C1</span><span class="o">.</span><span class="n">t</span><span class="p">)</span> <span class="o">+</span> <span class="n">t</span>
+<span class="n">steps</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">steps</span><span class="p">):</span>
+    <span class="n">R</span> <span class="o">=</span> <span class="n">SO3</span><span class="p">(</span><span class="n">theta</span> <span class="o">/</span> <span class="n">steps</span><span class="p">,</span> <span class="n">omega</span><span class="p">)</span>
+    <span class="n">C1</span><span class="o">.</span><span class="n">update_pose</span><span class="p">(</span><span class="n">R</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">C1</span><span class="o">.</span><span class="n">R</span><span class="p">),</span> <span class="n">R</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">C1</span><span class="o">.</span><span class="n">t</span><span class="p">))</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.01</span><span class="p">)</span>
+<span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">steps</span><span class="p">):</span>
+    <span class="n">delta_xyz</span> <span class="o">=</span> <span class="n">t</span> <span class="o">/</span> <span class="n">steps</span>
+    <span class="n">C1</span><span class="o">.</span><span class="n">update_pose</span><span class="p">(</span><span class="n">C1</span><span class="o">.</span><span class="n">R</span><span class="p">,</span> <span class="n">C1</span><span class="o">.</span><span class="n">t</span> <span class="o">+</span> <span class="n">delta_xyz</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.01</span><span class="p">)</span>
+<span class="n">np</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="n">suppress</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1">#print("=== Rotating in w frame ====")</span>
+<span class="c1">#print("expected_R:\n {}".format(expected_R))</span>
+<span class="c1">#print("final_R:\n {}".format(C1.R))</span>
+<span class="c1">#print("expected_t:\n {}".format(expected_t))</span>
+<span class="c1">#print("final_t:\n {}".format(C1.t))</span>
+<span class="c1">#</span>
+</pre>
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    Then, we will move the rigid body in $b$ frame, i.e. $T_{wb^{''}} = T_{wb}T$. In this case, we will do $T_{trans}$ first then $T_{rot}$.
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+ <div class="input">
+  <div class="prompt input_prompt">
+   In [ ]:
+  </div>
+  <div class="inner_cell">
+   <div class="input_area collapsed">
+    <div class="collapse_expand_button fa fa-1x fa-minus-square-o">
+    </div>
+    <div class="highlight hl-ipython3">
+     <pre><span></span><span class="c1"># Move rigid body in r frame</span>
+<span class="n">expected_R</span> <span class="o">=</span> <span class="n">C2</span><span class="o">.</span><span class="n">R</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">SO3</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">omega</span><span class="p">))</span>
+<span class="n">expected_t</span> <span class="o">=</span> <span class="n">C2</span><span class="o">.</span><span class="n">R</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="o">+</span> <span class="n">C2</span><span class="o">.</span><span class="n">t</span>
+<span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">steps</span><span class="p">):</span>
+    <span class="n">delta_xyz</span> <span class="o">=</span> <span class="n">t</span> <span class="o">/</span> <span class="n">steps</span>
+    <span class="n">C2</span><span class="o">.</span><span class="n">update_pose</span><span class="p">(</span><span class="n">C2</span><span class="o">.</span><span class="n">R</span><span class="p">,</span> <span class="n">C2</span><span class="o">.</span><span class="n">t</span> <span class="o">+</span> <span class="n">C2</span><span class="o">.</span><span class="n">R</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">delta_xyz</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">)))</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.01</span><span class="p">)</span>
+<span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">steps</span><span class="p">):</span>
+    <span class="n">R</span> <span class="o">=</span> <span class="n">SO3</span><span class="p">(</span><span class="n">theta</span> <span class="o">/</span> <span class="n">steps</span><span class="p">,</span> <span class="n">omega</span><span class="p">)</span>
+    <span class="n">C2</span><span class="o">.</span><span class="n">update_pose</span><span class="p">(</span><span class="n">C2</span><span class="o">.</span><span class="n">R</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">R</span><span class="p">),</span> <span class="n">C2</span><span class="o">.</span><span class="n">t</span><span class="p">)</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.01</span><span class="p">)</span>
+<span class="n">np</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="n">suppress</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1">#print("=== Rotating in b frame ====")</span>
+<span class="c1">#print("expected_R:\n {}".format(expected_R))</span>
+<span class="c1">#print("final_R:\n {}".format(C2.R))</span>
+<span class="c1">#print("expected_t:\n {}".format(expected_t))</span>
+<span class="c1">#print("final_t:\n {}".format(C2.t))</span>
+<span class="c1">#</span>
+</pre>
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    Now think about what angle axis $\omega$, rotation angle $\theta$, and translation $t$ can bring $T_{wb}$ back to $I$. Of course, you can inverse the transformation matrix. But if you understand how rotating in body frame, you can easily figure this out by first find translation vector and then rotation components.
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+ <div class="input">
+  <div class="prompt input_prompt">
+   In [ ]:
+  </div>
+  <div class="inner_cell">
+   <div class="input_area collapsed">
+    <div class="collapse_expand_button fa fa-1x fa-minus-square-o">
+    </div>
+    <div class="highlight hl-ipython3">
+     <pre><span></span><span class="c1"># Move rigid body back to origin</span>
+
+<span class="n">plot</span> <span class="o">=</span> <span class="n">k3d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">camera_auto_fit</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">grid</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="n">C0</span> <span class="o">=</span> <span class="n">XYZ_RBG_Axes</span><span class="p">(</span><span class="n">plot</span><span class="p">,</span> <span class="s1">'C0'</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">)))</span>
+<span class="n">C1</span> <span class="o">=</span> <span class="n">XYZ_RBG_Axes</span><span class="p">(</span><span class="n">plot</span><span class="p">,</span> <span class="s1">'C1'</span><span class="p">,</span> <span class="n">SO3</span><span class="p">(</span><span class="n">to_radian</span><span class="p">(</span><span class="mi">90</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span> <span class="n">color</span><span class="o">=</span><span class="mh">0x00ffff</span><span class="p">,</span> <span class="n">axis_length</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">C2</span> <span class="o">=</span> <span class="n">XYZ_RBG_Axes</span><span class="p">(</span><span class="n">plot</span><span class="p">,</span> <span class="s1">'C2'</span><span class="p">,</span> <span class="n">SO3</span><span class="p">(</span><span class="n">to_radian</span><span class="p">(</span><span class="mi">90</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span> <span class="n">color</span><span class="o">=</span><span class="mh">0xff00ff</span><span class="p">,</span> <span class="n">axis_length</span><span class="o">=</span><span class="mf">0.75</span><span class="p">)</span>
+<span class="n">plot</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+<span class="n">theta</span> <span class="o">=</span> <span class="n">to_radian</span><span class="p">(</span><span class="o">-</span><span class="mf">90.0</span><span class="p">)</span>
+<span class="n">omega</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># Rotating in body frame</span>
+<span class="n">expected_R</span> <span class="o">=</span> <span class="n">C2</span><span class="o">.</span><span class="n">R</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">SO3</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">omega</span><span class="p">))</span>
+<span class="n">expected_t</span> <span class="o">=</span> <span class="n">C2</span><span class="o">.</span><span class="n">R</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="o">+</span> <span class="n">C2</span><span class="o">.</span><span class="n">t</span>
+<span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">steps</span><span class="p">):</span>
+    <span class="n">delta_xyz</span> <span class="o">=</span> <span class="n">t</span> <span class="o">/</span> <span class="n">steps</span>
+    <span class="n">C2</span><span class="o">.</span><span class="n">update_pose</span><span class="p">(</span><span class="n">C2</span><span class="o">.</span><span class="n">R</span><span class="p">,</span> <span class="n">C2</span><span class="o">.</span><span class="n">t</span> <span class="o">+</span> <span class="n">C2</span><span class="o">.</span><span class="n">R</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">delta_xyz</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">)))</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.01</span><span class="p">)</span>
+<span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">steps</span><span class="p">):</span>
+    <span class="n">R</span> <span class="o">=</span> <span class="n">SO3</span><span class="p">(</span><span class="n">theta</span> <span class="o">/</span> <span class="n">steps</span><span class="p">,</span> <span class="n">omega</span><span class="p">)</span>
+    <span class="n">C2</span><span class="o">.</span><span class="n">update_pose</span><span class="p">(</span><span class="n">C2</span><span class="o">.</span><span class="n">R</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">R</span><span class="p">),</span> <span class="n">C2</span><span class="o">.</span><span class="n">t</span><span class="p">)</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.01</span><span class="p">)</span>
+<span class="n">np</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="n">suppress</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1">#print("=== Rotating in b frame ====")</span>
+<span class="c1">#print("expected_R:\n {}".format(expected_R))</span>
+<span class="c1">#print("final_R:\n {}".format(C2.R))</span>
+<span class="c1">#print("expected_t:\n {}".format(expected_t))</span>
+<span class="c1">#print("final_t:\n {}".format(C2.t))</span>
+<span class="c1">#</span>
+</pre>
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    But can you animate it with a velocity containing both linear velocity and angular velocity? This was a new thing I learned which is called Twist. Like angular velocity can be represented by a $3x1$ vector, twist can be represented by a 6x1 vector. In the video below, I first show how to move the purple frame back to origin by translating and rotating in its $b$ frame in two steps. Then I show an animation moving cyan frame back to origin smoothly with a combined linear and angular velocity.
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+ <div class="input">
+  <div class="prompt input_prompt">
+   In [58]:
+  </div>
+  <div class="inner_cell">
+   <div class="input_area collapsed">
+    <div class="collapse_expand_button fa fa-1x fa-minus-square-o">
+    </div>
+    <div class="highlight hl-ipython3">
+     <pre><span></span><span class="c1"># Display video</span>
+<span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">YouTubeVideo</span>
+<span class="n">YouTubeVideo</span><span class="p">(</span><span class="s1">'lcZtD6v0hNs'</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+<span class="c1">#</span>
+</pre>
+    </div>
+   </div>
+  </div>
+ </div>
+ <div class="output_wrapper">
+  <div class="output">
+   <div class="output_area">
+    <div class="prompt output_prompt">
+     Out[58]:
+    </div>
+    <div class="output_html rendered_html output_subarea output_execute_result">
+     <iframe allowfullscreen="" frameborder="0" height="300" src="https://www.youtube.com/embed/lcZtD6v0hNs" width="500">
+     </iframe>
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+ <div class="input">
+  <div class="prompt input_prompt">
+   In [ ]:
+  </div>
+  <div class="inner_cell">
+   <div class="input_area collapsed">
+    <div class="collapse_expand_button fa fa-1x fa-minus-square-o">
+    </div>
+    <div class="highlight hl-ipython3">
+     <pre><span></span><span class="c1"># Twist demonstration.</span>
+<span class="k">def</span> <span class="nf">SE3</span><span class="p">(</span><span class="n">twist_theta</span><span class="p">,</span> <span class="n">twist_omega_</span><span class="p">,</span> <span class="n">twist_v</span><span class="p">):</span>
+    <span class="n">T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+    <span class="n">twist_omega</span> <span class="o">=</span> <span class="n">twist_omega_</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">twist_omega_</span><span class="p">)</span>
+    <span class="n">T</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">SO3</span><span class="p">(</span><span class="n">twist_theta</span><span class="p">,</span> <span class="n">twist_omega</span><span class="p">)</span>
+    <span class="n">T</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">]]</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">*</span><span class="n">twist_theta</span> 
+                <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">twist_theta</span><span class="p">))</span><span class="o">*</span><span class="n">skew</span><span class="p">(</span><span class="n">twist_omega</span><span class="p">)</span> 
+                <span class="o">+</span> <span class="p">(</span><span class="n">twist_theta</span><span class="o">-</span><span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">twist_theta</span><span class="p">))</span><span class="o">*</span><span class="n">skew</span><span class="p">(</span><span class="n">twist_omega</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">skew</span><span class="p">(</span><span class="n">twist_omega</span><span class="p">))</span>
+                <span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">twist_v</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">T</span>
+
+<span class="k">def</span> <span class="nf">TwistV</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">twist_theta</span><span class="p">,</span> <span class="n">twist_omega_</span><span class="p">):</span>
+    <span class="n">twist_omega</span> <span class="o">=</span> <span class="n">twist_omega_</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">twist_omega_</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">*</span><span class="n">twist_theta</span> 
+                        <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">twist_theta</span><span class="p">))</span><span class="o">*</span><span class="n">skew</span><span class="p">(</span><span class="n">twist_omega</span><span class="p">)</span> 
+                        <span class="o">+</span> <span class="p">(</span><span class="n">twist_theta</span><span class="o">-</span><span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">twist_theta</span><span class="p">))</span><span class="o">*</span><span class="n">skew</span><span class="p">(</span><span class="n">twist_omega</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">skew</span><span class="p">(</span><span class="n">twist_omega</span><span class="p">))</span>
+                        <span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">t</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">expected_R</span> <span class="o">=</span> <span class="n">SO3</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">omega</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">C1</span><span class="o">.</span><span class="n">R</span><span class="p">)</span> 
+<span class="n">expected_t</span> <span class="o">=</span> <span class="n">SO3</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">omega</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">C1</span><span class="o">.</span><span class="n">t</span><span class="p">)</span> <span class="o">+</span> <span class="n">t</span>
+<span class="n">C1_R</span> <span class="o">=</span> <span class="n">C1</span><span class="o">.</span><span class="n">R</span>
+<span class="n">C1_t</span> <span class="o">=</span> <span class="n">C1</span><span class="o">.</span><span class="n">t</span>
+<span class="n">twist_v</span> <span class="o">=</span> <span class="n">TwistV</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">omega</span><span class="p">)</span>
+<span class="n">steps</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">steps</span><span class="p">):</span>
+    <span class="n">T</span> <span class="o">=</span> <span class="n">SE3</span><span class="p">((</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">theta</span> <span class="o">/</span> <span class="n">steps</span><span class="p">,</span> <span class="n">omega</span><span class="p">,</span> <span class="n">twist_v</span><span class="p">)</span>
+    <span class="n">C1</span><span class="o">.</span><span class="n">update_pose</span><span class="p">(</span><span class="n">T</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">C1_R</span><span class="p">),</span> <span class="n">T</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">C1_t</span><span class="p">)</span><span class="o">+</span><span class="n">T</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">]])</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.01</span><span class="p">)</span>
+
+<span class="n">np</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="n">suppress</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1">#print("=== Rotating in w frame ====")</span>
+<span class="c1">#print("expected_R:\n {}".format(expected_R))</span>
+<span class="c1">#print("final_R:\n {}".format(C1.R))</span>
+<span class="c1">#print("expected_t:\n {}".format(expected_t))</span>
+<span class="c1">#print("final_t:\n {}".format(C1.t))</span>
+<span class="c1">#</span>
+</pre>
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+
+<div> This blog is converted from <a href="https://github.com/xipengwang/xipengwang.github.io/tree/master/notebooks/rigid-body-transformation.ipynb">rigid-body-transformation.ipynb</a></div>

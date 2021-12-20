@@ -61,6 +61,10 @@ inertial-navigation:
 	$(CONVERTER) --nbpath inertial-navigation-system.ipynb --date 2021-12-15 \
 		--description "Inertial Navigation System" --tag Notebook
 
+rigid-body-transformation:
+	$(CONVERTER) --nbpath rigid-body-transformation.ipynb --date 2021-12-18 \
+		--description "Rigid Body Transformation" --tag Notebook
+
 
 mutual-information:
 		$(CONVERTER) --nbpath mutual-information.ipynb --date 2021-06-03 \
