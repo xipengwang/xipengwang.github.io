@@ -643,7 +643,7 @@ $$
 $$
 \begin{align}
 y_{\omega,t} &amp;= \omega^{b}_{nb,t} + \delta_{\omega,t}^b + e_{\omega,t}^b \\
-y_{a,t} &amp;= R^{bn}(a_{nn}^n - g^n) + \delta_{a,t}^b + e_{a,t}^b
+y_{a,t} &amp;= (q^{nb})^{-1} \odot (a_{nn}^n - g^n) + \delta_{a,t}^b + e_{a,t}^b
 \end{align}
 $$
    </p>
@@ -758,8 +758,16 @@ q^{nb}_{t+1} &amp;= q^{nb}_t  \odot Exp_q(\frac{T}{2}(y_{\omega, t} - \delta_{\o
 \end{align}
 $$
    <p>
-    Note $(q_t^{nb}(y_{a,t}-\delta_{a,t}^b-e_{a,t}^b)+g^n)$ could be simplified as $(q_t^{nb}(y_{a,t}-\delta_{a,t}^b)-e_{a,t}^b+g^n)$ if we consider $e_{a,t}$ have same noise for three axes as $\sim \mathcal{N}(0, \sigma_a^2\mathcal{I}_3)$.
+    Note:
    </p>
+   <ul>
+    <li>
+     $(q_t^{nb}(y_{a,t}-\delta_{a,t}^b-e_{a,t}^b)+g^n)$ could be simplified as $(q_t^{nb}(y_{a,t}-\delta_{a,t}^b)-e_{a,t}^b+g^n)$ if we consider $e_{a,t}$ have same noise for three axes as $\sim \mathcal{N}(0, \sigma_a^2\mathcal{I}_3)$.
+    </li>
+    <li>
+     This numeric integration of the velocity and position assumes a constant orientation $q^{nb}_t$ for the time of integration between two measurements.
+    </li>
+   </ul>
   </div>
  </div>
 </div>
@@ -798,91 +806,21 @@ $$
   <div class="text_cell_render border-box-sizing rendered_html">
    <p>
     Firstly we will define the cost function to minimize along with the variables we want to optimize over. For position and orientation estimation of INS, if we use state vector as $(p_t^n, v_{n,t}^n, \delta_{a,t}^b, q^{nb}_t,  \delta_{\omega,t}^b )$, we can define the optimization problem as:
-$$
-\begin{align}
-\hat{x}
-    <em>
-     {0:N} = \underset{x
-    </em>
-    {0:N}}{\operatorname{argmin}} 
-|e
-    <em>
-     {p,0}|
-    </em>
-    {\Sigma^{-1}_{p^n_0}}
    </p>
-   <ul>
-    <li>
-     |e
-     <em>
-      {v,0}|
-     </em>
-     {\Sigma^{-1}_{v^n_0}}
-    </li>
-    <li>
-     |e
-     <em>
-      {q,0}|
-     </em>
-     {\Sigma^{-1}_{q^{nb}_0}}
-    </li>
-    <li>
-     |e
-     <em>
-      {p,a,t}|
-     </em>
-     {\Sigma^{-1}_{e_a}}
-    </li>
-    <li>
-     |e
-     <em>
-      {v,a,t}|
-     </em>
-     {\Sigma^{-1}_{e_a}}
-    </li>
-    <li>
-     |e
-     <em>
-      {\omega,t}|
-     </em>
-     {\Sigma^{-1}
-     <em>
-      {e
-     </em>
-     {\omega}}}
-    </li>
-    <li>
-     |e
-     <em>
-      {\delta
-     </em>
-     {\omega},t}|
-     <em>
-      {\Sigma^{-1}
-     </em>
-     {\delta_{\omega}}}
-    </li>
-    <li>
-     |e
-     <em>
-      {\delta
-     </em>
-     {a},t}|
-     <em>
-      {\Sigma^{-1}
-     </em>
-     {\delta_{a}}}
-    </li>
-    <li>
-     |e
-     <em>
-      {m,t}|
-     </em>
-     {\Sigma^{-1}_{e_m}}
+   $$
+\begin{align}
+\hat{x}_{0:N} = \underset{x_{0:N}}{\operatorname{argmin}}&amp; 
+\|e_{p,0}\|_{\Sigma^{-1}_{p^n_0}} 
++ \|e_{v,0}\|_{\Sigma^{-1}_{v^n_0}}
++ \|e_{q,0}\|_{\Sigma^{-1}_{q^{nb}_0}} \\
++&amp;\ \|e_{p,a,t}\|_{\Sigma^{-1}_{e_a}}
++ \|e_{v,a,t}\|_{\Sigma^{-1}_{e_a}}
++ \|e_{\omega,t}\|_{\Sigma^{-1}_{e_{\omega}}} \\
++&amp;\ \|e_{\delta_{\omega},t}\|_{\Sigma^{-1}_{\delta_{\omega}}}
++ \|e_{\delta_{a},t}\|_{\Sigma^{-1}_{\delta_{a}}} \\
++&amp;\ \|e_{m,t}\|_{\Sigma^{-1}_{e_m}}
 \end{align}
 $$
-    </li>
-   </ul>
    <p>
     <strong>
      Note:
@@ -1008,17 +946,929 @@ $$
  <div class="inner_cell">
   <div class="text_cell_render border-box-sizing rendered_html">
    <p>
-    I think a challenge to use IMU measurements driven model is that additional measurements might arrive at different freuqency than IMU measurements. We could interpolate the measurements for batch optimization since we have complete information for the whole time.
+    I think a challenge to use IMU measurements driven model is that additional measurements might arrive at different freuqency than IMU measurements. We could interpolate the measurements for batch optimization since we have complete information for the whole time. This assumes that we have a state node in our factor graph when every IMU measurement comes in. This will leads to fast growth number of variables in the optimization.
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h4 id="IMU-Noise-Model">
+    IMU Noise Model
+    <a class="anchor-link" href="#IMU-Noise-Model">
+     ¶
+    </a>
+   </h4>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <ul>
+    <li>
+     <strong>
+      Noise Density (ND)
+     </strong>
+     : It provides the noise divided by the square root of the sampling rate. The noise density for a gyroscope can be represented as $(^{\circ}/s)/\sqrt{Hz}$ or $(^{\circ}/hr)/\sqrt{Hz}$.By multiplying the noise density (ND) by the square root of the sampling rate (SR), the noise standard deviation $\sigma$ at that rate can be recovered $\sigma = ND * \sqrt{SR}$. When ND is specified as
+     <strong>
+      Power Spectral Density (PSD)
+     </strong>
+     , it is essentially $PSD = (ND)^2$.
+    </li>
+   </ul>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <ul>
+    <li>
+     <strong>
+      Random Walk (RW)
+     </strong>
+     : The specification for random walk is typically given in units of $^{\circ}/\sqrt{s}$ for gyroscopes, and $(m/s)/\sqrt{s}$ for accelerometers. By multiplying the random walk by the square root of time, the standard deviation of the drift due to noise can be recovered $\sigma = \text{RW}\sqrt{t}$. For unit conversion, we can use $60\sqrt{s} = \sqrt{hr}$, $ 1 \text{milli-g} \approx 0.01 m/s^2$.
+    </li>
+   </ul>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <ul>
+    <li>
+     <strong>
+      Bias
+     </strong>
+     : The bias is a constant offset of the output value from the input value. The in-run bias stability, or often called the bias instability, is a measure of how the bias will drift during operation over time at a constant temperature. This parameter also represents the best possible accuracy with which a sensor's bias can be estimated. Due to this, in-run bias stability is generally the most critical specification as it gives a floor to how accurate a bias can be measured.
+    </li>
+   </ul>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <ul>
+    <li>
+     <strong>
+      Scale Factor
+     </strong>
+     : Scale factor is a multiplier on a signal that is comprised of a ratio of the output to the input over the measurement range. This factor typically varies over temperature and must be calibrated for over the operational temperature range.
+    </li>
+   </ul>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <ul>
+    <li>
+     <p>
+      Summaries:
+     </p>
+     <ul>
+      <li>
+       $\sigma_a$ and $\sigma_{\omega}$ can be obtained by $\sigma_{discrete} = ND * \sqrt{SR} = RW * \sqrt{SR}$
+      </li>
+      <li>
+       Based on Kalibr, $\sigma_{\delta_a}$ and $\sigma_{\delta_{\omega}}$ can be obtained by $\sigma_{discrete} = \sigma / \sqrt{SR}$
+      </li>
+      <li>
+       Based on Kalibr, we can get continuous
+       <a href="https://github.com/ethz-asl/kalibr/wiki/IMU-Noise-Model#from-the-allan-standard-deviation-ad">
+        noise values
+       </a>
+       based on Allan Variance plot.
+      </li>
+     </ul>
+    </li>
+   </ul>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    Reference:
+   </p>
+   <ul>
+    <li>
+     <a href="https://github.com/ethz-asl/kalibr/wiki/IMU-Noise-Model">
+      https://github.com/ethz-asl/kalibr/wiki/IMU-Noise-Model
+     </a>
+    </li>
+    <li>
+     <a href="https://github.com/rpng/kalibr_allan">
+      https://github.com/rpng/kalibr_allan
+     </a>
+    </li>
+    <li>
+     <a href="https://www.mathworks.com/help/fusion/ug/inertial-sensor-noise-analysis-using-allan-variance.html">
+      https://www.mathworks.com/help/fusion/ug/inertial-sensor-noise-analysis-using-allan-variance.html
+     </a>
+    </li>
+    <li>
+     <a href="https://www.vectornav.com/resources/inertial-navigation-primer/specifications--and--error-budgets/specs-imuspecs">
+      https://www.vectornav.com/resources/inertial-navigation-primer/specifications--and--error-budgets/specs-imuspecs
+     </a>
+    </li>
+    <li>
+     <a href="https://www.vectornav.com/resources/inertial-navigation-primer/examples/noise">
+      https://www.vectornav.com/resources/inertial-navigation-primer/examples/noise
+     </a>
+    </li>
+    <li>
+     <a href="https://telesens.co/wp-content/uploads/2017/05/AllanVariance5087-1.pdf">
+      https://telesens.co/wp-content/uploads/2017/05/AllanVariance5087-1.pdf
+     </a>
+    </li>
+    <li>
+     <a href="https://mwrona.com/posts/gyro-noise-analysis/">
+      https://mwrona.com/posts/gyro-noise-analysis/
+     </a>
+    </li>
+    <li>
+     <a href="https://www.cl.cam.ac.uk/techreports/UCAM-CL-TR-696.pdf">
+      https://www.cl.cam.ac.uk/techreports/UCAM-CL-TR-696.pdf
+     </a>
+    </li>
+   </ul>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+ <div class="input">
+  <div class="prompt input_prompt">
+   In [ ]:
+  </div>
+  <div class="inner_cell">
+   <div class="input_area collapsed">
+    <div class="collapse_expand_button fa fa-1x fa-minus-square-o">
+    </div>
+    <div class="highlight hl-ipython3">
+     <pre><span></span><span class="c1"># Allan Plot Sample Code</span>
+<span class="c1"># From blog post: https://mwrona.com/posts/gyro-noise-analysis/</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="k">def</span> <span class="nf">AllanDeviation</span><span class="p">(</span><span class="n">dataArr</span><span class="p">,</span> <span class="n">fs</span><span class="p">,</span> <span class="n">maxNumM</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+    <span class="sd">"""Compute the Allan deviation (sigma) of time-series data.</span>
+
+<span class="sd">    Algorithm obtained from Mathworks:</span>
+<span class="sd">    https://www.mathworks.com/help/fusion/ug/inertial-sensor-noise-analysis-using-allan-variance.html</span>
+
+<span class="sd">    Args</span>
+<span class="sd">    ----</span>
+<span class="sd">        dataArr (numpy.ndarray): 1D data array</span>
+<span class="sd">        fs (int, float): Data sample frequency in Hz</span>
+<span class="sd">        maxNumM (int): Number of output points</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">        (taus, allanDev): Tuple of results</span>
+<span class="sd">        taus (numpy.ndarray): Array of tau values</span>
+<span class="sd">        allanDev (numpy.ndarray): Array of computed Allan deviations</span>
+<span class="sd">    """</span>
+    <span class="n">ts</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">fs</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dataArr</span><span class="p">)</span>
+    <span class="n">Mmax</span> <span class="o">=</span> <span class="mi">2</span><span class="o">**</span><span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">N</span> <span class="o">/</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="n">M</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">Mmax</span><span class="p">),</span> <span class="n">num</span><span class="o">=</span><span class="n">maxNumM</span><span class="p">)</span>
+    <span class="n">M</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">M</span><span class="p">)</span>  <span class="c1"># Round up to integer</span>
+    <span class="n">M</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">M</span><span class="p">)</span>  <span class="c1"># Remove duplicates</span>
+    <span class="n">taus</span> <span class="o">=</span> <span class="n">M</span> <span class="o">*</span> <span class="n">ts</span>  <span class="c1"># Compute 'cluster durations' tau</span>
+
+    <span class="c1"># Compute Allan variance</span>
+    <span class="n">allanVar</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">M</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">mi</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">M</span><span class="p">):</span>
+        <span class="n">twoMi</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">mi</span><span class="p">)</span>
+        <span class="n">mi</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">mi</span><span class="p">)</span>
+        <span class="n">allanVar</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">dataArr</span><span class="p">[</span><span class="n">twoMi</span><span class="p">:</span><span class="n">N</span><span class="p">]</span> <span class="o">-</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">dataArr</span><span class="p">[</span><span class="n">mi</span><span class="p">:</span><span class="n">N</span><span class="o">-</span><span class="n">mi</span><span class="p">])</span> <span class="o">+</span> <span class="n">dataArr</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">N</span><span class="o">-</span><span class="n">twoMi</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span>
+        <span class="p">)</span>
+    
+    <span class="n">allanVar</span> <span class="o">/=</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">taus</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">N</span> <span class="o">-</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">M</span><span class="p">))</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">taus</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">allanVar</span><span class="p">))</span>  <span class="c1"># Return deviation (dev = sqrt(var))</span>
+
+<span class="c1"># Config. params</span>
+<span class="n">DATA_FILE</span> <span class="o">=</span> <span class="s1">'gyro-data.csv'</span>  <span class="c1"># CSV data file "gx,gy,gz"</span>
+<span class="n">fs</span> <span class="o">=</span> <span class="mi">100</span>  <span class="c1"># Sample rate [Hz]</span>
+
+<span class="c1"># Load CSV into np array</span>
+<span class="n">dataArr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="n">DATA_FILE</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">','</span><span class="p">)</span>
+<span class="n">ts</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">fs</span>
+
+<span class="c1"># Separate into arrays</span>
+<span class="n">gx</span> <span class="o">=</span> <span class="n">dataArr</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mf">180.0</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>  <span class="c1"># [deg/s]</span>
+<span class="n">gy</span> <span class="o">=</span> <span class="n">dataArr</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mf">180.0</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+<span class="n">gz</span> <span class="o">=</span> <span class="n">dataArr</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mf">180.0</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+
+<span class="c1"># Calculate gyro angles</span>
+<span class="n">thetax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">gx</span><span class="p">)</span> <span class="o">*</span> <span class="n">ts</span>  <span class="c1"># [deg]</span>
+<span class="n">thetay</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">gy</span><span class="p">)</span> <span class="o">*</span> <span class="n">ts</span>
+<span class="n">thetaz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">gz</span><span class="p">)</span> <span class="o">*</span> <span class="n">ts</span>
+
+<span class="c1"># Compute Allan deviations</span>
+<span class="p">(</span><span class="n">taux</span><span class="p">,</span> <span class="n">adx</span><span class="p">)</span> <span class="o">=</span> <span class="n">AllanDeviation</span><span class="p">(</span><span class="n">thetax</span><span class="p">,</span> <span class="n">fs</span><span class="p">,</span> <span class="n">maxNumM</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+<span class="p">(</span><span class="n">tauy</span><span class="p">,</span> <span class="n">ady</span><span class="p">)</span> <span class="o">=</span> <span class="n">AllanDeviation</span><span class="p">(</span><span class="n">thetay</span><span class="p">,</span> <span class="n">fs</span><span class="p">,</span> <span class="n">maxNumM</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+<span class="p">(</span><span class="n">tauz</span><span class="p">,</span> <span class="n">adz</span><span class="p">)</span> <span class="o">=</span> <span class="n">AllanDeviation</span><span class="p">(</span><span class="n">thetaz</span><span class="p">,</span> <span class="n">fs</span><span class="p">,</span> <span class="n">maxNumM</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+
+<span class="c1"># Plot data on log-scale</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">'Gyro Allan Deviations'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">taux</span><span class="p">,</span> <span class="n">adx</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">'gx'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">tauy</span><span class="p">,</span> <span class="n">ady</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">'gy'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">tauz</span><span class="p">,</span> <span class="n">adz</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">'gz'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">'$\tau$ [sec]'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">'Deviation [deg/sec]'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s2">"both"</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">"-"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'0.65'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xscale</span><span class="p">(</span><span class="s1">'log'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">yscale</span><span class="p">(</span><span class="s1">'log'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="c1">#</span>
+</pre>
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h4 id="IMU-Preintegration">
+    IMU Preintegration
+    <a class="anchor-link" href="#IMU-Preintegration">
+     ¶
+    </a>
+   </h4>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    In short, we want to generate IMU factors between keyframes, which can be pre-computed just based on IMU measurements and time interval between keyframes so that they are not required to be recomputed after updating linearization points of state variables. This requires
     <strong>
-     TODO: IMU Preintegration on Manifold for Efficient Visual-Inertial Maximum-a-Posteriori Estimation
+     IMU and keyframe timestamps are synchronized
     </strong>
+    .
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h5 id="1)-Preintegrated-IMU-Measurements-with-assumption-that-bias-is-constant.">
+    <strong>
+     1) Preintegrated IMU Measurements with assumption that bias is constant
+    </strong>
+    .
+    <a class="anchor-link" href="#1)-Preintegrated-IMU-Measurements-with-assumption-that-bias-is-constant.">
+     ¶
+    </a>
+   </h5>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    Suppose we have state $x_i$ at timestamp $t_i$, then
+$$
+\begin{align}
+\Delta R_{ij} &amp;= R_i^T R_{j} \\ 
+&amp;= \prod_{k=i}^{j-1} Exp_{R}(T(y_{\omega, k} - \delta_{\omega,k}^b - e_{\omega,k}^b))\\
+\Delta v_{ij} &amp;= R_i^T(v_j-v_i-(j-i)Tg) \\ 
+&amp;= \sum_{k=i}^{j-1}[T\Delta R_{ik}(y_{a,k}-\delta_{a,k}^b-e_{a,k}^b)]\\
+\Delta p_{ij} &amp;= R_i^T(p_j - p_i - (j-i)Tv_i -\frac{1}{2}(j-i)^2T^2g) \\
+&amp;= \sum_{k=i}^{j-1}[T\Delta v_{ik} + \frac{1}{2}\Delta R_{ik}(j-i)^2T^2(y_{a,k}-\delta_{a,k}^b-e_{a,k}^b)]
+\end{align}
+$$
+The equation above clearly describe the relations between state variables and measurements. However, in order to be able to fit into a MAP estimation simply, we need it be in form as $y = f(x) + e$.
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    Given $Exp(\phi + \delta\phi) \approx\ Exp(\phi)Exp(J_r(\phi)\delta\phi)$ and assume $e_{\omega,k}^b$ is very small, we can have following equations with $\phi_k = T(y_{\omega, k} - \delta_{\omega,k}^b)$ and $\delta \phi = T(-e_{\omega,k}^b)$
+$$
+\begin{align}
+\Delta R_{ij} &amp;= \prod_{k=i}^{j-1} Exp_{R}(T(y_{\omega, k} - \delta_{\omega,k}^b - e_{\omega,k}^b)) \\
+&amp;= \prod_{k=i}^{j-1}Exp_{R}(T(y_{\omega, k} - \delta_{\omega,k}^b))Exp_{R}(J_{r_k}T(-e_{\omega,k}^b))
+\end{align}
+$$
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    Then given $Exp(\phi) R = R Exp(R^T \phi)$, we can have following equations with $\Delta R_k = Exp_{R}(T(y_{\omega, k} - \delta_{\omega,k}^b))$
+$$
+\begin{align}
+\Delta R_{ij} &amp;=  \prod_{k=i}^{j-1}Exp_{R}(T(y_{\omega, k} - \delta_{\omega,k}^b))Exp_{R}(J_{r_k}T(-e_{\omega,k}^b)) \\
+&amp;= \Delta R_i Exp_{R}(J_{r_i}T(-e_{\omega,i}^b)) \Delta R_{i+1} Exp_{R}(J_{r_{i+1}}T(-e_{\omega,{i+1}}^b))\Delta R_{i+2} \cdots \\
+&amp;= \Delta R_i \{Exp_{R}(J_{r_i}T(-e_{\omega,i}^b)) [\Delta R_{i+1}\Delta R_{i+2}]\} \{Exp_{R}(\Delta R_{i+2}^T J_{r_{i+1}}T(-e_{\omega,{i+1}}^b))\} \cdots \\
+&amp;= \Delta R_i\Delta R_{i+1}\Delta R_{i+2} \{Exp_{R}((\Delta R_{i+1}\Delta R_{i+2})^TJ_{r_i}T(-e_{\omega,i}^b))\} \{Exp_{R}(\Delta R_{i+2}^T J_{r_{i+1}}T(-e_{\omega,{i+1}}^b))\} \cdots \\
+&amp;= \Delta {\tilde{R}_{ij}}\prod_{k=i}^{j-1}[Exp_R(\Delta {\tilde{R}_{k+1,j}^T}J_{r_k}T(-e_{\omega,k}^b))] \\
+&amp;= \Delta {\tilde{R}_{ij}}Exp_R(-\delta \phi_{ij})
+\end{align}
+$$
+where $\Delta {\tilde{R}_{ij}} = \prod_{k=i}^{j-1}Exp_{R}(T(y_{\omega, k} - \delta_{\omega,k}^b))$
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    Similarly, we can get:
+$$
+\begin{align}
+\Delta v_{ij} &amp;= \sum_{k=i}^{j-1}[T\Delta R_{ik}(y_{a,k}-\delta_{a,k}^b-e_{a,k}^b)]\\
+&amp;= \sum_{k=i}^{j-1}[T\Delta {\tilde{R}_{ik}}Exp_R(-\delta \phi_{ik})(y_{a,k}-\delta_{a,k}^b-e_{a,k}^b)]
+\end{align}
+$$
+With first-order approximation $Exp_R(\delta \phi) = \mathcal{I} + [\delta \phi]_{\times}$, we can get:
+$$
+\begin{align}
+\Delta v_{ij} &amp;= \sum_{k=i}^{j-1}[T\Delta {\tilde{R}_{ik}}Exp_R(-\delta \phi_{ik})(y_{a,k}-\delta_{a,k}^b-e_{a,k}^b)]\\
+&amp;= \sum_{k=i}^{j-1}[T\Delta {\tilde{R}_{ik}}(\mathcal{I}-[\delta \phi_{ik}]_\times)(y_{a,k}-\delta_{a,k}^b-e_{a,k}^b)] \\
+&amp;= \sum_{k=i}^{j-1}[T\Delta {\tilde{R}_{ik}}(\mathcal{I}-[\delta \phi_{ik}]_\times)(y_{a,k}-\delta_{a,k}^b) - T\Delta {\tilde{R}_{ik}}e_{a,k}^b] \\
+\end{align}
+$$
+Note that we omit a higher order noise as $T\Delta {\tilde{R}_{ik}}\delta \phi_{ik}e_{a,k}^b$ in the third line of the equations.
    </p>
    <p>
-    Alternatively, if we use constant acceleration model, we could handle different measurements easily. However, I think a challenge is to set proper covariance for transition model given different transition time.
+    Then with $[a]_\times b = -b_\times a$
+$$
+\begin{align}
+\Delta v_{ij} &amp;= \sum_{k=i}^{j-1}[T\Delta {\tilde{R}_{ik}}(\mathcal{I}-[\delta \phi_{ik}]_\times)(y_{a,k}-\delta_{a,k}^b) - T\Delta {\tilde{R}_{ik}}e_{a,k}^b] \\
+&amp;= \Delta{\tilde{v_{ij}}} - \sum_{k=i}^{j-1}[T\Delta {\tilde{R}_{ik}}(e_{a,k}^b + [\delta \phi_{ik}]_\times(y_{a,k}-\delta_{a,k}^b))] \\
+&amp;= \Delta{\tilde{v_{ij}}} - \sum_{k=i}^{j-1}[T\Delta {\tilde{R}_{ik}}(e_{a,k}^b - [y_{a,k}-\delta_{a,k}^b]_\times(\delta \phi_{ik}))]\\
+&amp;= \Delta{\tilde{v_{ij}}} - \delta v_{ij}
+\end{align}
+$$
+where $\Delta{\tilde{v_{ij}}} = \sum_{k=i}^{j-1}[T\Delta {\tilde{R}_{ik}}(y_{a,k}-\delta_{a,k}^b)]$
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   $$
+\begin{align}
+\Delta p_{ij} &amp;= \sum_{k=i}^{j-1}[T\Delta v_{ik} + \frac{1}{2}\Delta R_{ik}(j-i)^2T^2(y_{a,k}-\delta_{a,k}^b-e_{a,k}^b)] \\
+&amp;= \Delta{\tilde{p}_{ij}} - \sum_{k=i}^{j-1}[T\delta v_{ik} + \frac{1}{2}T^2\Delta {\tilde{R}_{ik}}(e_{a,k}^b -[y_{a,k}-\delta_{a,k}^b]_\times(\delta \phi_{ik}))] \\
+&amp;= \Delta{\tilde{p}_{ij}} - \delta p_{ij}
+\end{align}
+$$
+   <p>
+    where $\Delta{\tilde{p}_{ij}} = \sum_{k=i}^{j-1}[T\Delta{\tilde{v_{ij}}}-\frac{1}{2}T^2 {\tilde{R}_{ik}}(y_{a,k}-\delta_{a,k}^b)]$
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h5 id="2)-Noise-propagation">
+    2)
     <strong>
-     TODO: how does open source system work?
+     Noise propagation
+    </strong>
+    <a class="anchor-link" href="#2)-Noise-propagation">
+     ¶
+    </a>
+   </h5>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    Now we get noise term $\delta p_{ij}, \delta v_{ij}, \delta \phi_{ij}$, which also follows zero mean Gaussian distribution. How can we get
+    <strong>
+     find correct covariance
+    </strong>
+    for them?
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   $$
+\begin{align}
+Exp_R(-\delta \phi_{ij}) &amp;= \prod_{k=i}^{j-1}[Exp_R(\Delta {\tilde{R}_{k+1,j}^T}J_{r_k}T(-e_{\omega,k}^b))] \\
+\delta \phi_{ij} &amp;= -Log(\prod_{k=i}^{j-1}[Exp_R(\Delta {\tilde{R}_{k+1,j}^T}J_{r_k}T(-e_{\omega,k}^b))])
+\end{align}
+$$
+   <p>
+    Given $Log(Exp(\phi)Exp(\delta\phi)) \approx\ \phi + J_r^{-1}(\phi)\delta\phi$, we have $Log(Exp(\delta \phi_1)Exp(\delta\phi_2)) \approx\ \delta\phi_1 + \delta\phi_2$. Then we have:
+$$
+\begin{align}
+\delta \phi_{ij} &amp;= -Log(\prod_{k=i}^{j-1}[Exp_R(\Delta {\tilde{R}_{k+1,j}^T}J_{r_k}T(-e_{\omega,k}^b))])\\
+&amp; \approx \sum_{k=i}^{j-1} \Delta \tilde{R}_{k+1,j}^T J_{r_k}Te_{\omega,k}^b
+\end{align}
+$$
+Then we can use linear propagation as 
+$$
+\begin{align}
+\Sigma_{\delta \phi_{ij}} &amp; \approx  \sum_{k=i}^{j-1} (\Delta \tilde{R}_{k+1,j}^T J_{r_k}T)\Sigma_{e_{\omega,k}^b}(\Delta \tilde{R}_{k+1,j}^T J_{r_k}T)^T
+\end{align}
+$$
+Where $\sigma_{\omega}$ can be obtained by $\sigma_{discrete} = ND * \sqrt{SR} = RW * \sqrt{SR}$.
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    Similarly, noise propagation for velocity and position are also just linear propagation.
+$$
+\begin{align}
+\delta v_{ij} &amp;= \sum_{k=i}^{j-1}[T\Delta {\tilde{R}_{ik}}e_{a,k}^b - T\Delta {\tilde{R}_{ik}}[y_{a,k}-\delta_{a,k}^b]_\times(\delta \phi_{ik})]
+\end{align}
+$$
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   $$
+\begin{align}
+\delta p_{ij} &amp;=  \sum_{k=i}^{j-1}[T\delta v_{ik} + \frac{1}{2}T^2\Delta {\tilde{R}_{ik}}e_{a,k}^b -\frac{1}{2}T^2\Delta {\tilde{R}_{ik}}[y_{a,k}-\delta_{a,k}^b]_\times(\delta \phi_{ik})]
+\end{align}
+$$
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h5 id="3)-Incorporating-non-constant-bias">
+    3)
+    <strong>
+     Incorporating non-constant bias
+    </strong>
+    <a class="anchor-link" href="#3)-Incorporating-non-constant-bias">
+     ¶
+    </a>
+   </h5>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    From the previous section, we know all pre-integrated measurements depend on bias estimation $\delta_{a,i}$ and $\delta_{\omega,i}$, where we assume constant bias between frames, aka $\delta_{i} == \delta_{j}$. So this means that if the bias estimation changes, we need to re-calculate all measurements which is exactly what we want to avoid.
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    The solution is to use Taylor expansion $f(x) \approx f(a) + J_x|_{x=a}(x-a)$. 
+$$
+\begin{align}
+\Delta {\tilde{R}_{ij}} &amp;= \prod_{k=i}^{j-1}Exp_{R}(T(y_{\omega, k} - \delta_{\omega,k}^b)) \\
+&amp;= f_{R_{ij}}(\delta_{\omega,i}^b) \\
+&amp;= f_{R_{ij}}(\bar{\delta}_{\omega,i}^b + \Delta \delta_{\omega,i}^b) \\
+&amp;\approx f_{R_{ij}}(\bar{\delta}_{\omega,i}^b) + J^{R_{ij}}_{\delta_{\omega,i}}|_{\delta_{\omega,i} = \bar{\delta}_{\omega,i}^b} \Delta \delta_{\omega,i}^b \\
+\end{align}
+$$
+   </p>
+   <p>
+    Calculating the Jacobian matrix $J^{R_{ij}}_{\delta_{\omega,i}}|_{\delta_{\omega,i}= \bar{\delta}_{\omega,i}^b}$ is not trivial. Next, we will figure it out.
+   </p>
+   $$
+\begin{align}
+\Delta {\tilde{R}_{ij}} &amp;= \prod_{k=i}^{j-1}Exp_{R}(T(y_{\omega, k} - \delta_{\omega,k}^b)) \\
+&amp;= \prod_{k=i}^{j-1}Exp_{R}(T(y_{\omega, k} - \bar{\delta}_{\omega,i}^b) - T\Delta \delta_{\omega,i}^b)
+\end{align}
+$$
+   <p>
+    Based on $Exp(\phi + \delta\phi) \approx Exp(\phi)Exp(J_r(\phi)\delta\phi)$, $\phi = T(y_{\omega, k} - \bar{\delta}_{\omega,i}^b)$ and  $\delta \phi = - T\Delta \delta_{\omega,i}^b$,
+$$
+\begin{align}
+\Delta {\tilde{R}_{ij}} &amp;= \prod_{k=i}^{j-1}Exp_{R}(T(y_{\omega, k} - \bar{\delta}_{\omega,i}^b) - T\Delta \delta_{\omega,i}^b) \\
+&amp;= \prod_{k=i}^{j-1}Exp_{R}(T(y_{\omega, k} - \bar{\delta}_{\omega,i}^b)\prod_{k=i}^{j-1}Exp_{R}(-J_r^k \Delta \delta_{\omega,i}^b)
+\end{align}
+$$
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    Based on similar derivation for $\Delta R_{ij}$, we can get 
+$$
+\begin{align}
+\Delta {\tilde{R}_{ij}} &amp;= \prod_{k=i}^{j-1}Exp_{R}(T(y_{\omega, k} - \bar{\delta}_{\omega,i}^b)\prod_{k=i}^{j-1}Exp_{R}(-J_{r_k} \Delta \delta_{\omega,i}^b)\\
+&amp;= f_{R_{ij}}(\bar{\delta}_{\omega,i}^b)\prod_{k=i}^{j-1}[Exp_R(f_{R_{k+1,j}}(\bar{\delta}_{\omega,i}^b)^T J_{r_k}T(-\Delta \delta_{\omega,i}^b))] \\
+\end{align}
+$$
+Then based on $Exp(\phi + J_r^{-1}(\phi)\delta\phi) \approx Exp(\phi)Exp(J_r(\phi)J_r^{-1}(\phi)\delta\phi)$ and assume $f_{R_{_{k+1,j}}}(\bar{\delta}_{\omega,i}^b)^T J_{r_k}T(-\Delta \delta_{\omega,i}^b)$ is also suffient small, we can have:
+$$
+\begin{align}
+\Delta {\tilde{R}_{ij}} &amp;= f_{R_{ij}}(\bar{\delta}_{\omega,i}^b)\prod_{k=i}^{j-1}[Exp_R(f_{R_{k+1,j}}(\bar{\delta}_{\omega,i}^b)^T J_{r_k}T(-\Delta \delta_{\omega,i}^b))] \\
+ &amp;= f_{R_{ij}}(\bar{\delta}_{\omega,i}^b)Exp_R(\sum_{k=i}^{j-1}[f_{R_{k+1,j}}(\bar{\delta}_{\omega,i}^b)^T J_{r_k}T(-\Delta \delta_{\omega,i}^b)]) \\
+ &amp;= f_{R_{ij}}(\bar{\delta}_{\omega,i}^b)Exp_R(\mathcal{J}_{\delta_{\omega,i}^b}^{f_{R_{ij}}}\Delta \delta_{\omega,i}^b)
+\end{align}
+$$
+where $\mathcal{J}_{\delta_{\omega,i}^b}^{f_{R_{ij}}} = -\sum_{k=i}^{j-1}[f_{R_{k+1,j}}(\bar{\delta}_{\omega,i}^b)^T J_{r_k}T]$
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    Similarly for speed residual, we can have:
+$$
+\begin{align}
+\Delta{\tilde{v}_{ij}} &amp;= \sum_{k=i}^{j-1}[T\Delta {\tilde{R}_{ik}}(y_{a,k}-\delta_{a,k}^b)]\\
+&amp;= f_{v_{ij}}(\delta_{a,i}^b, \delta_{\omega,i}^b) \\
+&amp;= f_{v_{ij}}(\bar{\delta}_{a,i}^b+\Delta \delta_{a,i}^b, \bar{\delta}_{\omega,i}^b + \Delta \delta_{\omega,i}^b) \\
+&amp;\approx f_{v_{ij}}(\bar{\delta}_{a,i}^b, \bar{\delta}_{\omega,i}^b) + J^v_{\delta_{a,i}}|_{\delta_{a,i}^b=\bar{\delta}_{a,i}^b} \Delta \delta_{a,i}^b + J^v_{\delta_{\omega,i}}|_{\delta_{\omega,i} = \bar{\delta}_{\omega,i}^b} \Delta \delta_{\omega,i}^b
+\end{align}
+$$
+   </p>
+   $$
+\begin{align}
+\Delta{\tilde{v}_{ij}} &amp;= \sum_{k=i}^{j-1}[T\Delta {\tilde{R}_{ik}}(y_{a,k}-\delta_{a,k}^b)]\\
+&amp;= \sum_{k=i}^{j-1}[T f_{R_{ik}}(\bar{\delta}_{\omega,i}^b)Exp_R(\mathcal{J}_{\delta_{\omega,i}^b}^{f_{R_{ik}}}\Delta \delta_{\omega,i}^b))(y_{a,k}-\bar{\delta}_{a,i}^b - \Delta \delta_{a,i}^b)] \\
+&amp;\approx \sum_{k=i}^{j-1}[T f_{R_{ik}}(\bar{\delta}_{\omega,i}^b)(\mathcal{I} + [\mathcal{J}_{\delta_{\omega,i}^b}^{f_{R_{ik}}}\Delta \delta_{\omega,i}^b)]_{\times})(y_{a,k}-\bar{\delta}_{a,i}^b - \Delta \delta_{a,i}^b)] \\
+&amp;= f_{v_{ij}}(\bar{\delta}_{a,i}^b, \bar{\delta}_{\omega,i}^b) - \sum_{k=i}^{j-1}[T f_{R_{ik}}(\bar{\delta}_{\omega,i}^b)\Delta \delta_{a,i}^b - T f_{R_{ik}}(\bar{\delta}_{\omega,i}^b)[\mathcal{J}_{\delta_{\omega,i}^b}^{f_{R_{ik}}}\Delta \delta_{\omega,i}^b]_{\times}(y_{a,k}-\bar{\delta}_{a,i}^b)] + o(\text{high order term})\\
+&amp;= f_{v_{ij}}(\bar{\delta}_{a,i}^b, \bar{\delta}_{\omega,i}^b) - \sum_{k=i}^{j-1}[T f_{R_{ik}}(\bar{\delta}_{\omega,i}^b)\Delta \delta_{a,i}^b + T f_{R_{ik}}(\bar{\delta}_{\omega,i}^b)[y_{a,k}-\bar{\delta}_{a,i}^b]_{\times}\mathcal{J}_{\delta_{\omega,i}^b}^{f_{R_{ik}}}\Delta \delta_{\omega,i}^b]\\
+&amp;= f_{v_{ij}}(\bar{\delta}_{a,i}^b, \bar{\delta}_{\omega,i}^b) + \mathcal{J}_{\delta_{a,i}^b}^{f_{v_{ij}}}\Delta \delta_{a,i}^b + \mathcal{J}_{\delta_{\omega,,i}^b}^{f_{v_{ij}}}\Delta \delta_{\omega,i}^b
+\end{align}
+$$
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    Similarly for position residual, we can have:
+$$
+\begin{align}
+\Delta{\tilde{p}_{ij}} &amp;= \sum_{k=i}^{j-1}[T\Delta{\tilde{v_{ij}}}-\frac{1}{2}T^2 {\tilde{R}_{ik}}(y_{a,k}-\delta_{a,k}^b)] \\
+&amp;= f_p(\delta_{a,i}^b, \delta_{\omega,i}^b) \\
+&amp;= f_p(\bar{\delta}_{a,i}^b+\Delta \delta_{a,i}^b, \bar{\delta}_{\omega,i}^b + \Delta \delta_{\omega,i}^b) \\
+&amp;\approx f_p(\bar{\delta}_{a,i}^b, \bar{\delta}_{\omega,i}^b) + J^p_{\delta_{a,i}}|_{\delta_{a,i}^b=\bar{\delta}_{a,i}^b} \Delta \delta_{a,i}^b + J^p_{\delta_{\omega,i}}|_{\delta_{\omega,i} = \bar{\delta}_{\omega,i}^b} \Delta \delta_{\omega,i}^b
+\end{align}
+$$
+   </p>
+   $$
+\begin{align}
+\Delta{\tilde{p}_{ij}} &amp;= \sum_{k=i}^{j-1}[T\Delta{\tilde{v_{ij}}}-\frac{1}{2}T^2 {\tilde{R}_{ik}}(y_{a,k}-\delta_{a,k}^b)] \\
+&amp;= \sum_{k=i}^{j-1}[T f_{v_{ik}}(\bar{\delta}_{a,i}^b, \bar{\delta}_{\omega,i}^b) + T\mathcal{J}_{\delta_{a,i}^b}^{f_{v_{ik}}}\Delta \delta_{a,i}^b + T\mathcal{J}_{\delta_{\omega,,i}^b}^{f_{v_{ik}}}\Delta \delta_{\omega,i}^b -\frac{1}{2}T^2 f_{R_{ik}}(\bar{\delta}_{\omega,i}^b)Exp_R(\mathcal{J}_{\delta_{\omega,i}^b}^{f_{R_{ik}}}\Delta \delta_{\omega,i}^b))(y_{a,k}-\bar{\delta}_{a,i}^b - \Delta \delta_{a,i}^b)] \\
+&amp;\approx \sum_{k=i}^{j-1}[T f_{v_{ik}}(\bar{\delta}_{a,i}^b, \bar{\delta}_{\omega,i}^b) + T\mathcal{J}_{\delta_{a,i}^b}^{f_{v_{ik}}}\Delta \delta_{a,i}^b + T\mathcal{J}_{\delta_{\omega,,i}^b}^{f_{v_{ik}}}\Delta \delta_{\omega,i}^b -\frac{1}{2}T^2 f_{R_{ik}}(\bar{\delta}_{\omega,i}^b)(\mathcal{I} + [\mathcal{J}_{\delta_{\omega,i}^b}^{f_{R_{ik}}}\Delta \delta_{\omega,i}^b)]_{\times})(y_{a,k}-\bar{\delta}_{a,i}^b - \Delta \delta_{a,i}^b)] \\
+&amp;= f_p(\bar{\delta}_{a,i}^b, \bar{\delta}_{\omega,i}^b) + \sum_{k=i}^{j-1}[T\mathcal{J}_{\delta_{a,i}^b}^{f_{v_{ik}}}\Delta \delta_{a,i}^b + T\mathcal{J}_{\delta_{\omega,,i}^b}^{f_{v_{ik}}}\Delta \delta_{\omega,i}^b -\frac{1}{2}T^2 f_{R_{ik}}(\bar{\delta}_{\omega,i}^b)\Delta \delta_{a,i}^b - \frac{1}{2}T^2 f_{R_{ik}}(\bar{\delta}_{\omega,i}^b)[\mathcal{J}_{\delta_{\omega,i}^b}^{f_{R_{ik}}}\Delta \delta_{\omega,i}^b]_{\times}(y_{a,k}-\bar{\delta}_{a,i}^b)] + o(\text{high order term}) \\
+&amp;= f_p(\bar{\delta}_{a,i}^b, \bar{\delta}_{\omega,i}^b) + \sum_{k=i}^{j-1}[T\mathcal{J}_{\delta_{a,i}^b}^{f_{v_{ik}}}\Delta \delta_{a,i}^b + T\mathcal{J}_{\delta_{\omega,,i}^b}^{f_{v_{ik}}}\Delta \delta_{\omega,i}^b -\frac{1}{2}T^2 f_{R_{ik}}(\bar{\delta}_{\omega,i}^b)\Delta \delta_{a,i}^b - \frac{1}{2}T^2 f_{R_{ik}}(\bar{\delta}_{\omega,i}^b)[y_{a,k}-\bar{\delta}_{a,i}^b]_{\times}\mathcal{J}_{\delta_{\omega,i}^b}^{f_{R_{ik}}}\Delta \delta_{\omega,i}^b] \\
+&amp;= f_p(\bar{\delta}_{a,i}^b, \bar{\delta}_{\omega,i}^b) + \mathcal{J}_{\delta_{a,i}^b}^{f_{p_{ij}}}\Delta \delta_{a,i}^b + \mathcal{J}_{\delta_{\omega,,i}^b}^{f_{p_{ij}}}\Delta \delta_{\omega,i}^b
+\end{align}
+$$
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h5 id="4)-Summary">
+    4)
+    <strong>
+     Summary
+    </strong>
+    <a class="anchor-link" href="#4)-Summary">
+     ¶
+    </a>
+   </h5>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    Base on the derivations in previous three sections, we can finally find the residual functions as:
+$$
+\begin{align}
+r_{\Delta R_{ij}} &amp;= Log(\Delta {\tilde{R}_{ij}^T}R_i^TR_j) \\
+&amp;= Log((f_{R_{ij}}(\bar{\delta}_{\omega,i}^b)Exp_R(\mathcal{J}_{\delta_{\omega,i}^b}^{f_{R_{ij}}}\Delta \delta_{\omega,i}^b))^TR_i^TR_j)
+\end{align}
+$$
+where $f_{R_{ij}}(\delta_{\omega,i}^b) = \prod_{k=i}^{j-1}Exp_{R}(T(y_{\omega, k} - \delta_{\omega,i}^b))$ and $\mathcal{J}_{\delta_{\omega,i}^b}^{f_{R_{ij}}} = -\sum_{k=i}^{j-1}[f_{R_{k+1,j}}(\bar{\delta}_{\omega,i}^b)^T J_{r_k}T]$
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   $$
+\begin{align}
+r_{\Delta v_{ij}} &amp;= R_i^T(v_j-v_i-(j-i)Tg) - \Delta{\tilde{v}_{ij}} \\
+&amp;= R_i^T(v_j-v_i-(j-i)Tg) - f_{v_{ij}}(\bar{\delta}_{a,i}^b, \bar{\delta}_{\omega,i}^b) - \mathcal{J}_{\delta_{a,i}^b}^{f_{v_{ij}}}\Delta \delta_{a,i}^b - \mathcal{J}_{\delta_{\omega,i}^b}^{f_{v_{ij}}}\Delta \delta_{\omega,i}^b
+\end{align}
+$$
+   <p>
+    where $f_{v_{ij}}(\delta_{a,i}^b, \delta_{\omega,i}^b) = \sum_{k=i}^{j-1}[T\Delta {\tilde{R}_{ik}}(y_{a,k}-\delta_{a,k}^b)]$, $\mathcal{J}_{\delta_{a,i}^b}^{f_{v_{ij}}} = -\sum_{k=i}^{j-1}[T f_{R_{ik}}(\bar{\delta}_{\omega,i}^b)]$ and $\mathcal{J}_{\delta_{\omega,,i}^b}^{f_{v_{ij}}} = -\sum_{k=i}^{j-1}[T f_{R_{ik}}(\bar{\delta}_{\omega,i}^b)[y_{a,k}-\bar{\delta}_{a,i}^b]_{\times}\mathcal{J}_{\delta_{\omega,i}^b}^{f_{R_{ik}}}]$
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   $$
+\begin{align}
+r_{\Delta p_{ij}} &amp;=  R_i^T(p_j - p_i - (j-i)Tv_i -\frac{1}{2}(j-i)^2T^2g) - \Delta{\tilde{p}_{ij}}\\
+&amp;= R_i^T(p_j - p_i - (j-i)Tv_i -\frac{1}{2}(j-i)^2T^2g) - f_p(\bar{\delta}_{a,i}^b, \bar{\delta}_{\omega,i}^b) - \mathcal{J}_{\delta_{a,i}^b}^{f_{p_{ij}}}\Delta \delta_{a,i}^b - \mathcal{J}_{\delta_{\omega,,i}^b}^{f_{p_{ij}}}\Delta \delta_{\omega,i}^b
+\end{align}
+$$
+   <p>
+    where $f_p(\delta_{a,i}^b, \delta_{\omega,i}^b) = \sum_{k=i}^{j-1}[T\Delta{\tilde{v_{ij}}}-\frac{1}{2}T^2 {\tilde{R}_{ik}}(y_{a,k}-\delta_{a,k}^b)]$, $\mathcal{J}_{\delta_{a,i}^b}^{f_{p_{ij}}}=\sum_{k=i}^{j-1}[T\mathcal{J}_{\delta_{a,i}^b}^{f_{v_{ik}}}\ - \frac{1}{2}T^2 f_{R_{ik}}(\bar{\delta}_{\omega,i}^b)]$ and $\mathcal{J}_{\delta_{\omega,,i}^b}^{f_{p_{ij}}}=\sum_{k=i}^{j-1}[T\mathcal{J}_{\delta_{\omega,,i}^b}^{f_{v_{ik}}} - \frac{1}{2}T^2 f_{R_{ik}}(\bar{\delta}_{\omega,i}^b)[y_{a,k}-\bar{\delta}_{a,i}^b]_{\times}\mathcal{J}_{\delta_{\omega,i}^b}^{f_{R_{ik}}}]$
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    <strong>
+     SO what values do we need to calculate between frame $i$ and $j$?
     </strong>
    </p>
+   <ul>
+    <li>
+     $f_{R_{ik}}(\delta_{\omega,k}^b)$ and $\mathcal{J}_{\delta_{\omega,i}^b}^{f_{R_{ik}}}$
+    </li>
+    <li>
+     $f_{v_{ik}}(\delta_{a,i}^b, \delta_{\omega,i}^b)$ and $\mathcal{J}_{\delta_{a,i}^b}^{f_{v_{ik}}}$ and $\mathcal{J}_{\delta_{\omega,i}^b}^{f_{v_{ik}}}$
+    </li>
+    <li>
+     $f_{p}(\delta_{a,i}^b, \delta_{\omega,i}^b)$ and $\mathcal{J}_{\delta_{a,i}^b}^{f_{p_{ij}}}$ and $\mathcal{J}_{\delta_{\omega,,i}^b}^{f_{p_{ij}}}$
+    </li>
+   </ul>
+   <p>
+    <strong>
+     Another thing to pay attention is that we should use bias delta value as state.
+    </strong>
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    <strong>
+     One last thing need to mention is how sufficient small $\delta \phi$ need to be so that we can use? equations below?
+    </strong>
+    $$
+\begin{align}
+Exp(\phi + \delta\phi) &amp;\approx Exp(\phi)Exp(J_r(\phi)\delta\phi) \\
+Exp(\phi + J_r^{-1}(\phi)\delta\phi) &amp;\approx Exp(\phi)Exp(J_r(\phi)J_r^{-1}(\phi)\delta\phi) \\
+Log(Exp(\phi)Exp(\delta\phi)) &amp;\approx \phi + J_r^{-1}(\phi)\delta\phi
+\end{align}
+$$
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+ <div class="input">
+  <div class="prompt input_prompt">
+   In [22]:
+  </div>
+  <div class="inner_cell">
+   <div class="input_area collapsed">
+    <div class="collapse_expand_button fa fa-1x fa-minus-square-o">
+    </div>
+    <div class="highlight hl-ipython3">
+     <pre><span></span><span class="c1"># SO3 exponential approximation imports</span>
+
+<span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">sin</span><span class="p">,</span> <span class="n">cos</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy.linalg</span> <span class="kn">import</span> <span class="n">expm</span><span class="p">,</span> <span class="n">logm</span>
+
+<span class="k">def</span> <span class="nf">skew</span><span class="p">(</span><span class="n">omega</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="n">omega</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">(),</span> <span class="n">omega</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">()],</span>
+                     <span class="p">[</span><span class="n">omega</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">(),</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="n">omega</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">()],</span>
+                     <span class="p">[</span><span class="o">-</span><span class="n">omega</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">(),</span> <span class="n">omega</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">(),</span> <span class="mi">0</span><span class="p">]])</span>
+
+<span class="k">def</span> <span class="nf">unskew</span><span class="p">(</span><span class="n">Omega</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">Omega</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">()],</span> <span class="p">[</span><span class="n">Omega</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">()],</span> <span class="p">[</span><span class="n">Omega</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">()]])</span>
+
+<span class="k">def</span> <span class="nf">exp</span><span class="p">(</span><span class="n">omega</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">expm</span><span class="p">(</span><span class="n">skew</span><span class="p">(</span><span class="n">omega</span><span class="p">))</span>
+
+<span class="k">def</span> <span class="nf">log</span><span class="p">(</span><span class="n">R</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">unskew</span><span class="p">(</span><span class="n">logm</span><span class="p">(</span><span class="n">R</span><span class="p">))</span>
+
+<span class="k">def</span> <span class="nf">Adjoint_SO3</span><span class="p">(</span><span class="n">Omega</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">Omega</span>
+
+<span class="k">def</span> <span class="nf">LeftJacobian_SO3</span><span class="p">(</span><span class="n">w</span><span class="p">):</span>
+    <span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+    <span class="n">A</span> <span class="o">=</span> <span class="n">skew</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">theta</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="c1"># Note: when theta is small, we should use taylor series</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">+</span> <span class="p">((</span><span class="mi">1</span><span class="o">-</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">))</span><span class="o">/</span><span class="n">theta</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">A</span> <span class="o">+</span> <span class="p">((</span><span class="n">theta</span><span class="o">-</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">))</span><span class="o">/</span><span class="n">theta</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">A</span><span class="p">)</span>
+
+<span class="c1">#def RightJacobian_SO3(w):</span>
+<span class="c1">#    return Adjoint_SO3(expm(skew(-w))).dot(LeftJacobian_SO3(w))</span>
+
+<span class="k">def</span> <span class="nf">RightJacobian_SO3</span><span class="p">(</span><span class="n">w</span><span class="p">):</span>
+    <span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+    <span class="n">A</span> <span class="o">=</span> <span class="n">skew</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">theta</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="c1"># Note: when theta is small, we should use taylor series</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">-</span> <span class="p">((</span><span class="mi">1</span><span class="o">-</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">))</span><span class="o">/</span><span class="n">theta</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">A</span> <span class="o">+</span> <span class="p">((</span><span class="n">theta</span><span class="o">-</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">))</span><span class="o">/</span><span class="n">theta</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">A</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">RightJacobian_SO3_inv</span><span class="p">(</span><span class="n">w</span><span class="p">):</span>
+    <span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+    <span class="n">A</span> <span class="o">=</span> <span class="n">skew</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">theta</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="c1"># Note: when theta is small, we should use taylor series</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.5</span><span class="o">*</span><span class="n">A</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">theta</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">))</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">theta</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)))</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">A</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">from_rpy</span><span class="p">(</span><span class="n">roll</span><span class="p">,</span> <span class="n">pitch</span><span class="p">,</span> <span class="n">yaw</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">rotz</span><span class="p">(</span><span class="n">yaw</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">roty</span><span class="p">(</span><span class="n">pitch</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">rotx</span><span class="p">(</span><span class="n">roll</span><span class="p">)))</span>
+
+<span class="k">def</span> <span class="nf">rotx</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                     <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="o">-</span><span class="n">s</span><span class="p">],</span>
+                     <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">c</span><span class="p">]])</span>
+
+<span class="k">def</span> <span class="nf">roty</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">c</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">s</span><span class="p">],</span>
+                     <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                     <span class="p">[</span><span class="o">-</span><span class="n">s</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">c</span><span class="p">]])</span>
+
+<span class="k">def</span> <span class="nf">rotz</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">c</span><span class="p">,</span> <span class="o">-</span><span class="n">s</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                     <span class="p">[</span><span class="n">s</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                     <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
+
+<span class="c1">#</span>
+</pre>
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+ <div class="input">
+  <div class="prompt input_prompt">
+   In [ ]:
+  </div>
+  <div class="inner_cell">
+   <div class="input_area collapsed">
+    <div class="collapse_expand_button fa fa-1x fa-minus-square-o">
+    </div>
+    <div class="highlight hl-ipython3">
+     <pre><span></span><span class="c1">## SO3 exponential approximation</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="n">small_value_magnitude</span> <span class="o">=</span> <span class="mf">1E-2</span>
+<span class="k">def</span> <span class="nf">cal_exp_approximation_error</span><span class="p">(</span><span class="n">small_value_magnitude</span><span class="p">):</span>
+    <span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+    <span class="n">small_w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span> <span class="o">*</span> <span class="n">small_value_magnitude</span>
+    <span class="n">delta</span> <span class="o">=</span> <span class="n">log</span><span class="p">(</span><span class="n">exp</span><span class="p">(</span><span class="n">w</span> <span class="o">+</span> <span class="n">small_w</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">exp</span><span class="p">(</span><span class="n">w</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">exp</span><span class="p">(</span><span class="n">RightJacobian_SO3</span><span class="p">(</span><span class="n">w</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">small_w</span><span class="p">)))))</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">delta</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'error norm: </span><span class="si">{</span><span class="n">cal_exp_approximation_error</span><span class="p">(</span><span class="n">small_value_magnitude</span><span class="p">)</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+<span class="c1">#</span>
+</pre>
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    Reference
+   </p>
+   <ul>
+    <li>
+     <a href="http://www.roboticsproceedings.org/rss11/p06.pdf">
+      IMU Preintegration on Manifold for Efficient Visual-Inertial Maximum-a-Posteriori Estimation
+     </a>
+    </li>
+   </ul>
   </div>
  </div>
 </div>
