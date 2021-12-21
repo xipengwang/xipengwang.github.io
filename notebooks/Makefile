@@ -69,6 +69,9 @@ stereo-rectification:
 	$(CONVERTER) --nbpath stereo-rectification.ipynb --date 2021-12-19 \
 		--description "Stereo rectification" --tag Notebook
 
+gaussian-distribution-marginalization:
+	$(CONVERTER) --nbpath gaussian_distribution_marginalization.ipynb --date 2021-12-20 \
+		--description "Marginalization and Conditioning of Gaussian Distribution" --tag Notebook
 
 mutual-information:
 		$(CONVERTER) --nbpath mutual-information.ipynb --date 2021-06-03 \

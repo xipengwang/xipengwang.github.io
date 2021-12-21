@@ -225,4 +225,4 @@ distribution $\textbf{x} \sim \mathcal{N}(\mu_{x}, \Sigma_{xx})$ ?
 > where $\eta = \Sigma^{-1}\mu$, $\Lambda = \Sigma^{-1}$
 
 To learn more about marginalization and conditioning of information form, check
-this [post]({% post_url 2021-01-21-gaussian-marginalization%}).
+this [post]({% post_url 2021-12-20-gaussian_distribution_marginalization%}).
