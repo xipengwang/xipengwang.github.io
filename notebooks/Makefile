@@ -43,7 +43,8 @@ paper-reading-mixture-models-for-least-square-optimization:
 	$(CONVERTER) --nbpath paper-reading-mixture-models-for-least-square-optimization.ipynb --date 2021-05-11 \
 		--description "Paper Reading - Gaussian mixture models and robust kernels for least square optimization" --tag PaperReading
 
-blog: expectation–maximization factor-graph grid-mapping mutual-information
+blog: expectation–maximization factor-graph grid-mapping mutual-information inertial-navigation rigid-body-transformation \
+	stereo-rectification gaussian-distribution-marginalization lie-theory
 
 expectation–maximization:
 	$(CONVERTER) --nbpath expectation–maximization.ipynb --date 2021-05-10 \
@@ -72,6 +73,10 @@ stereo-rectification:
 gaussian-distribution-marginalization:
 	$(CONVERTER) --nbpath gaussian_distribution_marginalization.ipynb --date 2021-12-20 \
 		--description "Marginalization and Conditioning of Gaussian Distribution" --tag Notebook
+
+lie-theory:
+	$(CONVERTER) --nbpath lie-theory.ipynb --date 2021-12-31 \
+		--description "Lie Theory for State Estimation in Robotics" --tag Notebook
 
 mutual-information:
 		$(CONVERTER) --nbpath mutual-information.ipynb --date 2021-06-03 \

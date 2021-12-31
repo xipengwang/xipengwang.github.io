@@ -1,0 +1,347 @@
+---
+layout: notebook
+title: Lie Theory for State Estimation in Robotics
+description: Lie Theory for State Estimation in Robotics
+tag: Notebook
+---
+
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h2 id="Introduction-to-an-Optimization-Problem-on-SO(3)">
+    Introduction to an Optimization Problem on SO(3)
+    <a class="anchor-link" href="#Introduction-to-an-Optimization-Problem-on-SO(3)">
+     ¶
+    </a>
+   </h2>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    We have robot orientation at time $t$ as $R^{nb}_t$, and given $R^T R = \mathcal{I}$:
+$$
+\begin{align}
+d\frac{R_t}{dt}R_t^T + R_td\frac{R_t^T}{dt} &amp;= 0 \\
+d\frac{R_t}{dt}R_t^T + (d\frac{R_t}{dt}R_t^T)^T &amp;= 0 \\
+\end{align}
+$$
+Define $S_t = d\frac{R_t}{dt}R_t^T$, then we have $S_t+ S_t^T = 0$. So $S_t$ is a skew matrix as:
+$$
+S_t= \begin{bmatrix}
+0,&amp; -\omega_{t,3},&amp; \omega_{t,2} \\
+\omega_{t,3},&amp; 0,&amp; -\omega_{t,1}  \\
+-\omega_{t,2},&amp; \omega_{t,1},&amp; 0\\
+\end{bmatrix}
+$$.
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    If $S_t$ is a constant, we can solve this differentiation equation.
+    <strong>
+     But when can $S_t$ be a constant?
+    </strong>
+    Suppose a rigid body rotate around a normalized $\phi$ constantly with rotation speed as $\|\phi\|$, then we can have:
+$$
+\begin{align}
+R_t \omega &amp;=  \phi \\
+d\frac{R_t}{dt}\phi + R_t d\frac{\phi}{dt} &amp;= 0 \\
+d\frac{R_t}{dt}\phi &amp;= 0 \\
+S_tR_t\phi &amp;= 0 \\
+S_t \phi &amp;= 0 \\
+\begin{bmatrix}
+0,&amp; -\omega_{t,3},&amp; \omega_{t,2} \\
+\omega_{t,3},&amp; 0,&amp; -\omega_{t,1}  \\
+-\omega_{t,2},&amp; \omega_{t,1},&amp; 0\\
+\end{bmatrix} \begin{bmatrix}
+\phi_0 \\
+\phi_1 \\
+\phi_2\\
+\end{bmatrix} &amp;= 0
+\end{align}
+$$
+In order to make the $S_t \phi = 0$ always true, $\omega$ should be the same as $\phi$ so $[\omega]_\times \phi = 0$.
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    Now we can assume we have a constant $S_t$ as $S$ when a rigid body rotate constantly around a vector $\omega$, we can get
+$$
+\begin{align}
+S_t &amp;= [\omega]_\times \\
+&amp;=\begin{bmatrix}
+0,&amp; -\omega_3,&amp; \omega_2 \\
+\omega_3,&amp; 0,&amp; -\omega_1  \\
+-\omega_2,&amp; \omega_1,&amp; 0\\
+\end{bmatrix}
+\end{align}
+$$
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    By solving $d\frac{R_t}{dt} = SR_t$, we get
+$$
+\begin{align}
+R_t &amp;= R_0exp([\omega]_\times t) \\
+\end{align}
+$$
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    <strong>
+     Now we can have two very interesting conclusions:
+    </strong>
+   </p>
+   <ul>
+    <li>
+     If $R_0 = \mathcal{I}$, then $R_t = exp([\omega]_\times t)$. This means we can map a rotation axis $\omega$ to a rotation matrix with the exponential operation. This is actually exactly same as Rodrigues' rotation formula $exp([\omega]_\times) = R = \mathcal{I} + sin(\|\omega\|)[\omega]_\times + (1-cos(\|\omega\|))[\omega]_\times^2$. When $\omega$ is small, we should use Taylor expansion to get R or use an approximation $R \approx \mathcal{I} + [\omega]_\times$
+    </li>
+    <li>
+     If $\omega$ is very small, then we can think $exp([\omega]_\times)$ is a small perturbation on the current state $R_0$. This is extremely useful for solving an optimization problem on SO(3) using iterative methods.
+    </li>
+   </ul>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h3 id="Introduction-to-$\boxplus$">
+    Introduction to $\boxplus$
+    <a class="anchor-link" href="#Introduction-to-$\boxplus$">
+     ¶
+    </a>
+   </h3>
+   <p>
+    Suppose the current state is $\bar{x}$, for approaches like Gauss-Newton, we normally would minimize the cost function $f$ as below. We assume that $\bar{x}$ and its perturbation $\Delta x$ in the same Euclidean space so that they be summed together use $+$.
+   </p>
+   $$
+\begin{align}
+\Delta  \hat{x} &amp;= \underset{\Delta x}{\operatorname{argmin}}{f(\bar{x}+\Delta x)} 
+\end{align}
+$$
+   <p>
+    But what is a more general expression for this problem? For example, we have rotation matrix $R \in \mathbb{R^9}$ and its perturbation $\omega \in \mathbb{R^3}$. Clearly $+$ wouldn't work in this case. Thus we introduce a new plus here as $\boxplus$:
+$$
+\begin{align}
+\Delta  \hat{x} &amp;= \underset{\Delta x}{\operatorname{argmin}}{f(\bar{x} \boxplus \Delta x)} 
+\end{align}
+$$
+   </p>
+   <p>
+    For rotation:
+$$
+\begin{align}
+\bar{R} \boxplus \Delta \omega =  \bar{R}exp([\omega]_\times)
+\end{align}
+$$
+For translation:
+$$
+\begin{align}
+\bar{t} \boxplus \Delta t =  \bar{t} + \Delta t
+\end{align}
+$$
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h3 id="Jacobians">
+    Jacobians
+    <a class="anchor-link" href="#Jacobians">
+     ¶
+    </a>
+   </h3>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    For the special case, we can find Jacobian matrix $J^{f(x)}_{x}|_{x = 0}$ to approximate $f$ to be a linear function, then solve the minimization problem. 
+$$
+\begin{align}
+\Delta  \hat{x} &amp;= \underset{\Delta x}{\operatorname{argmin}}{f(\bar{x}+\Delta x)}  \\
+&amp;\approx \underset{\Delta x}{\operatorname{argmin}}[f(\bar{x})+ J^{f(x)}_{x}|_{x = 0}\Delta x]
+\end{align}
+$$
+   </p>
+   <p>
+    For the general case, it becomes:
+$$
+\begin{align}
+\Delta  \hat{x} &amp;= \underset{\Delta x}{\operatorname{argmin}}{f(\bar{x} \boxplus \Delta x)}  \\
+&amp;\approx \underset{\Delta x}{\operatorname{argmin}}[f(\bar{x})+ J^{f(x\boxplus \Delta x)}_{x}|_{x = \bar{x}, \Delta x = 0}J^{\bar{x}\boxplus  x}_{x}|_{x = 0}\Delta x]
+\end{align}
+$$
+   </p>
+   <p>
+    We actually leverage chain rule to find proper Jacobian matrix as $J^{f(x\boxplus \Delta x)}_{x}|_{x = \bar{x}, \Delta x = 0}J^{\bar{x}\boxplus  x}_{x}|_{x = 0}$.
+   </p>
+   <ul>
+    <li>
+     Though the first part seems complicated, $J^{f(x\boxplus \Delta x)}_{x}|_{x = \bar{x}, \Delta x = 0}$ is actually just $J^{f(x)}_{x}|_{x = 0}$/
+    </li>
+    <li>
+     For the second part, if $\bar{x}$ and perturbation state $x$ in the same Euclidean space, then $J^{\bar{x}\boxplus  x}_{x}|_{x = 0} = \mathcal{I}$. Otherwise we have to calculate it, e.g. $J^{\bar{R}\boxplus  \omega}_{\omega}|_{\omega = 0} = J^{\bar{R}exp([\omega]_\times)}_{\omega}|_{\omega = 0} = []_{3 \times 1}$
+    </li>
+   </ul>
+   <p>
+    Calculating Jacobian is not hard based on chain rules but is very tedious and error-prone. So using auto-differentiation would be a good idea. However, in order to get them analytically, we need know more about Lie theory which will be introduced throughly in the next section.
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h3 id="State-Correction">
+    State Correction
+    <a class="anchor-link" href="#State-Correction">
+     ¶
+    </a>
+   </h3>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    The state correction would be as simple as below:
+$$
+\begin{align}
+x = \bar{x} \boxplus \Delta  \hat{x} 
+\end{align}
+$$
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h2 id="More-about-Lie-Theory-for-State-Estimation-in-Robotics">
+    More about Lie Theory for State Estimation in Robotics
+    <a class="anchor-link" href="#More-about-Lie-Theory-for-State-Estimation-in-Robotics">
+     ¶
+    </a>
+   </h2>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   $$
+\begin{align}
+Exp(\phi) :=\ &amp; exp(\phi^{\wedge}) = R \\
+Log(R) :=\ &amp; log(R)^{\vee} = \phi \\
+% \vee \wedge
+\end{align}
+$$
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    First-order approximation:
+$$
+\begin{align}
+Exp(\phi + \delta\phi) &amp;\approx Exp(\phi)Exp(J_r(\phi)\delta\phi) \\
+Exp(\phi + J_r^{-1}(\phi)\delta\phi) &amp;\approx Exp(\phi)Exp(J_r(\phi)J_r^{-1}(\phi)\delta\phi) \\
+Log(Exp(\phi)Exp(\delta\phi)) &amp;\approx \phi + J_r^{-1}(\phi)\delta\phi
+\end{align}
+$$
+   </p>
+   $$
+\begin{align}
+Exp(\phi) R = R Exp(R^T \phi) 
+\end{align}
+$$
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    Reference:
+   </p>
+   <ul>
+    <li>
+     Sola et al.
+     <code>
+      A micro Lie theory for state estimation in robotics
+     </code>
+    </li>
+   </ul>
+  </div>
+ </div>
+</div>
+
+<div> This blog is converted from <a href="https://github.com/xipengwang/xipengwang.github.io/tree/master/notebooks/lie-theory.ipynb">lie-theory.ipynb</a></div>
