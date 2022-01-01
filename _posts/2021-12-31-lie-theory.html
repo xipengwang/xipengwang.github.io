@@ -18,9 +18,9 @@ tag: Notebook
  </div>
  <div class="inner_cell">
   <div class="text_cell_render border-box-sizing rendered_html">
-   <h2 id="Introduction-to-an-Optimization-Problem-on-SO(3)">
-    Introduction to an Optimization Problem on SO(3)
-    <a class="anchor-link" href="#Introduction-to-an-Optimization-Problem-on-SO(3)">
+   <h2 id="Solve-an-Optimization-Problem-on-SO(3)-with-Exponential-Map">
+    Solve an Optimization Problem on SO(3) with Exponential Map
+    <a class="anchor-link" href="#Solve-an-Optimization-Problem-on-SO(3)-with-Exponential-Map">
      ¶
     </a>
    </h2>
@@ -62,10 +62,10 @@ $$.
     <strong>
      But when can $S_t$ be a constant?
     </strong>
-    Suppose a rigid body rotate around a normalized $\phi$ constantly with rotation speed as $\|\phi\|$, then we can have:
+    Suppose a rigid body rotate around a normalized $\phi$ constantly with rotation speed as $\|\phi\|$, then we can have $R\phi = \phi$ since $\phi$ would be the eigen vector of $R$, then:
 $$
 \begin{align}
-R_t \omega &amp;=  \phi \\
+R_t \phi &amp;=  \phi \\
 d\frac{R_t}{dt}\phi + R_t d\frac{\phi}{dt} &amp;= 0 \\
 d\frac{R_t}{dt}\phi &amp;= 0 \\
 S_tR_t\phi &amp;= 0 \\
@@ -135,7 +135,7 @@ $$
    </p>
    <ul>
     <li>
-     If $R_0 = \mathcal{I}$, then $R_t = exp([\omega]_\times t)$. This means we can map a rotation axis $\omega$ to a rotation matrix with the exponential operation. This is actually exactly same as Rodrigues' rotation formula $exp([\omega]_\times) = R = \mathcal{I} + sin(\|\omega\|)[\omega]_\times + (1-cos(\|\omega\|))[\omega]_\times^2$. When $\omega$ is small, we should use Taylor expansion to get R or use an approximation $R \approx \mathcal{I} + [\omega]_\times$
+     If $R_0 = \mathcal{I}$, then $R_t = exp([\omega]_\times t)$. This means we can map a rotation axis $\omega$ to a rotation matrix with the exponential operation. This is actually exactly same as Rodrigues' rotation formula $exp([\omega]_\times) = R = \mathcal{I} + sin(\|\omega\|)[\omega]_\times + (1-cos(\|\omega\|))[\omega]_\times^2$. When $\omega$ is small, we should use Taylor expansion $exp([\omega]_\times) = \epsilon + [\omega]_\times + \frac{1}{2}[\omega]_\times^2 + \cdots$ to get R or use an approximation $R \approx \mathcal{I} + [\omega]_\times$
     </li>
     <li>
      If $\omega$ is very small, then we can think $exp([\omega]_\times)$ is a small perturbation on the current state $R_0$. This is extremely useful for solving an optimization problem on SO(3) using iterative methods.
@@ -160,14 +160,14 @@ $$
    </p>
    $$
 \begin{align}
-\Delta  \hat{x} &amp;= \underset{\Delta x}{\operatorname{argmin}}{f(\bar{x}+\Delta x)} 
+\Delta  \hat{x} &amp;= \underset{\Delta x}{\operatorname{argmin}}{\|f(\bar{x}+\Delta x)\|_2} 
 \end{align}
 $$
    <p>
     But what is a more general expression for this problem? For example, we have rotation matrix $R \in \mathbb{R^9}$ and its perturbation $\omega \in \mathbb{R^3}$. Clearly $+$ wouldn't work in this case. Thus we introduce a new plus here as $\boxplus$:
 $$
 \begin{align}
-\Delta  \hat{x} &amp;= \underset{\Delta x}{\operatorname{argmin}}{f(\bar{x} \boxplus \Delta x)} 
+\Delta  \hat{x} &amp;= \underset{\Delta x}{\operatorname{argmin}}{\|f(\bar{x} \boxplus \Delta x)\|_2} 
 \end{align}
 $$
    </p>
@@ -211,8 +211,8 @@ $$
     For the special case, we can find Jacobian matrix $J^{f(x)}_{x}|_{x = 0}$ to approximate $f$ to be a linear function, then solve the minimization problem. 
 $$
 \begin{align}
-\Delta  \hat{x} &amp;= \underset{\Delta x}{\operatorname{argmin}}{f(\bar{x}+\Delta x)}  \\
-&amp;\approx \underset{\Delta x}{\operatorname{argmin}}[f(\bar{x})+ J^{f(x)}_{x}|_{x = 0}\Delta x]
+\Delta  \hat{x} &amp;= \underset{\Delta x}{\operatorname{argmin}}{\|f(\bar{x}+\Delta x)\|_2}  \\
+&amp;\approx \underset{\Delta x}{\operatorname{argmin}}\|f(\bar{x})+ J^{f(x)}_{x}|_{x = 0}\Delta x\|_2
 \end{align}
 $$
    </p>
@@ -220,8 +220,8 @@ $$
     For the general case, it becomes:
 $$
 \begin{align}
-\Delta  \hat{x} &amp;= \underset{\Delta x}{\operatorname{argmin}}{f(\bar{x} \boxplus \Delta x)}  \\
-&amp;\approx \underset{\Delta x}{\operatorname{argmin}}[f(\bar{x})+ J^{f(x\boxplus \Delta x)}_{x}|_{x = \bar{x}, \Delta x = 0}J^{\bar{x}\boxplus  x}_{x}|_{x = 0}\Delta x]
+\Delta  \hat{x} &amp;= \underset{\Delta x}{\operatorname{argmin}}{\|f(\bar{x} \boxplus \Delta x)\|_2}  \\
+&amp;\approx \underset{\Delta x}{\operatorname{argmin}}\|f(\bar{x})+ J^{f(x\boxplus \Delta x)}_{x}|_{x = \bar{x}, \Delta x = 0}J^{\bar{x}\boxplus  x}_{x}|_{x = 0}\Delta x\|_2
 \end{align}
 $$
    </p>
@@ -230,15 +230,45 @@ $$
    </p>
    <ul>
     <li>
-     Though the first part seems complicated, $J^{f(x\boxplus \Delta x)}_{x}|_{x = \bar{x}, \Delta x = 0}$ is actually just $J^{f(x)}_{x}|_{x = 0}$/
+     Though the first part seems complicated, $J^{f(x\boxplus \Delta x)}_{x}|_{x = \bar{x}, \Delta x = 0}$ is actually just $J^{f(x)}_{x}|_{x = 0}$
     </li>
     <li>
-     For the second part, if $\bar{x}$ and perturbation state $x$ in the same Euclidean space, then $J^{\bar{x}\boxplus  x}_{x}|_{x = 0} = \mathcal{I}$. Otherwise we have to calculate it, e.g. $J^{\bar{R}\boxplus  \omega}_{\omega}|_{\omega = 0} = J^{\bar{R}exp([\omega]_\times)}_{\omega}|_{\omega = 0} = []_{3 \times 1}$
+     For the second part, if $\bar{x}$ and perturbation state $x$ in the same Euclidean space, then $J^{\bar{x}\boxplus  x}_{x}|_{x = 0} = \mathcal{I}$. Otherwise we have to calculate it, e.g. $J^{\bar{R}\boxplus  \omega}_{\omega}|_{\omega = 0} = J^{\bar{R}exp([\omega]_\times)}_{\omega}|_{\omega = 0} = []_{9 \times 1}$
     </li>
    </ul>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
    <p>
-    Calculating Jacobian is not hard based on chain rules but is very tedious and error-prone. So using auto-differentiation would be a good idea. However, in order to get them analytically, we need know more about Lie theory which will be introduced throughly in the next section.
+    XW's notes:
    </p>
+   <ul>
+    <li>
+     Calculating Jacobian is not hard based on chain rules but is very tedious and error-prone. So using auto-differentiation would be a good idea.
+    </li>
+    <li>
+     In order to get Jacobian analytically, we need know more about Lie theory which will be introduced throughly in the next section.
+    </li>
+    <li>
+     <p>
+      Lie theory gives us ways to quickly get the final Jacobian matrices mapping changes between tangent spaces but also involves lots of math. So I think using the chain rules is actually easier since calculating Jacobian to individual elements in rotation matrix is usually trivial then all you need is to find $J^{\bar{R}\boxplus  \omega}_{\omega}|_{\omega = 0} = []_{9 \times 1}$.
+     </p>
+     <p>
+      $$
+\begin{align}
+J^{\bar{R}\boxplus  \omega}_{\omega}|_{\omega = 0} &amp;= \frac{\partial \bar{R}Exp(\omega)}{\partial \omega} \\
+&amp;= \frac{\partial \bar{R}(\mathcal{I}+[\omega]_\times)}{\partial \omega} \\
+&amp;= \bar{R}\frac{\partial [\omega]_\times}{\partial \omega}
+\end{align}
+$$
+     </p>
+    </li>
+   </ul>
   </div>
  </div>
 </div>
@@ -291,6 +321,1742 @@ $$
  </div>
  <div class="inner_cell">
   <div class="text_cell_render border-box-sizing rendered_html">
+   <h3 id="Group-Operations">
+    Group Operations
+    <a class="anchor-link" href="#Group-Operations">
+     ¶
+    </a>
+   </h3>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    A group $(\mathcal{G}, \circ)$ is a is a set, $\mathcal{G}$, with a composition operation, $\circ$. It satisfies 4 properties: closure, identity, inverse and associativity.
+For any $\mathcal{X},\mathcal{Y},\mathcal{Z} \in \mathcal{G}$:
+$$
+\begin{align}
+\mathcal{X} \circ \mathcal{Y} \in \mathcal{G} \\
+\mathcal{\epsilon}  \circ \mathcal{X} = \mathcal{X}  \circ \mathcal{\epsilon}  \\
+\mathcal{\epsilon} =  \mathcal{X}^{-1} \circ \mathcal{X} \\
+(\mathcal{X} \circ \mathcal{Y}) \circ \mathcal{Z} = \mathcal{X} \circ (\mathcal{Y} \circ \mathcal{Z})
+\end{align}
+$$
+   </p>
+   <p>
+    So it is easy to see that SO(3) is a group with $\mathcal{\epsilon} = \mathcal{I}_{3 \times 3}$.
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h3 id="Lie-Group">
+    Lie Group
+    <a class="anchor-link" href="#Lie-Group">
+     ¶
+    </a>
+   </h3>
+   <p>
+    A Lie group $\mathcal{M}$ is a smooth manifold whose elements satisfy the group axioms. Its operation $\cdot$ on other set is defined as :
+$$
+\begin{align}
+\mathcal{X} \cdot \mathcal{v} 
+\end{align}
+$$
+where $v \in \mathcal{V}  \ \mathcal{X} \in \mathcal{M}$. It satisfy:
+$$
+\begin{align}
+\mathcal{\epsilon}  \cdot \mathcal{v} &amp;= \mathcal{v} \\
+(\mathcal{X} \circ \mathcal{Y}) \cdot \mathcal{v} &amp;= \mathcal{X} \circ (\mathcal{Y} \cdot \mathcal{v})
+\end{align}
+$$
+Clearly, applying rotation matrix $R$ on a vector $x \in \mathbb{R}^3$ is a Lie group action.
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h3 id="Tangent-Space-and-Lie-Algebra">
+    Tangent Space and Lie Algebra
+    <a class="anchor-link" href="#Tangent-Space-and-Lie-Algebra">
+     ¶
+    </a>
+   </h3>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    Given $\mathcal{X}(t)$ a point moving on a Lie group manifold $\mathcal{M}$, its velocity $\dot{\mathcal{X}} = \frac{\partial {\mathcal{X}}}{\partial t}$ belongs to the
+    <strong>
+     space tangent
+    </strong>
+    to $\mathcal{M}$ at $\mathcal{X}$, noted as $\mathcal{T}_{\mathcal{X}}\mathcal{M}$. The tangent space at $\mathcal{\epsilon}$ is
+    <strong>
+     Lie algebra
+    </strong>
+    , noted as $\mathfrak{m}$. We can use a exponential operation map things from $\mathfrak{m}$ to $\mathcal{M}$.
+   </p>
+   <p>
+    Take SO(3) as an example. $R$ is in a manifold $\mathcal{M}$ while $[\omega]_\times$ is in a lie algebra. We will define an operation called
+    <strong>
+     wedge
+    </strong>
+    $\wedge$ which converts a vector to lie algebra, and an operation called
+    <strong>
+     vee
+    </strong>
+    $\vee$ to converts a lie algebra element to a vector. Further more, we define ${}^{\mathcal{X}}\omega^{\wedge} \in \mathcal{T}_{\mathcal{X}}\mathcal{M}$.
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    More generally, we define Exp and Log operations to convert between vector space $\tau$ and manifold $\mathcal{M}$. We also define exp and log operations to convert between lie algebra and manifold.
+$$
+\begin{align}
+\mathcal{X} &amp;= exp(\tau^{\wedge}) \\
+\tau^{\wedge} &amp;= log(\mathcal{X}) \\
+\mathcal{X} &amp;= Exp(\tau) \\
+\tau &amp;= Log(\mathcal{X}) 
+\end{align}
+$$
+where $exp(\tau^{\wedge}) = \epsilon + \tau^{\wedge} + \frac{1}{2}(\tau^{\wedge})^2 + \cdots$.
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    Key properties of the exponential map are:
+$$
+\begin{align}
+exp((t+s)\tau^{\wedge}) &amp;= exp(t\tau^{\wedge})exp(s\tau^{\wedge}) \\
+exp(t\tau^{\wedge}) &amp;= [exp(\tau^{\wedge})]^t \\
+exp(-\tau^{\wedge}) &amp;= [exp(\tau^{\wedge})]^{-1} \\
+exp(\mathcal{X}\tau^{\wedge}\mathcal{X}^{-1}) &amp;= \mathcal{X}exp(\tau^{\wedge})\mathcal{X}^{-1}
+\end{align}
+$$
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h3 id="$\boxplus$-and-$\boxminus$">
+    $\boxplus$ and $\boxminus$
+    <a class="anchor-link" href="#$\boxplus$-and-$\boxminus$">
+     ¶
+    </a>
+   </h3>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h4 id="Local-operation-:-right-operation">
+    Local operation : right operation
+    <a class="anchor-link" href="#Local-operation-:-right-operation">
+     ¶
+    </a>
+   </h4>
+   $$
+\begin{align}
+\mathcal{Y} &amp;= \mathcal{X} \boxplus {}^{\mathcal{X}}\tau = \mathcal{X} \circ Exp({}^{\mathcal{X}}\tau)) \\
+{}^{\mathcal{X}}\tau &amp;= \mathcal{Y} \boxminus \mathcal{X} = Log(\mathcal{X}^{-1} \circ \mathcal{Y})
+\end{align}
+$$
+   <p>
+    The right operation is a local perturbation in frame $\mathcal{X}$. For example, for rotation operation, we have:
+$$
+\begin{align}
+\dot{R^{\epsilon}_{\mathcal{X}}} &amp;= R^{\epsilon}_{\mathcal{X}}[\omega_{\mathcal{X}}]_\times
+\end{align}
+$$
+where $\epsilon$ is the inertia frame.
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h4 id="Global-operation:-left-operation">
+    Global operation: left operation
+    <a class="anchor-link" href="#Global-operation:-left-operation">
+     ¶
+    </a>
+   </h4>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   $$
+\begin{align}
+\mathcal{Y} &amp;=  {}^{\mathcal{\epsilon}}\tau \boxplus \mathcal{X}  =  Exp({}^{\mathcal{\epsilon}}\tau)) \circ \mathcal{X} \\
+{}^{\mathcal{\epsilon}}\tau &amp;= \mathcal{Y} \boxminus \mathcal{X} = Log( \mathcal{Y} \circ \mathcal{X}^{-1} )
+\end{align}
+$$
+   <p>
+    The right operation is a local perturbation in frame $\mathcal{X}$. For example, for rotation operation, we have:
+$$
+\begin{align}
+\dot{R^{\epsilon}_{\mathcal{X}}} &amp;= [\omega_{\mathcal{\epsilon}}]_\times R^{\epsilon}_{\mathcal{X}}
+\end{align}
+$$
+where $\epsilon$ is the inertia frame.
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h3 id="Adjoint-Operation">
+    Adjoint Operation
+    <a class="anchor-link" href="#Adjoint-Operation">
+     ¶
+    </a>
+   </h3>
+   <p>
+    We can find a local operation and global operation to map $\mathcal{X}$ to the same $\mathcal{Y}$, i.e. $\mathcal{X} \boxplus {}^{\mathcal{X}}\tau = {}^{\mathcal{\epsilon}}\tau \boxplus \mathcal{X}$.
+$$
+\begin{align}
+\mathcal{X} \circ Exp({}^{\mathcal{X}}\tau)) &amp;= Exp({}^{\mathcal{\epsilon}}\tau)) \circ \mathcal{X} \\
+Exp({}^{\mathcal{\epsilon}}\tau)) &amp;= \mathcal{X} \circ  Exp({}^{\mathcal{X}}\tau)) \circ  \mathcal{X}^{-1}\\
+exp({}^{\mathcal{\epsilon}}\tau^{\wedge}) &amp;= \mathcal{X} \circ  exp({}^{\mathcal{X}}\tau^{\wedge}) \circ  \mathcal{X}^{-1} \\
+exp({}^{\mathcal{\epsilon}}\tau^{\wedge}) &amp;= exp(\mathcal{X} \circ  {}^{\mathcal{X}}\tau^{\wedge} \circ  \mathcal{X}^{-1}) \\
+\end{align}
+$$
+Then we get a map between local lie algebra and global lie algebra:
+   </p>
+   <blockquote>
+    $${}^{\mathcal{\epsilon}}\tau^{\wedge} = \mathcal{X} \circ  {}^{\mathcal{X}}\tau^{\wedge} \circ  \mathcal{X}^{-1}$$
+   </blockquote>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    We define the
+    <strong>
+     adjoint action
+    </strong>
+    as $Ad_{\mathcal{X}}(\tau^{\wedge}) = \mathcal{X} \circ  {}^{\mathcal{X}}\tau^{\wedge} \circ  \mathcal{X}^{-1}$ so that ${}^{\mathcal{\epsilon}}\tau^{\wedge} = Ad_{\mathcal{X}}({}^{\mathcal{X}}\tau^{\wedge})$
+   </p>
+   $$
+\begin{align}
+Ad_{\mathcal{X}}(a\tau^{\wedge} + b\sigma^{\wedge}) &amp;= Ad_{\mathcal{X}}(a\tau^{\wedge}) + Ad_{\mathcal{X}}(b\sigma^{\wedge}) \\
+Ad_{\mathcal{X}}(Ad_{\mathcal{Y}}(\tau^{\wedge})) &amp;= Ad_{\mathcal{XY}}(\tau^{\wedge})
+\end{align}
+$$
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    Since $Ad_{\mathcal{X}}()$ is a linear operation so that we can find an equivalent matrix operation as $Ad_{\mathcal{X}}$: ${}^{\mathcal{\epsilon}}\tau^{\wedge} = Ad_{\mathcal{X}}{}^{\mathcal{X}}\tau^{\wedge}$
+$$
+\begin{align}
+\mathcal{X} \boxplus {}^{\mathcal{X}}\tau^{\wedge} &amp;= Ad_{\mathcal{X}}{}^{\mathcal{X}}\tau^{\wedge} \boxplus \mathcal{X} \\
+Ad_{\mathcal{X}^{-1}} &amp;=  Ad_{\mathcal{X}}^{-1}\\
+Ad_{\mathcal{XY}} &amp;= Ad_{\mathcal{X}}Ad_{\mathcal{Y}}
+\end{align}
+$$
+   </p>
+   <p>
+    From ${}^{\mathcal{\epsilon}}\tau^{\wedge} = \mathcal{X} \circ  {}^{\mathcal{X}}\tau^{\wedge} \circ  \mathcal{X}^{-1}$, we can find $Ad_{\mathcal{X}} {}^{\mathcal{X}}\tau^{\wedge} = (\mathcal{X} \circ  {}^{\mathcal{X}}\tau^{\wedge} \circ  \mathcal{X}^{-1})^\vee$
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    Once we have adjoint matrix, we could find the relation below which is quite useful when calculate Jacobian matrices:
+$$
+\begin{align}
+Exp(Ad_{\mathcal{X}} {}^{\mathcal{X}}\tau^{\wedge}) \circ  \mathcal{X} &amp;= \mathcal{X} \circ  Exp({}^{\mathcal{X}}\tau) \\
+Exp(Ad_{\mathcal{X}^{-1}} {}^{\mathcal{X}}\tau^{\wedge})\circ \mathcal{X}^{-1}   &amp;=  \mathcal{X}^{-1} \circ Exp({}^{\mathcal{X}}\tau)     \\
+Exp({}^{\mathcal{X}}\tau)\circ \mathcal{X}   &amp;=  \mathcal{X} \circ Exp(Ad_{\mathcal{X}^{-1}} {}^{\mathcal{X}}\tau^{\wedge}) \\
+\end{align}
+$$
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h3 id="Lie-Group-Examples">
+    Lie Group Examples
+    <a class="anchor-link" href="#Lie-Group-Examples">
+     ¶
+    </a>
+   </h3>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h4 id="SO(3)">
+    SO(3)
+    <a class="anchor-link" href="#SO(3)">
+     ¶
+    </a>
+   </h4>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h5 id="Manifold">
+    Manifold
+    <a class="anchor-link" href="#Manifold">
+     ¶
+    </a>
+   </h5>
+   $$
+R \in SO(3) \subset \mathbb{R^{3\times3}}
+$$
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h5 id="Lie-Algebra">
+    Lie Algebra
+    <a class="anchor-link" href="#Lie-Algebra">
+     ¶
+    </a>
+   </h5>
+   $$
+\begin{align}
+\theta &amp; \in \mathbb{R^{3}} \\
+\theta^{\wedge} &amp;= 
+[\theta]_\times \in \mathfrak{so(3)}
+\end{align} 
+$$
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h5 id="Inverse-and-Rotation-Action">
+    Inverse and Rotation Action
+    <a class="anchor-link" href="#Inverse-and-Rotation-Action">
+     ¶
+    </a>
+   </h5>
+   $$
+\begin{align}
+R^{-1} &amp;= R^T \\
+x^{n} &amp;= R^{nb} x^{b} 
+\end{align} 
+$$
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h5 id="Exp-and-Log">
+    Exp and Log
+    <a class="anchor-link" href="#Exp-and-Log">
+     ¶
+    </a>
+   </h5>
+   $$
+\begin{align}
+R &amp;= Exp(\theta) \\
+&amp;= \mathcal{I} + sin(\|\theta\|)[\theta]_\times + (1-cos(\|\theta\|))[\theta]_\times^2 \\
+\theta &amp;= Log(R) \\
+&amp;= \frac{\alpha(R-R^T)^\vee}{2sin(\alpha)} \\
+\alpha &amp;= cos^{-1}(\frac{trace{R}-1}{2}) 
+\end{align} 
+$$
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h5 id="Adjoint">
+    Adjoint
+    <a class="anchor-link" href="#Adjoint">
+     ¶
+    </a>
+   </h5>
+   $$
+Ad_{R} = R
+$$
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h4 id="SE(3)">
+    SE(3)
+    <a class="anchor-link" href="#SE(3)">
+     ¶
+    </a>
+   </h4>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h5 id="Manifold">
+    Manifold
+    <a class="anchor-link" href="#Manifold">
+     ¶
+    </a>
+   </h5>
+   $$
+M = \begin{bmatrix}
+R &amp; t\\
+0 &amp; 1
+\end{bmatrix} \in SE(3) \subset \mathbb{R^{4\times4}}
+$$
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h5 id="Lie-Algebra">
+    Lie Algebra
+    <a class="anchor-link" href="#Lie-Algebra">
+     ¶
+    </a>
+   </h5>
+   $$
+\begin{align}
+\xi &amp;= \begin{bmatrix}
+\rho \\
+\theta
+\end{bmatrix} \in \mathbb{R^{6}} \\
+\xi^{\wedge} &amp;= \begin{bmatrix}
+[\theta]_\times &amp; \rho\\
+0 &amp; 0
+\end{bmatrix} \in \mathfrak{se(3)}
+\end{align} 
+$$
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h5 id="Inverse-and--Action">
+    Inverse and  Action
+    <a class="anchor-link" href="#Inverse-and--Action">
+     ¶
+    </a>
+   </h5>
+   $$
+\begin{align}
+M^{-1} &amp;= \begin{bmatrix}
+R^T &amp; -R^Tt\\
+0 &amp; 1
+\end{bmatrix} \\
+M_aM_b &amp;= \begin{bmatrix}
+R_aR_b &amp; t_a + R_at_b\\
+0 &amp; 1
+\end{bmatrix}\\
+x' &amp;= M x = Rx + t
+\end{align} 
+$$
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h5 id="Exp-and-Log">
+    Exp and Log
+    <a class="anchor-link" href="#Exp-and-Log">
+     ¶
+    </a>
+   </h5>
+   $$
+\begin{align}
+M &amp;= Exp(\xi) \\
+&amp;=  \begin{bmatrix}
+Exp(\theta) &amp; V(\theta)\rho\\
+0 &amp; 1
+\end{bmatrix}\\
+\xi &amp;= Log(M) \\
+&amp;= \begin{bmatrix}
+V^{-1}(\theta)t\\
+Log(R)
+\end{bmatrix}
+\end{align} 
+$$$$
+V(\theta) = \mathcal{I} + \frac{1-cos(\|\theta\|)}{\|\theta\|^2}[\theta]_\times + \frac{\|\theta\|-sin(\|\theta\|)}{\|\theta\|^3}[\theta]_\times^2
+$$
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h5 id="Adjoint">
+    Adjoint
+    <a class="anchor-link" href="#Adjoint">
+     ¶
+    </a>
+   </h5>
+   $$
+\begin{align}
+Ad_{M}= \begin{bmatrix}
+R &amp; [t]_\times R \\
+0 &amp; R
+\end{bmatrix}
+\end{align}
+$$
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h5 id="pseudo-Exp-and-pseudo-Log">
+    pseudo-Exp and pseudo-Log
+    <a class="anchor-link" href="#pseudo-Exp-and-pseudo-Log">
+     ¶
+    </a>
+   </h5>
+   $$
+\begin{align}
+M_{pseudo} &amp;= Exp_{pseudo}(\xi) \\
+&amp;=  \begin{bmatrix}
+Exp(\theta) &amp; t\\
+0 &amp; 1
+\end{bmatrix}\\
+\xi_{pseudo} &amp;= Log_{pseudo}(M) \\
+&amp;= \begin{bmatrix}
+t\\
+Log(R)
+\end{bmatrix}
+\end{align} 
+$$$$
+\begin{align}
+Ad_{M_{pseudo}} &amp;=\begin{bmatrix}
+R &amp; [t]_\times R \\
+0 &amp; R
+\end{bmatrix}
+\end{align}
+$$
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h3 id="Derivatives-on-Lie-Groups">
+    Derivatives on Lie Groups
+    <a class="anchor-link" href="#Derivatives-on-Lie-Groups">
+     ¶
+    </a>
+   </h3>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    We have $\mathcal{Y} = f(\mathcal{X})$ with $\mathcal{X} \in \mathcal{M}, \mathcal{Y} \in \mathcal{N}, \mathcal{T}_{\mathcal{M}} \in \mathbb{R}^m, \mathcal{T}_{\mathcal{N}} \in \mathbb{R}^n$, then we can get a
+    <strong>
+     right Jacobian
+    </strong>
+    matrix which maps tangent space $\mathcal{T}_{\mathcal{M}}$ to another tangent space $\mathcal{T}_{\mathcal{N}}$.
+   </p>
+   $$
+\begin{align}
+{J}_{\mathcal{X}}^{\mathcal{Y}} &amp;= \underset{\tau \rightarrow 0}{\operatorname{lim}}\frac{f(\mathcal{X} \boxplus_{\mathcal{M}} \tau) \boxminus_{\mathcal{N}}f(\mathcal{X})}{\tau} \in \mathbb{R^{n \times m}} \\
+&amp;= \underset{\tau \rightarrow 0}{\operatorname{lim}}\frac{Log(f(\mathcal{X})^{-1} \circ f(\mathcal{X} \circ Exp(\tau))}{\tau}
+\end{align}
+$$
+   <p>
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    The we could have a approximation based on Taylor expansion as $f(\mathcal{X} \boxplus {}^{\mathcal{X}}\tau) \approx f(\mathcal{X}) \boxplus {J^{\mathcal{Y}}_{\mathcal{X}}}{}^{\mathcal{X}}\tau$. And without proof here, we also claim relation between left and right jacobian is that ${}^{\mathcal{\epsilon}}J^{\mathcal{Y}}_{\mathcal{X}}Ad_{\mathcal{X}} = Ad_{f(\mathcal{X})}{}^{\mathcal{X}}J^{\mathcal{Y}}_{\mathcal{X}}$.
+   </p>
+   <p>
+    Note (XW: My own observation): If I use $\boxplus$ for this approximation, I couldn't figure out how to  plug in this into Gauss Newton optimization framework. So I have to make sure $f(\mathcal{X})$ is in a Euclidean space which means its tangent space is the same as its manifold space so that $\boxplus$ becomes normal $+$, i.e. $f(\mathcal{X} \boxplus {}^{\mathcal{X}}\tau) \approx f(\mathcal{X}) + {J^{\mathcal{Y}}_{\mathcal{X}}}{}^{\mathcal{X}}\tau$.
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h4 id="Inverse">
+    Inverse
+    <a class="anchor-link" href="#Inverse">
+     ¶
+    </a>
+   </h4>
+   $$
+\begin{align}
+{J}^{\mathcal{X}^{-1}}_{\mathcal{X}} &amp;= -Ad_{\mathcal{X}}
+\end{align}
+$$
+   <p>
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h4 id="Composition">
+    Composition
+    <a class="anchor-link" href="#Composition">
+     ¶
+    </a>
+   </h4>
+   $$
+\begin{align}
+{J}^{\mathcal{X} \circ \mathcal{Y}}_{\mathcal{X}} &amp;=  Ad_{\mathcal{Y}}^{-1}\\
+{J}^{\mathcal{X} \circ \mathcal{Y}}_{\mathcal{Y}} &amp;= \mathcal{I}
+\end{align}
+$$
+   <p>
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h4 id="Exp">
+    Exp
+    <a class="anchor-link" href="#Exp">
+     ¶
+    </a>
+   </h4>
+   $$
+\begin{align}
+{J}_r(\tau) &amp;= \frac{\partial Exp(\tau)}{\partial \tau}  \\
+&amp;= \underset{\delta\tau \rightarrow 0}{\operatorname{lim}}\frac{Exp(\tau \boxplus \delta \tau) \boxminus Exp(\tau)}{\partial \delta \tau}\\
+&amp;= \underset{\delta\tau \rightarrow 0}{\operatorname{lim}}\frac{Log(Exp(\tau)^{-1}Exp(\tau + \delta \tau)}{\partial \delta \tau}
+\end{align}
+$$
+   <p>
+    First-order approximation:
+$$
+\begin{align}
+Exp(\phi + \delta\phi) &amp;\approx Exp(\phi)Exp(J_r(\phi)\delta\phi) \\
+Exp(\phi + J_r^{-1}(\phi)\delta\phi) &amp;\approx Exp(\phi)Exp(J_r(\phi)J_r^{-1}(\phi)\delta\phi) \\
+Log(Exp(\phi)Exp(\delta\phi)) &amp;\approx \phi + J_r^{-1}(\phi)\delta\phi
+\end{align}
+$$
+Left and right jacobian:
+$$
+J_r(-\tau) = J_l(\tau)
+$$
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h4 id="Log">
+    Log
+    <a class="anchor-link" href="#Log">
+     ¶
+    </a>
+   </h4>
+   $$
+\begin{align}
+{J}^{Log(\mathcal{X})}_{\mathcal{X}} &amp;= J_r^{-1}(\tau)
+\end{align}
+$$
+   <p>
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h4 id="$\boxplus$">
+    $\boxplus$
+    <a class="anchor-link" href="#$\boxplus$">
+     ¶
+    </a>
+   </h4>
+   $$
+\begin{align}
+{J}^{\mathcal{X}\boxplus \tau}_{\mathcal{X}} &amp;=  Ad_{Exp(\tau)}^{-1}\\
+{J}^{\mathcal{X}\boxplus \tau}_{\tau} &amp;= J_r({\tau})
+\end{align}
+$$
+   <p>
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h4 id="$\boxminus$">
+    $\boxminus$
+    <a class="anchor-link" href="#$\boxminus$">
+     ¶
+    </a>
+   </h4>
+   $$
+\begin{align}
+{J}^{\mathcal{Y}\boxminus \mathcal{X}}_{\mathcal{X}} &amp;=  -J_l^{-1(\tau)}\\
+{J}^{\mathcal{Y}\boxminus \mathcal{X}}_{\mathcal{Y}} &amp;= J_r^{-1}(\tau)
+\end{align}
+$$
+   <p>
+    where $\tau = Log(\mathcal{Y}\boxminus \mathcal{X}) = Log(\mathcal{X}^{-1}\mathcal{Y})$
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h3 id="Derivatives-on-Lie-Groups-Examples:--SO(3),-SE(3)">
+    Derivatives on Lie Groups Examples:  SO(3), SE(3)
+    <a class="anchor-link" href="#Derivatives-on-Lie-Groups-Examples:--SO(3),-SE(3)">
+     ¶
+    </a>
+   </h3>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h4 id="SO(3)">
+    SO(3)
+    <a class="anchor-link" href="#SO(3)">
+     ¶
+    </a>
+   </h4>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h5 id="Inverse">
+    Inverse
+    <a class="anchor-link" href="#Inverse">
+     ¶
+    </a>
+   </h5>
+   $$
+\begin{align}
+{J}^{\mathcal{R}^{-1}}_{\mathcal{R}} &amp;= -Ad_{\mathcal{R}} = -R
+\end{align}
+$$
+   <p>
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h5 id="Composition">
+    Composition
+    <a class="anchor-link" href="#Composition">
+     ¶
+    </a>
+   </h5>
+   $$
+\begin{align}
+{J}^{\mathcal{Q} \circ \mathcal{R}}_{\mathcal{Q}} &amp;=  Ad_{\mathcal{Q}}^{-1} = Q^T\\
+{J}^{\mathcal{Q} \circ \mathcal{R}}_{\mathcal{R}} &amp;= \mathcal{I}
+\end{align}
+$$
+   <p>
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h5 id="Exp">
+    Exp
+    <a class="anchor-link" href="#Exp">
+     ¶
+    </a>
+   </h5>
+   <p>
+    $t = \|\theta\|,  u=\frac{\theta}{\|\theta\|}$
+$$
+\begin{align}
+{J}_r(\theta) &amp;= \frac{sin(t)}{t}\mathcal{I}_{3\times3} + (1- \frac{sin(t)}{t})uu^T-\frac{1-cos(t)}{t}[u]_\times\\
+{J}^{-1}_r(\theta) &amp;= \frac{t}{2}cot(\frac{t}{2})\mathcal{I}_{3\times3} + (1-\frac{t}{2}cot(\frac{t}{2}))uu^T +\frac{t}{2}[u]_times\\
+{J}_l(\theta) &amp;= \frac{sin(t)}{t}\mathcal{I}_{3\times3} + (1- \frac{sin(t)}{t})uu^T + \frac{1-cos(t)}{t}[u]_\times\\
+{J}^{-1}_l(\theta) &amp;= \frac{t}{2}cot(\frac{t}{2})\mathcal{I}_{3\times3} + (1-\frac{t}{2}cot(\frac{t}{2}))uu^T -\frac{t}{2}[u]_\times\\
+J_l(\theta) &amp;= J_r(-\theta)
+\end{align}
+$$
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h5 id="Log">
+    Log
+    <a class="anchor-link" href="#Log">
+     ¶
+    </a>
+   </h5>
+   $$
+\begin{align}
+{J}^{Log(\mathcal{R})}_{\mathcal{R}} &amp;= J_r^{-1}(\theta)
+\end{align}
+$$
+   <p>
+    where $\theta = Log(R)$
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h5 id="$\boxminus$">
+    $\boxminus$
+    <a class="anchor-link" href="#$\boxminus$">
+     ¶
+    </a>
+   </h5>
+   $$
+\begin{align}
+{J}^{\mathcal{Q}\boxminus \mathcal{R}}_{\mathcal{R}} &amp;=  -J_l^{-1}(\theta)\\
+{J}^{\mathcal{Q}\boxminus \mathcal{R}}_{\mathcal{Q}} &amp;= J_r^{-1}(\theta)
+\end{align}
+$$
+   <p>
+    where $\theta = Log(\mathcal{Q}\boxminus \mathcal{R}) = Log(\mathcal{R}^{-1}\mathcal{Q})$
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h5 id="Rotation-Action">
+    Rotation Action
+    <a class="anchor-link" href="#Rotation-Action">
+     ¶
+    </a>
+   </h5>
+   $$
+\begin{align}
+{J}^{\mathcal{R} \cdot v}_{\mathcal{R}} &amp;= -R[v]_\times\\
+{J}^{\mathcal{R} \cdot v}_{v} &amp;= R
+\end{align}
+$$
+   <p>
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h4 id="SE(3)">
+    SE(3)
+    <a class="anchor-link" href="#SE(3)">
+     ¶
+    </a>
+   </h4>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h5 id="Inverse">
+    Inverse
+    <a class="anchor-link" href="#Inverse">
+     ¶
+    </a>
+   </h5>
+   $$
+\begin{align}
+{J}^{\mathcal{T}^{-1}}_{\mathcal{T}} &amp;= -Ad_{\mathcal{T}} = -\begin{bmatrix}
+R &amp; [t]_\times R \\
+0 &amp; R
+\end{bmatrix}
+\end{align}
+$$
+   <p>
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h5 id="Composition">
+    Composition
+    <a class="anchor-link" href="#Composition">
+     ¶
+    </a>
+   </h5>
+   $$
+\begin{align}
+{J}^{\mathcal{S} \circ \mathcal{T}}_{\mathcal{S}} &amp;=  Ad_{\mathcal{S}}^{-1} = Ad_{\mathcal{S}^{-1}} =\begin{bmatrix}
+R^t &amp; R^T[t]_\times R \\
+0 &amp; R^T
+\end{bmatrix}\\
+{J}^{\mathcal{S} \circ \mathcal{T}}_{\mathcal{T}} &amp;= \mathcal{I}
+\end{align}
+$$
+   <p>
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h5 id="Exp">
+    Exp
+    <a class="anchor-link" href="#Exp">
+     ¶
+    </a>
+   </h5>
+   $$
+\begin{align}
+{J}_r(\rho,\theta) &amp;= \begin{bmatrix}J_r &amp; Q_r \\ 0 &amp; J_r \end{bmatrix}\\
+{J}^{-1}_r(\rho,\theta) &amp;= \begin{bmatrix}J_r^{-1} &amp; -J_r^{-1}Q_rJ_r^{-1} \\ 0 &amp; J_r^{-1} \end{bmatrix}\\
+{J}_l(\rho,\theta) &amp;= J_r(-\rho,-\theta)\\
+{J}^{-1}_l(\rho,\theta) &amp;= {J}^{-1}_r(-\rho,-\theta)\\
+\end{align}
+$$
+   <p>
+    $t = \|\theta\|$
+$$
+\begin{align}
+Q_l(\xi) &amp;= Q_r(-\xi) \\
+&amp;= \frac{1}{2}[\rho]_\times \\
+&amp;+ \frac{t-sin(t)}{t^3}([\phi]_\times[\rho]_\times + [\rho]_\times[\phi]_\times+[\phi]_\times[\rho]_\times[\phi]_\times)\\
+&amp;+\frac{t^2+2cos(t)-2}{2t^4}([\phi]_\times[\phi]_\times[\rho]_\times+[\rho]_\times[\phi]_\times[\phi]_\times-3[\phi]_\times[\rho]_\times[\phi]_\times)\\
+&amp;+\frac{2t-3sin(t)+tcos(t)}{2t^5}([\phi]_\times[\rho]_\times[\phi]_\times[\phi]_\times+[\phi]_\times[\phi]_\times[\rho]_\times[\phi]_\times)
+\end{align}
+$$
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h5 id="Log">
+    Log
+    <a class="anchor-link" href="#Log">
+     ¶
+    </a>
+   </h5>
+   $$
+\begin{align}
+{J}^{Log(\mathcal{T})}_{\mathcal{T}} &amp;= J_r^{-1}(\xi)
+\end{align}
+$$
+   <p>
+    where $\xi = (\rho,\theta) = Log(T)$
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h5 id="$\boxminus$">
+    $\boxminus$
+    <a class="anchor-link" href="#$\boxminus$">
+     ¶
+    </a>
+   </h5>
+   $$
+\begin{align}
+{J}^{\mathcal{S}\boxminus \mathcal{T}}_{\mathcal{T}} &amp;=  -J_l^{-1}(\xi)\\
+{J}^{\mathcal{S}\boxminus \mathcal{T}}_{\mathcal{S}} &amp;= J_r^{-1}(\xi)
+\end{align}
+$$
+   <p>
+    where $\xi = Log(\mathcal{S}\boxminus \mathcal{T}) = Log(\mathcal{T}^{-1}\mathcal{S})$
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h5 id="Action">
+    Action
+    <a class="anchor-link" href="#Action">
+     ¶
+    </a>
+   </h5>
+   $$
+\begin{align}
+{J}^{\mathcal{T} \cdot v}_{\mathcal{R}} &amp;= [R -R[v]_\times]\\
+{J}^{\mathcal{T} \cdot v}_{v} &amp;= R
+\end{align}
+$$
+   <p>
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h3 id="Uncertainty-Propagation">
+    Uncertainty Propagation
+    <a class="anchor-link" href="#Uncertainty-Propagation">
+     ¶
+    </a>
+   </h3>
+   <p>
+    When we use right boxplus, essentially we perturbed poses in local frame (check
+    <a href="{% post_url 2021-12-18-rigid-body-transformation %}">
+     this
+    </a>
+    for more information). We can define variances in the local tangent frame or global tangent frame.
+   </p>
+   $$
+\begin{align}
+T_{EV} &amp;= \bar{T}_{EV}Exp({}^{\mathcal{V}}\xi) \\
+T_{EV} &amp;= Exp({}^{\mathcal{E}}\xi)\bar{T}_{EV}
+\end{align}
+$$
+   <p>
+    where $\bar{T}_{EV}$ is noise free and noise $\xi \sim \mathcal{N}(0, \Sigma)$.
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h4 id="Inverse">
+    Inverse
+    <a class="anchor-link" href="#Inverse">
+     ¶
+    </a>
+   </h4>
+   $$
+\begin{align}
+T_{EV} &amp;= \bar{T}_{EV}Exp({}^{\mathcal{V}}\xi) \\
+T_{EV}^{-1} &amp;= (\bar{T}_{EV}Exp({}^{\mathcal{V}}\xi))^{-1} \\
+&amp;= (Exp({}^{\mathcal{V}}\xi))^{-1}\bar{T}_{EV}^{-1}\\
+&amp;= Exp(-{}^{\mathcal{V}}\xi)\bar{T}_{EV}^{-1}\\
+&amp;= \bar{T}_{EV}^{-1}Exp(-Ad_{T_{EV}}{}^{\mathcal{V}}\xi) \\
+\Sigma_{VE} &amp; = Ad_{T_{EV}}\Sigma_{EV} Ad_{T_{EV}}^T
+\end{align}
+$$
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h4 id="Composition">
+    Composition
+    <a class="anchor-link" href="#Composition">
+     ¶
+    </a>
+   </h4>
+   $$
+\begin{align}
+T_{EV_2} &amp;= \bar{T}_{EV_1}Exp({}^{\mathcal{V_1}}\xi)\bar{T}_{V_1V_2}Exp({}^{\mathcal{V_{12}}}\xi) \\
+&amp;= \bar{T}_{EV_1}\bar{T}_{V_1V_2}Exp(Ad_{T_{V_1V_2}^{-1}}{}^{\mathcal{V_1}}\xi)Exp({}^{\mathcal{V_{12}}}\xi) \\
+\Sigma_{EV_2} &amp;= Ad_{T_{V_2V_1}}\Sigma_{EV_1} Ad_{T_{V_2V_1}}^T + \Sigma_{V_1V_2} + Ad_{T_{V_2V_1}}\Sigma_{EV_1,V_1V_2} + (Ad_{T_{V_2V_1}}\Sigma_{EV_1,V_1V_2})^T
+\end{align}
+$$
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h4 id="Relative-transformation">
+    Relative transformation
+    <a class="anchor-link" href="#Relative-transformation">
+     ¶
+    </a>
+   </h4>
+   $$
+\begin{align}
+T_{V_1V_2} &amp;= (\bar{T}_{EV_1}Exp({}^{\mathcal{V_1}}\xi))^{-1}\bar{T}_{EV_2}Exp({}^{\mathcal{V_{2}}}\xi)\\
+&amp;=Exp(-{}^{\mathcal{V_1}}\xi)\bar{T}_{EV_1}^{-1}\bar{T}_{EV_2}Exp({}^{\mathcal{V_{2}}}\xi)\\
+&amp;=\bar{T}_{EV_1}^{-1}\bar{T}_{EV_2}Exp(-Ad_{T_{V_2E}T_{EV_1}}{}^{\mathcal{V_1}}\xi)Exp({}^{\mathcal{V_{2}}}\xi)\\
+&amp;=\bar{T}_{V_1V_2}Exp(-Ad_{T_{V_2V_1}}{}^{\mathcal{V_1}}\xi)Exp({}^{\mathcal{V_{2}}}\xi)\\
+\Sigma_{V_1V_2} &amp;= Ad_{T_{V_2V_1}}\Sigma_{V_1}Ad_{T_{V_2V_1}}^T + \Sigma_{V_2} -  Ad_{T_{V_2V_1}}\Sigma_{EV_1, EV_2} - (Ad_{T_{V_2V_1}}\Sigma_{EV_1, EV_2})^T
+\end{align}
+$$
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h3 id="A-Pose-Graph-Example">
+    A Pose Graph Example
+    <a class="anchor-link" href="#A-Pose-Graph-Example">
+     ¶
+    </a>
+   </h3>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h4 id="SE(3)-=-SO(3)-+-T(3)">
+    SE(3) = SO(3) + T(3)
+    <a class="anchor-link" href="#SE(3)-=-SO(3)-+-T(3)">
+     ¶
+    </a>
+   </h4>
+   <p>
+    In the first pose example, we will separate constraints on rotation and translation. In this case, we will leverage Lie theory on SO(3).
+$$
+\begin{align}
+\Delta  \hat{x} &amp;= \underset{\Delta x}{\operatorname{argmin}}{\|f(R_{gi}, t_{gi}, R_{gj}, t_{gj}, \hat{R}_{gi}, \hat{t}_{gi}, \hat{R}_{ij}, \hat{t}_{ij})\|_\Sigma} \\
+\end{align}
+$$
+   </p>
+   $$
+\begin{align}
+\Delta  \hat{x} &amp;= \underset{\Delta x}{\operatorname{argmin}}{
+\|(\bar{t}_{gi}+\Delta t_{gi})-\hat{t}_{gi} \| \\
++ \|Log(\hat{R}_{gi}^T (\bar{R}_{gi}\boxplus \Delta \theta_{gi}))\| \\
++\|Log(\hat{R}_{ij}^T (\bar{R}_{gi}\boxplus \Delta \theta_{gi})^T(\bar{R}_{gj}\boxplus \Delta \theta_{gj}))\|\\
++ \|(\bar{R}_{gi} \boxplus \Delta \theta_{gi})^T((\bar{t}_{gj}+\Delta t_{gj})-(\bar{t}_{gi}+\Delta t_{gi}))-\hat{t}_{ij}\|
+} \\
+&amp;= \underset{\Delta x}{\operatorname{argmin}}{
+\|(\bar{t}_{gi} - \hat{t}_{gi}) + \mathcal{I}_{3\times3}\Delta t_{gi}  \| \\
++ \|Log(\hat{R}_{gi}^T \bar{R}_{gi}) + J^{-1}_r(Log(\hat{R}_{gi}^T \bar{R}_{gi})) \mathcal{I}_{3\times3}\Delta \theta_{gi}\|\\
++\|Log(\hat{R}_{ij}^T \bar{R}_{gi}^T\bar{R}_{gj}) 
+- J^{-1}_r(Log(\hat{R}_{ij}^T \bar{R}_{gi}^T\bar{R}_{gj}))Ad_{\bar{R}^T_{gj}}Ad_{\bar{R}_{gi}} \Delta \theta_{gi}
++ J^{-1}_r(Log(\hat{R}_{ij}^T \bar{R}_{gi}^T\bar{R}_{gj}))\mathcal{I}_{3\times3}\Delta\theta_{gj}\| \\
++ \|\bar{R}^T_{gi}(\bar{t}_{gj} - \bar{t}_{gi})-\hat{t}_{ij} -\bar{R}^T_{gi}\Delta t_{gi} + \bar{R}^T_{gi}\Delta t_{gj} + \bar{R}^T_{gi}[\bar{t}_{gj} - \bar{t}_{gi}]_\times \bar{R}_{gi}\Delta \theta_{gi}\| 
+}
+\end{align}
+$$
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    You can find more information about how to solve this factor graph in this
+    <a href="{% post_url 2021-05-24-factor-graph %}">
+     post
+    </a>
+    .
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+ <div class="input">
+  <div class="prompt input_prompt">
+   In [7]:
+  </div>
+  <div class="inner_cell">
+   <div class="input_area collapsed">
+    <div class="collapse_expand_button fa fa-1x fa-minus-square-o">
+    </div>
+    <div class="highlight hl-ipython3">
+     <pre><span></span><span class="c1"># Lie theory SO(3) libraries</span>
+
+<span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">sin</span><span class="p">,</span> <span class="n">cos</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy.linalg</span> <span class="kn">import</span> <span class="n">expm</span><span class="p">,</span> <span class="n">logm</span>
+
+<span class="k">def</span> <span class="nf">skew</span><span class="p">(</span><span class="n">omega</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="n">omega</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">(),</span> <span class="n">omega</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">()],</span>
+                     <span class="p">[</span><span class="n">omega</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">(),</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="n">omega</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">()],</span>
+                     <span class="p">[</span><span class="o">-</span><span class="n">omega</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">(),</span> <span class="n">omega</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">(),</span> <span class="mi">0</span><span class="p">]])</span>
+
+<span class="k">def</span> <span class="nf">unskew</span><span class="p">(</span><span class="n">Omega</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">Omega</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">()],</span> <span class="p">[</span><span class="n">Omega</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">()],</span> <span class="p">[</span><span class="n">Omega</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">()]])</span>
+
+<span class="k">def</span> <span class="nf">Exp_SO3</span><span class="p">(</span><span class="n">omega</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">expm</span><span class="p">(</span><span class="n">skew</span><span class="p">(</span><span class="n">omega</span><span class="p">))</span>
+
+<span class="k">def</span> <span class="nf">Log_SO3</span><span class="p">(</span><span class="n">R</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">unskew</span><span class="p">(</span><span class="n">logm</span><span class="p">(</span><span class="n">R</span><span class="p">))</span>
+
+<span class="k">def</span> <span class="nf">Adjoint_SO3</span><span class="p">(</span><span class="n">Omega</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">Omega</span>
+
+<span class="k">def</span> <span class="nf">LeftJacobian_SO3</span><span class="p">(</span><span class="n">w</span><span class="p">):</span>
+    <span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1E-8</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">w</span><span class="o">/</span><span class="n">theta</span>
+    <span class="n">A</span> <span class="o">=</span> <span class="n">skew</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span><span class="o">/</span><span class="n">theta</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span><span class="o">/</span><span class="n">theta</span><span class="p">)</span><span class="o">*</span><span class="n">a</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">T</span><span class="p">)</span> <span class="o">+</span> <span class="p">((</span><span class="mi">1</span><span class="o">-</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">))</span><span class="o">/</span><span class="n">theta</span><span class="p">)</span> <span class="o">*</span> <span class="n">A</span><span class="p">;</span>
+        
+<span class="k">def</span> <span class="nf">LeftJacobianInv_SO3</span><span class="p">(</span><span class="n">w</span><span class="p">):</span>
+    <span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1E-8</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">w</span><span class="o">/</span><span class="n">theta</span>
+    <span class="n">A</span> <span class="o">=</span> <span class="n">skew</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+    <span class="n">cot_theta_half</span> <span class="o">=</span> <span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="o">/</span><span class="mf">2.0</span><span class="p">)</span><span class="o">/</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="o">/</span><span class="mf">2.0</span><span class="p">);</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">theta</span><span class="o">/</span><span class="mf">2.0</span><span class="p">)</span><span class="o">*</span><span class="n">cot_theta_half</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="p">(</span><span class="n">theta</span><span class="o">/</span><span class="mf">2.0</span><span class="p">)</span><span class="o">*</span><span class="n">cot_theta_half</span><span class="p">)</span><span class="o">*</span><span class="n">a</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">T</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="n">theta</span><span class="o">/</span><span class="mf">2.0</span><span class="p">)</span><span class="o">*</span><span class="n">A</span><span class="p">;</span>
+
+<span class="k">def</span> <span class="nf">RightJacobian_SO3</span><span class="p">(</span><span class="n">w</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">LeftJacobian_SO3</span><span class="p">(</span><span class="o">-</span><span class="n">w</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">RightJacobianInv_SO3</span><span class="p">(</span><span class="n">w</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">LeftJacobianInv_SO3</span><span class="p">(</span><span class="o">-</span><span class="n">w</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">from_rpy</span><span class="p">(</span><span class="n">roll</span><span class="p">,</span> <span class="n">pitch</span><span class="p">,</span> <span class="n">yaw</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">rotz</span><span class="p">(</span><span class="n">yaw</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">roty</span><span class="p">(</span><span class="n">pitch</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">rotx</span><span class="p">(</span><span class="n">roll</span><span class="p">)))</span>
+
+
+<span class="k">def</span> <span class="nf">from_rpy_xyz</span><span class="p">(</span><span class="n">roll</span><span class="p">,</span> <span class="n">pitch</span><span class="p">,</span> <span class="n">yaw</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">):</span>
+    <span class="n">rot</span> <span class="o">=</span> <span class="n">from_rpy</span><span class="p">(</span><span class="n">roll</span><span class="p">,</span> <span class="n">pitch</span><span class="p">,</span> <span class="n">yaw</span><span class="p">)</span>
+    <span class="n">rot_t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">rot</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">x</span><span class="p">],</span> <span class="p">[</span><span class="n">y</span><span class="p">],</span> <span class="p">[</span><span class="n">z</span><span class="p">]])),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">rot_t</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">rotx</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                     <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="o">-</span><span class="n">s</span><span class="p">],</span>
+                     <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">c</span><span class="p">]])</span>
+
+
+<span class="k">def</span> <span class="nf">roty</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">c</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">s</span><span class="p">],</span>
+                     <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                     <span class="p">[</span><span class="o">-</span><span class="n">s</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">c</span><span class="p">]])</span>
+
+
+<span class="k">def</span> <span class="nf">rotz</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">c</span><span class="p">,</span> <span class="o">-</span><span class="n">s</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                     <span class="p">[</span><span class="n">s</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                     <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
+
+<span class="c1">#</span>
+</pre>
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+ <div class="input">
+  <div class="prompt input_prompt">
+   In [3]:
+  </div>
+  <div class="inner_cell">
+   <div class="input_area collapsed">
+    <div class="collapse_expand_button fa fa-1x fa-minus-square-o">
+    </div>
+    <div class="highlight hl-ipython3">
+     <pre><span></span><span class="c1"># A simple pose graph</span>
+
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">T_gi</span> <span class="o">=</span> <span class="n">from_rpy_xyz</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">noise</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> 
+                         <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="c1"># noise = np.zeros(6)</span>
+
+<span class="n">T_gi_hat</span> <span class="o">=</span> <span class="n">T_gi</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Exp_SE3</span><span class="p">(</span><span class="n">noise</span><span class="p">))</span>
+<span class="n">T_gi_gj_hat</span> <span class="o">=</span> <span class="n">from_rpy_xyz</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+<span class="n">T_gj</span> <span class="o">=</span> <span class="n">T_gi</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">T_gi_gj_hat</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Exp_SE3</span><span class="p">(</span><span class="n">noise</span><span class="p">)))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Before optimization, check residuals.'</span><span class="p">)</span>
+<span class="n">pose_i_anchor_error</span> <span class="o">=</span> <span class="n">Log_SE3</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">T_gi_hat</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">T_gi</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Pose i anchor observation error: </span><span class="se">\n</span><span class="s1"> </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">pose_i_anchor_error</span><span class="p">)</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+
+<span class="n">transformation_ij_error</span> <span class="o">=</span> <span class="n">Log_SE3</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">T_gi_gj_hat</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">T_gi</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">T_gj</span><span class="p">)))</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Transformation error: </span><span class="se">\n</span><span class="s1"> </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">transformation_ij_error</span><span class="p">)</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">Optimize</span><span class="p">(</span><span class="n">R_gi</span><span class="p">,</span> <span class="n">t_gi</span><span class="p">,</span> <span class="n">R_gj</span><span class="p">,</span> <span class="n">t_gj</span><span class="p">,</span> <span class="n">R_gi_hat</span><span class="p">,</span> <span class="n">t_gi_hat</span><span class="p">,</span> <span class="n">R_gi_gj_hat</span><span class="p">,</span> <span class="n">t_gi_gj_hat</span><span class="p">):</span>
+    <span class="n">J</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">3</span><span class="o">*</span><span class="mi">4</span><span class="p">,</span> <span class="mi">12</span><span class="p">))</span> <span class="c1"># Jacobian</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">3</span><span class="o">*</span><span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span> <span class="c1"># Residual</span>
+    <span class="n">ret</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">12</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span> <span class="c1"># State update</span>
+    
+    <span class="n">theta_1</span> <span class="o">=</span> <span class="n">Log_SO3</span><span class="p">(</span><span class="n">R_gi_hat</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">R_gi</span><span class="p">))</span>
+    <span class="n">theta_2</span> <span class="o">=</span> <span class="n">Log_SO3</span><span class="p">(</span><span class="n">R_gi_gj_hat</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">R_gi</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">R_gj</span><span class="p">)))</span>
+
+    <span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">t_gi</span> <span class="o">-</span> <span class="n">t_gi_hat</span>
+    <span class="n">r</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">theta_1</span>
+    <span class="n">r</span><span class="p">[</span><span class="mi">6</span><span class="p">:</span><span class="mi">9</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">theta_2</span>
+    <span class="n">r</span><span class="p">[</span><span class="mi">9</span><span class="p">:</span><span class="mi">12</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">R_gi</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">t_gj</span> <span class="o">-</span> <span class="n">t_gi</span><span class="p">)</span> <span class="o">-</span> <span class="n">t_gi_gj_hat</span>
+    
+    <span class="c1"># delta_theta_i, delta_t_i, delta_theta_j, delta_t_j</span>
+    <span class="n">J</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">J</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">RightJacobianInv_SO3</span><span class="p">(</span><span class="n">theta_1</span><span class="p">)</span>
+    <span class="n">J</span><span class="p">[</span><span class="mi">6</span><span class="p">:</span><span class="mi">9</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">RightJacobianInv_SO3</span><span class="p">(</span><span class="n">theta_2</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">R_gj</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">R_gi</span><span class="p">))</span>
+    <span class="n">J</span><span class="p">[</span><span class="mi">6</span><span class="p">:</span><span class="mi">9</span><span class="p">,</span> <span class="mi">6</span><span class="p">:</span><span class="mi">9</span><span class="p">]</span> <span class="o">=</span> <span class="n">RightJacobianInv_SO3</span><span class="p">(</span><span class="n">theta_2</span><span class="p">)</span>
+    <span class="n">J</span><span class="p">[</span><span class="mi">9</span><span class="p">:</span><span class="mi">12</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">R_gi</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">skew</span><span class="p">(</span><span class="n">t_gj</span><span class="o">-</span><span class="n">t_gi</span><span class="p">))</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">R_gi</span><span class="p">)</span>
+    <span class="n">J</span><span class="p">[</span><span class="mi">9</span><span class="p">:</span><span class="mi">12</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">R_gi</span><span class="o">.</span><span class="n">T</span>
+    <span class="n">J</span><span class="p">[</span><span class="mi">9</span><span class="p">:</span><span class="mi">12</span><span class="p">,</span> <span class="mi">9</span><span class="p">:</span><span class="mi">12</span><span class="p">]</span> <span class="o">=</span> <span class="n">R_gi</span><span class="o">.</span><span class="n">T</span>
+    <span class="n">delta_x</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">J</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">J</span><span class="p">))</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">J</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">r</span><span class="p">))</span>
+    <span class="k">assert</span><span class="p">(</span><span class="n">delta_x</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">ret</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">delta_x</span>
+
+<span class="n">R_gi_hat</span> <span class="o">=</span> <span class="n">T_gi_hat</span><span class="p">[:</span><span class="mi">3</span><span class="p">,</span> <span class="p">:</span><span class="mi">3</span><span class="p">]</span>
+<span class="n">t_gi_hat</span> <span class="o">=</span> <span class="n">T_gi_hat</span><span class="p">[:</span><span class="mi">3</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">]]</span>
+<span class="n">R_gi_gj_hat</span> <span class="o">=</span> <span class="n">T_gi_gj_hat</span><span class="p">[:</span><span class="mi">3</span><span class="p">,</span> <span class="p">:</span><span class="mi">3</span><span class="p">]</span>
+<span class="n">t_gi_gj_hat</span> <span class="o">=</span> <span class="n">T_gi_gj_hat</span><span class="p">[:</span><span class="mi">3</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">]]</span>
+
+<span class="n">STEPS</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">STEPS</span><span class="p">):</span>
+    <span class="n">R_gi</span> <span class="o">=</span> <span class="n">T_gi</span><span class="p">[:</span><span class="mi">3</span><span class="p">,</span> <span class="p">:</span><span class="mi">3</span><span class="p">]</span>
+    <span class="n">t_gi</span> <span class="o">=</span> <span class="n">T_gi</span><span class="p">[:</span><span class="mi">3</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">]]</span>
+    <span class="n">R_gj</span> <span class="o">=</span> <span class="n">T_gj</span><span class="p">[:</span><span class="mi">3</span><span class="p">,</span> <span class="p">:</span><span class="mi">3</span><span class="p">]</span>
+    <span class="n">t_gj</span> <span class="o">=</span> <span class="n">T_gj</span><span class="p">[:</span><span class="mi">3</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">]]</span>
+    
+    <span class="n">delta</span> <span class="o">=</span> <span class="n">Optimize</span><span class="p">(</span><span class="n">R_gi</span><span class="p">,</span> <span class="n">t_gi</span><span class="p">,</span> <span class="n">R_gj</span><span class="p">,</span> <span class="n">t_gj</span><span class="p">,</span> <span class="n">R_gi_hat</span><span class="p">,</span> <span class="n">t_gi_hat</span><span class="p">,</span> <span class="n">R_gi_gj_hat</span><span class="p">,</span> <span class="n">t_gi_gj_hat</span><span class="p">)</span>
+    <span class="n">R_gi</span> <span class="o">=</span> <span class="n">R_gi</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Exp_SO3</span><span class="p">(</span><span class="n">delta</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">,:]))</span>
+    <span class="n">t_gi</span> <span class="o">=</span> <span class="n">t_gi</span> <span class="o">+</span> <span class="n">delta</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span>
+    <span class="n">R_gj</span> <span class="o">=</span> <span class="n">R_gj</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Exp_SO3</span><span class="p">(</span><span class="n">delta</span><span class="p">[</span><span class="mi">6</span><span class="p">:</span><span class="mi">9</span><span class="p">,:]))</span>
+    <span class="n">t_gj</span> <span class="o">=</span> <span class="n">t_gj</span> <span class="o">+</span> <span class="n">delta</span><span class="p">[</span><span class="mi">9</span><span class="p">:</span><span class="mi">12</span><span class="p">]</span>
+    
+    <span class="n">T_gi</span><span class="p">[:</span><span class="mi">3</span><span class="p">,</span> <span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">R_gi</span>
+    <span class="n">T_gi</span><span class="p">[:</span><span class="mi">3</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">]]</span> <span class="o">=</span> <span class="n">t_gi</span>
+    <span class="n">T_gj</span><span class="p">[:</span><span class="mi">3</span><span class="p">,</span> <span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">R_gj</span>
+    <span class="n">T_gj</span><span class="p">[:</span><span class="mi">3</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">]]</span> <span class="o">=</span> <span class="n">t_gj</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">After one step optimization, check residuals.'</span><span class="p">)</span>
+<span class="n">pose_i_anchor_error</span> <span class="o">=</span> <span class="n">Log_SE3</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">T_gi_hat</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">T_gi</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Pose i anchor observation error: </span><span class="se">\n</span><span class="s1"> </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">pose_i_anchor_error</span><span class="p">)</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+
+<span class="n">transformation_ij_error</span> <span class="o">=</span> <span class="n">Log_SE3</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">T_gi_gj_hat</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">T_gi</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">T_gj</span><span class="p">)))</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Transformation error: </span><span class="se">\n</span><span class="s1"> </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">transformation_ij_error</span><span class="p">)</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+<span class="c1">#</span>
+</pre>
+    </div>
+   </div>
+  </div>
+ </div>
+ <div class="output_wrapper">
+  <div class="output">
+   <div class="output_area">
+    <div class="prompt">
+    </div>
+    <div class="output_subarea output_stream output_stdout output_text">
+     <pre>Before optimization, check residuals.
+Pose i anchor observation error: 
+ 5.3971237378566785
+Transformation error: 
+ 5.3971237378566705
+
+After one step optimization, check residuals.
+Pose i anchor observation error: 
+ 3.385777950370129e-16
+Transformation error: 
+ 2.6219095756349117e-15
+</pre>
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h4 id="SE(3)">
+    SE(3)
+    <a class="anchor-link" href="#SE(3)">
+     ¶
+    </a>
+   </h4>
+   <p>
+    In the first pose example, we will separate constraints on rotation and translation. In this case, we will leverage Lie theory on SE(3).
+$$
+\begin{align}
+\Delta  \hat{x} &amp;= \underset{\Delta x}{\operatorname{argmin}}{\|f(T_{gi}, T_{gj}, \hat{T}_{gi}, \hat{T}_{ij})\|_\Sigma} \\
+\end{align}
+$$
+   </p>
+   $$
+\begin{align}
+\Delta  \hat{x} &amp;= \underset{\Delta x}{\operatorname{argmin}}{
+ \|Log(\hat{T}_{gi}^{-1} (\bar{T}_{gi}\boxplus \Delta \xi_{gi}))\| \\
++\|Log(\hat{T}_{ij}^{-1} (\bar{T}_{gi}\boxplus \Delta \xi_{gi})^{-1}(\bar{T}_{gj}\boxplus \Delta \xi_{gj}))\|
+} \\
+&amp;= \underset{\Delta x}{\operatorname{argmin}}{
+\|Log(\hat{T}_{gi}^{-1} \bar{T}_{gi}) + J^{-1}_r(Log(\hat{T}_{gi}^{-1} \bar{T}_{gi})) \mathcal{I}_{3\times3}\Delta \xi_{gi}\|\\
++\|Log(\hat{T}_{ij}^{-1} \bar{T}_{gi}^{-1}\bar{T}_{gj}) 
+- J^{-1}_r(Log(\hat{T}_{ij}^{-1} \bar{T}_{gi}^{-1}\bar{T}_{gj}))Ad_{\bar{T}^{-1}_{gj}}Ad_{\bar{T}_{gi}} \Delta \xi_{gi}
++ J^{-1}_r(Log(\hat{T}_{ij}^{-1} \bar{T}_{gi}^{-1}\bar{T}_{gj}))\mathcal{I}_{3\times3}\Delta\xi_{gj}\| 
+}
+\end{align}
+$$
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+ <div class="input">
+  <div class="prompt input_prompt">
+   In [24]:
+  </div>
+  <div class="inner_cell">
+   <div class="input_area collapsed">
+    <div class="collapse_expand_button fa fa-1x fa-minus-square-o">
+    </div>
+    <div class="highlight hl-ipython3">
+     <pre><span></span><span class="c1"># Lie theory SE(3) libraries</span>
+
+<span class="k">def</span> <span class="nf">wedge</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+    <span class="n">X</span><span class="p">[:</span><span class="mi">3</span><span class="p">,</span> <span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">skew</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">])</span>
+    <span class="n">X</span><span class="p">[:</span><span class="mi">3</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">]]</span> <span class="o">=</span> <span class="n">LeftJacobian_SO3</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">])</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">])</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">X</span>
+
+<span class="k">def</span> <span class="nf">vee</span><span class="p">(</span><span class="n">X</span><span class="p">):</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">6</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">x</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span> <span class="o">=</span> <span class="n">unskew</span><span class="p">(</span><span class="n">X</span><span class="p">[:</span><span class="mi">3</span><span class="p">,</span> <span class="p">:</span><span class="mi">3</span><span class="p">])</span>
+    <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">LeftJacobianInv_SO3</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">])</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X</span><span class="p">[:</span><span class="mi">3</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">]])</span>
+    <span class="k">return</span> <span class="n">x</span>
+
+<span class="k">def</span> <span class="nf">Exp_SE3</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">expm</span><span class="p">(</span><span class="n">wedge</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+
+<span class="k">def</span> <span class="nf">Log_SE3</span><span class="p">(</span><span class="n">X</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">vee</span><span class="p">(</span><span class="n">logm</span><span class="p">(</span><span class="n">X</span><span class="p">))</span>
+
+<span class="k">def</span> <span class="nf">Adjoint_SE3</span><span class="p">(</span><span class="n">T</span><span class="p">):</span>
+    <span class="n">ret</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+    <span class="n">R</span> <span class="o">=</span> <span class="n">T</span><span class="p">[:</span><span class="mi">3</span><span class="p">,</span> <span class="p">:</span><span class="mi">3</span><span class="p">]</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">T</span><span class="p">[:</span><span class="mi">3</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">]]</span>
+    <span class="n">ret</span><span class="p">[:</span><span class="mi">3</span><span class="p">,</span> <span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">R</span>
+    <span class="n">ret</span><span class="p">[:</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span> <span class="o">=</span> <span class="n">skew</span><span class="p">(</span><span class="n">t</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">R</span><span class="p">)</span>
+    <span class="n">ret</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span> <span class="o">=</span> <span class="n">R</span>
+    <span class="k">return</span> <span class="n">ret</span>
+
+<span class="k">def</span> <span class="nf">LeftQ</span><span class="p">(</span><span class="n">xi</span><span class="p">):</span>
+    <span class="n">w</span> <span class="o">=</span> <span class="n">xi</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">xi</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1E-8</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">skew</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+    <span class="k">return</span> <span class="mf">0.5</span><span class="o">*</span><span class="n">skew</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="o">+</span> \
+<span class="o">+</span> <span class="p">(</span><span class="n">t</span><span class="o">-</span><span class="n">sin</span><span class="p">(</span><span class="n">t</span><span class="p">))</span><span class="o">/</span><span class="p">(</span><span class="n">t</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">skew</span><span class="p">(</span><span class="n">w</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">skew</span><span class="p">(</span><span class="n">r</span><span class="p">))</span> <span class="o">+</span> <span class="n">skew</span><span class="p">(</span><span class="n">r</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">skew</span><span class="p">(</span><span class="n">w</span><span class="p">))</span> <span class="o">+</span> <span class="n">skew</span><span class="p">(</span><span class="n">w</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">skew</span><span class="p">(</span><span class="n">r</span><span class="p">))</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">skew</span><span class="p">(</span><span class="n">w</span><span class="p">)))</span> \
+<span class="o">+</span> <span class="p">(</span><span class="n">t</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="mi">2</span><span class="o">*</span><span class="n">cos</span><span class="p">(</span><span class="n">t</span><span class="p">)</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">t</span><span class="o">**</span><span class="mi">4</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">skew</span><span class="p">(</span><span class="n">w</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">skew</span><span class="p">(</span><span class="n">w</span><span class="p">))</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">skew</span><span class="p">(</span><span class="n">r</span><span class="p">))</span> <span class="o">+</span> <span class="n">skew</span><span class="p">(</span><span class="n">r</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">skew</span><span class="p">(</span><span class="n">r</span><span class="p">))</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">skew</span><span class="p">(</span><span class="n">w</span><span class="p">))</span> <span class="o">-</span> <span class="mi">3</span><span class="o">*</span><span class="n">skew</span><span class="p">(</span><span class="n">w</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">skew</span><span class="p">(</span><span class="n">r</span><span class="p">))</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">skew</span><span class="p">(</span><span class="n">w</span><span class="p">)))</span> \
+<span class="o">+</span> <span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">t</span><span class="o">-</span><span class="mi">3</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">t</span><span class="p">)</span><span class="o">+</span><span class="n">t</span><span class="o">*</span><span class="n">cos</span><span class="p">(</span><span class="n">t</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">t</span><span class="o">**</span><span class="mi">5</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">skew</span><span class="p">(</span><span class="n">w</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">skew</span><span class="p">(</span><span class="n">r</span><span class="p">))</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">skew</span><span class="p">(</span><span class="n">w</span><span class="p">))</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">w</span><span class="p">)</span> <span class="o">+</span> <span class="n">skew</span><span class="p">(</span><span class="n">w</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">skew</span><span class="p">(</span><span class="n">w</span><span class="p">))</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">skew</span><span class="p">(</span><span class="n">r</span><span class="p">))</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">w</span><span class="p">))</span>
+
+<span class="k">def</span> <span class="nf">RightQ</span><span class="p">(</span><span class="n">xi</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">LeftQ</span><span class="p">(</span><span class="o">-</span><span class="n">xi</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">RightJacobian_SE3</span><span class="p">(</span><span class="n">xi</span><span class="p">):</span>
+    <span class="n">w</span> <span class="o">=</span> <span class="n">xi</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span>
+    <span class="n">ret</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">6</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span>
+    <span class="n">ret</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">RightJacobian_SO3</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+    <span class="n">ret</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span> <span class="o">=</span> <span class="n">RightQ</span><span class="p">(</span><span class="n">xi</span><span class="p">)</span>
+    <span class="n">ret</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span> <span class="o">=</span> <span class="n">ret</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">ret</span>
+
+<span class="k">def</span> <span class="nf">RightJacobianInv_SE3</span><span class="p">(</span><span class="n">xi</span><span class="p">):</span>
+    <span class="n">w</span> <span class="o">=</span> <span class="n">xi</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span>
+    <span class="n">ret</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">6</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span>
+    <span class="n">ret</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">RightJacobianInv_SO3</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+    <span class="n">ret</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">ret</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">RightQ</span><span class="p">(</span><span class="n">xi</span><span class="p">))</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">ret</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">])</span>
+    <span class="n">ret</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span> <span class="o">=</span> <span class="n">ret</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">ret</span>
+                                                                 
+<span class="k">def</span> <span class="nf">LeftJacobian_SE3</span><span class="p">(</span><span class="n">xi</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">RightJacobian_SE3</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">i</span><span class="p">)</span>
+        
+<span class="k">def</span> <span class="nf">LeftJacobianInv_SE3</span><span class="p">(</span><span class="n">xi</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">RightJacobianInv_SE3</span><span class="p">(</span><span class="o">-</span><span class="n">xi</span><span class="p">)</span>
+<span class="c1">#</span>
+</pre>
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+ <div class="input">
+  <div class="prompt input_prompt">
+   In [25]:
+  </div>
+  <div class="inner_cell">
+   <div class="input_area collapsed">
+    <div class="collapse_expand_button fa fa-1x fa-minus-square-o">
+    </div>
+    <div class="highlight hl-ipython3">
+     <pre><span></span><span class="c1"># A simple pose graph</span>
+
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">T_gi</span> <span class="o">=</span> <span class="n">from_rpy_xyz</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">noise</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> 
+                         <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="c1"># noise = np.zeros(6)</span>
+
+<span class="n">T_gi_hat</span> <span class="o">=</span> <span class="n">T_gi</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Exp_SE3</span><span class="p">(</span><span class="n">noise</span><span class="p">))</span>
+<span class="n">T_gi_gj_hat</span> <span class="o">=</span> <span class="n">from_rpy_xyz</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+<span class="n">T_gj</span> <span class="o">=</span> <span class="n">T_gi</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">T_gi_gj_hat</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Exp_SE3</span><span class="p">(</span><span class="n">noise</span><span class="p">)))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Before optimization, check residuals.'</span><span class="p">)</span>
+<span class="n">pose_i_anchor_error</span> <span class="o">=</span> <span class="n">Log_SE3</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">T_gi_hat</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">T_gi</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Pose i anchor observation error: </span><span class="se">\n</span><span class="s1"> </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">pose_i_anchor_error</span><span class="p">)</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+
+<span class="n">transformation_ij_error</span> <span class="o">=</span> <span class="n">Log_SE3</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">T_gi_gj_hat</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">T_gi</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">T_gj</span><span class="p">)))</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Transformation error: </span><span class="se">\n</span><span class="s1"> </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">transformation_ij_error</span><span class="p">)</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">Optimize</span><span class="p">(</span><span class="n">T_gi</span><span class="p">,</span> <span class="n">T_gj</span><span class="p">,</span> <span class="n">T_gi_hat</span><span class="p">,</span> <span class="n">T_gi_gj_hat</span><span class="p">):</span>
+    <span class="n">J</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">3</span><span class="o">*</span><span class="mi">4</span><span class="p">,</span> <span class="mi">12</span><span class="p">))</span> <span class="c1"># Jacobian</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">3</span><span class="o">*</span><span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span> <span class="c1"># Residual</span>
+    <span class="n">ret</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">12</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span> <span class="c1"># State update</span>
+
+    <span class="n">r1</span> <span class="o">=</span> <span class="n">Log_SE3</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">T_gi_hat</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">T_gi</span><span class="p">))</span>
+    <span class="n">r2</span> <span class="o">=</span> <span class="n">Log_SE3</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">T_gi_gj_hat</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">T_gi</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">T_gj</span><span class="p">)))</span>
+    <span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span> <span class="o">=</span> <span class="n">r1</span>
+    <span class="n">r</span><span class="p">[</span><span class="mi">6</span><span class="p">:</span><span class="mi">12</span><span class="p">]</span> <span class="o">=</span> <span class="n">r2</span>
+    <span class="c1"># delta_i, delta_j</span>
+    <span class="n">J</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">6</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span> <span class="o">=</span> <span class="n">RightJacobianInv_SE3</span><span class="p">(</span><span class="n">r1</span><span class="p">)</span>
+    <span class="n">J</span><span class="p">[</span><span class="mi">6</span><span class="p">:</span><span class="mi">12</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">RightJacobianInv_SE3</span><span class="p">(</span><span class="n">r2</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Adjoint_SE3</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">T_gj</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">T_gi</span><span class="p">)))</span>
+    <span class="n">J</span><span class="p">[</span><span class="mi">6</span><span class="p">:</span><span class="mi">12</span><span class="p">,</span> <span class="mi">6</span><span class="p">:</span><span class="mi">12</span><span class="p">]</span> <span class="o">=</span> <span class="n">RightJacobianInv_SE3</span><span class="p">(</span><span class="n">r2</span><span class="p">)</span>
+    <span class="n">delta_x</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">J</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">J</span><span class="p">))</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">J</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">r</span><span class="p">))</span>
+    <span class="k">assert</span><span class="p">(</span><span class="n">delta_x</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">ret</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">delta_x</span>
+
+<span class="n">STEPS</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">STEPS</span><span class="p">):</span>
+    <span class="n">delta</span> <span class="o">=</span> <span class="n">Optimize</span><span class="p">(</span><span class="n">T_gi</span><span class="p">,</span> <span class="n">T_gj</span><span class="p">,</span> <span class="n">T_gi_hat</span><span class="p">,</span> <span class="n">T_gi_gj_hat</span><span class="p">)</span>
+    <span class="n">T_gi</span> <span class="o">=</span> <span class="n">T_gi</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Exp_SE3</span><span class="p">(</span><span class="n">delta</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">6</span><span class="p">,:]))</span>
+    <span class="n">T_gj</span> <span class="o">=</span> <span class="n">T_gj</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Exp_SE3</span><span class="p">(</span><span class="n">delta</span><span class="p">[</span><span class="mi">6</span><span class="p">:</span><span class="mi">12</span><span class="p">,:]))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">After one step optimization, check residuals.'</span><span class="p">)</span>
+<span class="n">pose_i_anchor_error</span> <span class="o">=</span> <span class="n">Log_SE3</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">T_gi_hat</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">T_gi</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Pose i anchor observation error: </span><span class="se">\n</span><span class="s1"> </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">pose_i_anchor_error</span><span class="p">)</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+
+<span class="n">transformation_ij_error</span> <span class="o">=</span> <span class="n">Log_SE3</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">T_gi_gj_hat</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">T_gi</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">T_gj</span><span class="p">)))</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Transformation error: </span><span class="se">\n</span><span class="s1"> </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">transformation_ij_error</span><span class="p">)</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+<span class="c1">#</span>
+</pre>
+    </div>
+   </div>
+  </div>
+ </div>
+ <div class="output_wrapper">
+  <div class="output">
+   <div class="output_area">
+    <div class="prompt">
+    </div>
+    <div class="output_subarea output_stream output_stdout output_text">
+     <pre>Before optimization, check residuals.
+Pose i anchor observation error: 
+ 5.3971237378566785
+Transformation error: 
+ 5.3971237378566705
+
+After one step optimization, check residuals.
+Pose i anchor observation error: 
+ 3.7445745327566424e-16
+Transformation error: 
+ 2.1087465674330853e-15
+</pre>
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h2 id="Summary">
+    Summary
+    <a class="anchor-link" href="#Summary">
+     ¶
+    </a>
+   </h2>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
    $$
 \begin{align}
 Exp(\phi) :=\ &amp; exp(\phi^{\wedge}) = R \\
@@ -318,7 +2084,11 @@ $$
    </p>
    $$
 \begin{align}
-Exp(\phi) R = R Exp(R^T \phi) 
+Exp(Ad_{\mathcal{X}} {}^{\mathcal{X}}\tau^{\wedge}) \circ  \mathcal{X} &amp;= \mathcal{X} \circ  Exp({}^{\mathcal{X}}\tau) \\
+Exp(R \phi) R &amp;= R Exp(\phi) \\
+Exp(Ad_{\mathcal{X}^{-1}} {}^{\mathcal{X}}\tau^{\wedge})\circ \mathcal{X}^{-1}   &amp;=  \mathcal{X}^{-1} \circ Exp({}^{\mathcal{X}}\tau)     \\
+Exp({}^{\mathcal{X}}\tau)\circ \mathcal{X}   &amp;=  \mathcal{X} \circ Exp(Ad_{\mathcal{X}^{-1}} {}^{\mathcal{X}}\tau^{\wedge}) \\
+Exp(\phi) R &amp;= R Exp(R^T \phi)
 \end{align}
 $$
   </div>
@@ -338,6 +2108,23 @@ $$
      <code>
       A micro Lie theory for state estimation in robotics
      </code>
+    </li>
+    <li>
+     Barfoot
+     <code>
+      State Estimation for Robotics
+     </code>
+    </li>
+    <li>
+     Mangelson et al.
+     <code>
+      Characterizing the Uncertainty of Jointly Distributed Poses in the Lie Algebra
+     </code>
+    </li>
+    <li>
+     <a href="https://gtsam.org/2021/02/23/uncertainties-part3.html">
+      https://gtsam.org/2021/02/23/uncertainties-part3.html
+     </a>
     </li>
    </ul>
   </div>
