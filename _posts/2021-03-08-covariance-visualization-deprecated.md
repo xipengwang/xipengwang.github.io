@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Covariance Visualization and Principle Component Analysis(PCA)
-tag: Legacy
+tag: Legacy-Deprecated
 ---
 ![Rigid Body Animation]({{site.baseurl}}/images/2021-03-08-covariance-visualization/ellipse.png)
 

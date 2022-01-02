@@ -82,6 +82,10 @@ torque:
 	$(CONVERTER) --nbpath torque.ipynb --date 2022-01-02 \
 		--description "Torque and Angular Momentum" --tag Notebook
 
+covariance-visualization:
+	$(CONVERTER) --nbpath covariance-visualization.ipynb --date 2022-01-02 \
+		--description "Covariance Visualization" --tag Notebook
+
 mutual-information:
 		$(CONVERTER) --nbpath mutual-information.ipynb --date 2021-06-03 \
 			--description "Entropy, Cross Entropy, Conditional Entropy, Joint Entropy, Mutual Information" --tag Notebook

@@ -1,10 +1,10 @@
 ---
 layout: post
 title: Eigen faces are cool [WIP] (template matching, linear classificaton, etc)
-tag: Legacy
+tag: Legacy-Deprecated
 ---
 
-In [Covariance visualization]({% post_url 2021-03-08-covariance-visualization
+In [Covariance visualization]({% post_url 2022-01-02-covariance-visualization
 %}), we have discussed that PCA is basically a way to project original data to a
 different coordinate frame where variances along different axis in order. One
 application of PCA is so called
