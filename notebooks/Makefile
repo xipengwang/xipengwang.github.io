@@ -44,7 +44,7 @@ paper-reading-mixture-models-for-least-square-optimization:
 		--description "Paper Reading - Gaussian mixture models and robust kernels for least square optimization" --tag PaperReading
 
 blog: expectation–maximization factor-graph grid-mapping mutual-information inertial-navigation rigid-body-transformation \
-	stereo-rectification gaussian-distribution-marginalization lie-theory torque
+	stereo-rectification gaussian-distribution-marginalization lie-theory torque continuous-time-estimation
 
 expectation–maximization:
 	$(CONVERTER) --nbpath expectation–maximization.ipynb --date 2021-05-10 \
@@ -81,6 +81,10 @@ lie-theory:
 torque:
 	$(CONVERTER) --nbpath torque.ipynb --date 2022-01-02 \
 		--description "Torque and Angular Momentum" --tag Notebook
+
+continuous-time-estimation:
+	$(CONVERTER) --nbpath continuous-time-estimation.ipynb --date 2022-01-20 \
+		--description "Continuous-time Estimation" --tag Notebook
 
 covariance-visualization:
 	$(CONVERTER) --nbpath covariance-visualization.ipynb --date 2022-01-02 \
