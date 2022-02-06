@@ -44,7 +44,7 @@ paper-reading-mixture-models-for-least-square-optimization:
 		--description "Paper Reading - Gaussian mixture models and robust kernels for least square optimization" --tag PaperReading
 
 blog: expectation–maximization factor-graph grid-mapping mutual-information inertial-navigation rigid-body-transformation \
-	stereo-rectification gaussian-distribution-marginalization lie-theory torque continuous-time-estimation
+	stereo-rectification gaussian-distribution-marginalization lie-theory torque continuous-time-estimation c_plus_plus
 
 expectation–maximization:
 	$(CONVERTER) --nbpath expectation–maximization.ipynb --date 2021-05-10 \
@@ -93,6 +93,10 @@ covariance-visualization:
 mutual-information:
 		$(CONVERTER) --nbpath mutual-information.ipynb --date 2021-06-03 \
 			--description "Entropy, Cross Entropy, Conditional Entropy, Joint Entropy, Mutual Information" --tag Notebook
+
+c_plus_plus:
+	$(CONVERTER) --nbpath c_plus_plus_notes.ipynb --date 2022-02-02 \
+		--description "C plus plus notes." --tag Notebook
 
 book: autonomous-robots-summary autobot-linear-algebra
 

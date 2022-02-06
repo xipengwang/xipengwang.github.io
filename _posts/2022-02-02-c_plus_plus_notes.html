@@ -1,0 +1,2498 @@
+---
+layout: notebook
+title: C Plus Plus
+description: C plus plus notes.
+tag: Notebook
+---
+
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h2 id="C++-Basics">
+    C++ Basics
+    <a class="anchor-link" href="#C++-Basics">
+     ¶
+    </a>
+   </h2>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h3 id="Compiler-Generated-Functions">
+    Compiler Generated Functions
+    <a class="anchor-link" href="#Compiler-Generated-Functions">
+     ¶
+    </a>
+   </h3>
+   <ul>
+    <li>
+     <ol>
+      <li>
+       Default constructor (generated only if no other constructor declared by users, e.g. 1, 2, 4)
+      </li>
+     </ol>
+    </li>
+    <li>
+     <ol>
+      <li>
+       Copy constructor (generated only if no 4 and 5 declared)
+      </li>
+     </ol>
+    </li>
+    <li>
+     <ol>
+      <li>
+       Copy assignment (generated only if no 4 and 5 declared)
+      </li>
+     </ol>
+    </li>
+    <li>
+     <ol>
+      <li>
+       Move constructor (generated only if no 2, 3, 5, 6 declared)
+      </li>
+     </ol>
+    </li>
+    <li>
+     <ol>
+      <li>
+       Move assignment (generated only if no 2, 3, 4, 6 declared)
+      </li>
+     </ol>
+    </li>
+    <li>
+     <ol>
+      <li>
+       Destructor (generated only if no virtual destructor is explicitly declared)
+      </li>
+     </ol>
+    </li>
+   </ul>
+   <p>
+    <strong>
+     <code>
+      Note
+     </code>
+    </strong>
+    : Rule 0 or Rule 5. If you need define any one of the others except constructor, then define all of them.
+   </p>
+   <details>
+    <summary>
+     compiler_generated_functions.cc
+    </summary>
+    <script src="https://gist.github.com/xipengwang/a3d77603080ee60e41142e5b16a3835b.js">
+    </script>
+   </details>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h3 id="User-Defined-Literals">
+    User Defined Literals
+    <a class="anchor-link" href="#User-Defined-Literals">
+     ¶
+    </a>
+   </h3>
+   <ul>
+    <li>
+     Literals are constants
+    </li>
+    <li>
+     4 types of literals: integer 1, floating point 0.1, character 'x', string "abc".
+     <ul>
+      <li>
+       type suffix: 1024u -&gt; unsigned int
+      </li>
+     </ul>
+    </li>
+   </ul>
+   <details>
+    <summary>
+     user_literals.cc
+    </summary>
+    <script src="https://gist.github.com/xipengwang/8bae17f1173d74129f45df7ea4233efd.js">
+    </script>
+   </details>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h2 id="C++-Advance">
+    C++ Advance
+    <a class="anchor-link" href="#C++-Advance">
+     ¶
+    </a>
+   </h2>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h3 id="Parameter-Pack-and-Fold-Expression">
+    Parameter Pack and Fold Expression
+    <a class="anchor-link" href="#Parameter-Pack-and-Fold-Expression">
+     ¶
+    </a>
+   </h3>
+   <ul>
+    <li>
+     Parameter Pack
+     <ul>
+      <li>
+       In a template-parameter-list (template
+       <parameter-list>
+        ),
+        <code>
+         typename ... t
+        </code>
+        introduces a template parameter pack.
+       </parameter-list>
+      </li>
+      <li>
+       In a parameter-declaration-clause (func(parameter-list)),
+       <code>
+        T ... t
+       </code>
+       introduces a function parameter pack.
+      </li>
+      <li>
+       Ellipsis
+       <code>
+        ...
+       </code>
+       appears immediately after a parameter name introduces parameter pack expansion
+      </li>
+     </ul>
+    </li>
+    <li>
+     Fold Expression
+     <ul>
+      <li>
+       1) Unary right fold (E op ...) becomes (E1 op (... op (EN-1 op EN)))
+      </li>
+      <li>
+       2) Unary left fold (... op E) becomes (((E1 op E2) op ...) op EN)
+      </li>
+      <li>
+       3) Binary right fold (E op ... op I) becomes (E1 op (... op (EN−1 op (EN op I))))
+      </li>
+      <li>
+       4) Binary left fold (I op ... op E) becomes ((((I op E1) op E2) op ...) op EN)
+      </li>
+     </ul>
+    </li>
+    <li>
+     <details>
+      <summary>
+       parameter_pack.cc
+      </summary>
+      <script src="https://gist.github.com/xipengwang/2226fe8afb2df2e8dd5c5c84532474c8.js">
+      </script>
+     </details>
+    </li>
+   </ul>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h3 id="Variant,-Optional,-Any">
+    Variant, Optional, Any
+    <a class="anchor-link" href="#Variant,-Optional,-Any">
+     ¶
+    </a>
+   </h3>
+   <ul>
+    <li>
+     std::optional is a wrapper that may or may not hold an object.
+    </li>
+    <li>
+     std::any is a type that may hold an object of an arbitrary type.
+    </li>
+    <li>
+     <p>
+      std::variant is a type-safe union.
+     </p>
+     <ul>
+      <li>
+       <details>
+        <summary>
+         variant.cc
+        </summary>
+        <script src="https://gist.github.com/xipengwang/6ccf793534ba3b13b59794fbb98c6a6f.js">
+        </script>
+       </details>
+      </li>
+     </ul>
+    </li>
+   </ul>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h3 id="Scope-Resolution-Operator-::">
+    Scope Resolution Operator ::
+    <a class="anchor-link" href="#Scope-Resolution-Operator-::">
+     ¶
+    </a>
+   </h3>
+   <ul>
+    <li>
+     <code>
+      ::func()
+     </code>
+     call only  in global space, ignore others
+    </li>
+    <li>
+     <code>
+      foo::func()
+     </code>
+     call inside any
+     <code>
+      foo
+     </code>
+     namespace I can see
+    </li>
+    <li>
+     <code>
+      ::foo::func()
+     </code>
+     call only in test namespace, ignore others
+    </li>
+    <li>
+     <code>
+      func()
+     </code>
+     call this func I can see
+    </li>
+    <li>
+     <p>
+      <code>
+       using foo::func
+      </code>
+      can bring other possible functions to current namespace
+     </p>
+     <ul>
+      <li>
+       <details>
+        <summary>
+         scope-operator.cc
+        </summary>
+        <script src="https://gist.github.com/xipengwang/41efefec3bb7aba74a72f79dc693dfb6.js">
+        </script>
+       </details>
+      </li>
+     </ul>
+    </li>
+   </ul>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h3 id="Overload-and-Override">
+    Overload and Override
+    <a class="anchor-link" href="#Overload-and-Override">
+     ¶
+    </a>
+   </h3>
+   <ul>
+    <li>
+     Compile-time polymorphism
+     <ul>
+      <li>
+       If two overloads are equal, non-template function is preferred over template function.
+      </li>
+      <li>
+       Overloads fail when only return type is different unless you use
+       <a href="https://www.sandordargo.com/blog/2020/08/19/covariant-return-types">
+        Covariant Return Types
+       </a>
+      </li>
+      <li>
+      </li>
+     </ul>
+    </li>
+    <li>
+     Run-time polymorphism
+     <ul>
+      <li>
+       virtual function override
+      </li>
+     </ul>
+    </li>
+    <li>
+     <a href="https://youtu.be/b5Kbzgx1w9A">
+      Tutorial
+     </a>
+    </li>
+   </ul>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h3 id="Smart-Pointer">
+    Smart Pointer
+    <a class="anchor-link" href="#Smart-Pointer">
+     ¶
+    </a>
+   </h3>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <ul>
+    <li>
+     <code>
+      unique_ptr
+     </code>
+     <ul>
+      <li>
+       Unique ownership so
+       <code>
+        Move-only
+       </code>
+      </li>
+     </ul>
+    </li>
+    <li>
+     <code>
+      shared_ptr
+     </code>
+     <ul>
+      <li>
+       Simple reference counting
+      </li>
+     </ul>
+    </li>
+    <li>
+     <code>
+      weak_ptr
+     </code>
+     <ul>
+      <li>
+       It tells you when the pointer is dangle. Control object is destroyed but control block is still alive.
+      </li>
+      <li>
+       It is just a ticket to get a shared_ptr by using
+       <code>
+        sptr = wptr.lock()
+       </code>
+      </li>
+     </ul>
+    </li>
+    <li>
+     <code>
+      std::enable_shared_from_this()
+     </code>
+     <ul>
+      <li>
+       A class pointer becomes its own ticket to get a shared pointer. Maybe?
+      </li>
+      <li>
+       If member function of a class is going to extent the class life time dynamically, use this.
+      </li>
+     </ul>
+    </li>
+    <li>
+     Rules of thumbs
+     <ul>
+      <li>
+       Treat smart pointer just as regular pointer
+       <ul>
+        <li>
+         Pass by value
+        </li>
+        <li>
+         Return by value
+        </li>
+       </ul>
+      </li>
+      <li>
+       A function/class taking a
+       <code>
+        unique_ptr
+       </code>
+       by value shows
+       <code>
+        transfer of the ownership
+       </code>
+      </li>
+      <li>
+       Prefer
+       <code>
+        make_unique
+       </code>
+       over directly using
+       <code>
+        new
+       </code>
+      </li>
+     </ul>
+    </li>
+    <li>
+     <a href="https://youtu.be/xGDLkt-jBJ4">
+      Tutorial
+     </a>
+    </li>
+    <li>
+     <code>
+      Tips
+     </code>
+     :
+     <ul>
+      <li>
+       variable declaration inside if condition
+       <ul>
+        <li>
+         <code>
+          if (auto sptr = wptr.lock()) { Use(sptr); }
+         </code>
+        </li>
+        <li>
+         <code>
+          if (D *deriv_ptr = dynamic_cast&lt;D*&gt;(base_ptr)) { UseDerive(deriv_ptr); }
+         </code>
+        </li>
+       </ul>
+      </li>
+     </ul>
+    </li>
+   </ul>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h3 id="Template-instantiation-and-specialization">
+    Template instantiation and specialization
+    <a class="anchor-link" href="#Template-instantiation-and-specialization">
+     ¶
+    </a>
+   </h3>
+   <ul>
+    <li>
+     Instantiation
+     <ul>
+      <li>
+       Substitute function parameters
+      </li>
+      <li>
+       Compiler does implicit instantiation, which only instantiate used member functions of a template class
+      </li>
+      <li>
+       Explicit instantiation will trigger complier to instantiate all member functions
+      </li>
+     </ul>
+    </li>
+    <li>
+     <p>
+      Specialization
+     </p>
+     <ul>
+      <li>
+       Substitute function implementations
+      </li>
+      <li>
+       <p>
+        Explicit specialization can also be used to prevent other types to be specialized (we can also use Concepts to do this now)
+       </p>
+       <ul>
+        <li>
+         <details>
+          <summary>
+           explicit_instantiation.cc
+          </summary>
+          <script src="https://gist.github.com/xipengwang/6ca2cfe1cccd9f0c34f4536d8d1589de.js">
+          </script>
+         </details>
+        </li>
+        <li>
+         <p>
+          <details>
+          </details>
+         </p>
+         <summary>
+          explicit_specialization.cc
+         </summary>
+        </li>
+       </ul>
+       <p>
+        <script src="https://gist.github.com/xipengwang/450b9d6a83c76d941bd7027e2b9d27fe.js">
+        </script>
+        &lt;/details&gt;
+-
+        <a href="https://youtu.be/XN319NYEOcE">
+         Tutorial
+        </a>
+        <a href="https://youtu.be/cpkDQaYttR4?t=2624">
+         Tutorial
+        </a>
+       </p>
+      </li>
+     </ul>
+    </li>
+   </ul>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h3 id="Constexpr">
+    Constexpr
+    <a class="anchor-link" href="#Constexpr">
+     ¶
+    </a>
+   </h3>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <ul>
+    <li>
+     <a href="">
+      Tutorial
+     </a>
+    </li>
+   </ul>
+   <p>
+    <code>
+     Tips
+    </code>
+    :
+   </p>
+   <ul>
+    <li>
+     <code>
+      constexpr
+     </code>
+     variables are stack values. They may not be evaluated at compile time
+     <a href="https://youtu.be/4pKtPWcl1Go?t=518">
+      (see this)
+     </a>
+     .
+    </li>
+    <li>
+     Most of time, you want
+     <code>
+      static constexpr
+     </code>
+     to define a constexpr variable.
+     <ul>
+      <li>
+       Force evaluated at compile time
+      </li>
+      <li>
+       However, you can't declare a
+       <code>
+        static constexpr
+       </code>
+       inside a
+       <code>
+        constexpr
+       </code>
+       function.
+      </li>
+     </ul>
+    </li>
+   </ul>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h2 id="C++-STL">
+    C++ STL
+    <a class="anchor-link" href="#C++-STL">
+     ¶
+    </a>
+   </h2>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h3 id="chrono">
+    <code>
+     chrono
+    </code>
+    <a class="anchor-link" href="#chrono">
+     ¶
+    </a>
+   </h3>
+   <ul>
+    <li>
+     A precision neutral library for time and date.
+    </li>
+    <li>
+     Clock:
+     <ul>
+      <li>
+       <code>
+        std::chrono::system_clock
+       </code>
+       : shows current time according to the system (manually changeable).
+      </li>
+      <li>
+       <code>
+        std::chrono::steady_clock
+       </code>
+       : goes at a uniform rate.
+      </li>
+      <li>
+       <code>
+        std::chrono::high_resolution_clock
+       </code>
+       : provides smallest possible tick period.
+      </li>
+      <li>
+       <code>
+        std::chrono::steady_clock::period
+       </code>
+       : is a
+       <code>
+        std::ratio
+       </code>
+       .
+      </li>
+      <li>
+       <code>
+        std::chrono::duration&lt;&gt;
+       </code>
+       : represents time duration,
+      </li>
+      <li>
+       <code>
+        std::chrono::time_point&lt;&gt;
+       </code>
+       : represents a point of time.
+      </li>
+     </ul>
+    </li>
+   </ul>
+   <details>
+    <summary>
+     chrono.cc
+    </summary>
+    <script src="https://gist.github.com/xipengwang/b71491adc801ad220a9253f2049b6611.js">
+    </script>
+   </details>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h3 id="Containers">
+    Containers
+    <a class="anchor-link" href="#Containers">
+     ¶
+    </a>
+   </h3>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <ul>
+    <li>
+     Sequence containers
+     <ul>
+      <li>
+       vector:
+       <ul>
+        <li>
+         Fast insert/remove at the end: O(1)
+        </li>
+        <li>
+         Slow insert/remove at the beginning or in the middle: O(n)
+        </li>
+        <li>
+         Slow search: O(n)
+        </li>
+        <li>
+         Contiguous memory:
+         <code>
+          T* ptr = &amp;vec[0]
+         </code>
+        </li>
+        <li>
+         Random access:
+         <code>
+          vec[i]
+         </code>
+        </li>
+       </ul>
+      </li>
+      <li>
+       deque
+       <ul>
+        <li>
+         Fast insert/remove at the beginning and end: O(1)
+        </li>
+        <li>
+         Slow insert/remove in the middle: O(n)
+        </li>
+        <li>
+         Slow search O(n)
+        </li>
+        <li>
+         Random access:
+         <code>
+          deq[i]
+         </code>
+        </li>
+       </ul>
+      </li>
+      <li>
+       list (double linked list)
+       <ul>
+        <li>
+         Fast insert/remove: O(1)
+        </li>
+        <li>
+         Slow search O(n)
+        </li>
+        <li>
+         No random access
+        </li>
+       </ul>
+      </li>
+      <li>
+       forward list
+      </li>
+      <li>
+       array
+       <ul>
+        <li>
+         std::array&lt;Type, Size&gt;
+        </li>
+        <li>
+         Contiguous memory:
+         <code>
+          T* ptr = &amp;arr[0]
+         </code>
+         or
+         <code>
+          T* ptr = arr.data()
+         </code>
+        </li>
+        <li>
+         Random access:
+         <code>
+          arr[i]
+         </code>
+        </li>
+       </ul>
+      </li>
+     </ul>
+    </li>
+   </ul>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <ul>
+    <li>
+     <p>
+      Associative Containers (binary tree, always sorted)
+     </p>
+     <ul>
+      <li>
+       set
+       <ul>
+        <li>
+         <code>
+          .insert()
+         </code>
+         Fast insertion: O(log(n))
+        </li>
+        <li>
+         <code>
+          .erase()
+         </code>
+         Fast removal: O(log(n))
+        </li>
+        <li>
+         <code>
+          .find()
+         </code>
+         Fast search: O(log(n))
+        </li>
+        <li>
+         No random access
+        </li>
+        <li>
+         No duplicated elements
+        </li>
+        <li>
+         Use equivalence
+         <code>
+          !(a&lt;b) &amp;&amp; !(b&gt;a)
+         </code>
+        </li>
+        <li>
+         Read-only
+        </li>
+        <li>
+         Traversing is slower than Sequence containers
+        </li>
+       </ul>
+      </li>
+      <li>
+       <p>
+        multiset
+       </p>
+       <ul>
+        <li>
+         <p>
+          No insertion failures
+         </p>
+         <details>
+          <summary>
+           multiset.cc
+          </summary>
+          <script src="https://gist.github.com/xipengwang/0fccf49d47ce748afa1ff6f415af82d5.js">
+          </script>
+         </details>
+        </li>
+       </ul>
+      </li>
+      <li>
+       map
+       <ul>
+        <li>
+         <code>
+          std::map&lt;Key, Value&gt;
+         </code>
+        </li>
+       </ul>
+      </li>
+      <li>
+       <p>
+        multimap
+       </p>
+       <ul>
+        <li>
+         <details>
+          <summary>
+           multimap.cc
+          </summary>
+          <script src="https://gist.github.com/xipengwang/ce426520dee984c7a727aee4d1a458d2.js">
+          </script>
+         </details>
+        </li>
+       </ul>
+      </li>
+     </ul>
+    </li>
+   </ul>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <ul>
+    <li>
+     <p>
+      Unordered Containers (hash table)
+     </p>
+     <ul>
+      <li>
+       unordered_set
+       <ul>
+        <li>
+         Fast insertion, removal, and search O(1)
+        </li>
+       </ul>
+      </li>
+      <li>
+       unordered_mutiset
+      </li>
+      <li>
+       <p>
+        unordered_map
+       </p>
+       <details>
+        <summary>
+         unordered_map.cc
+        </summary>
+        <script src="https://gist.github.com/xipengwang/b500e621e04fc2a6486ee781072a034a.js">
+        </script>
+       </details>
+      </li>
+      <li>
+       <p>
+        unordered_multimap
+       </p>
+      </li>
+     </ul>
+    </li>
+   </ul>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <ul>
+    <li>
+     Container Adaptor
+     <ul>
+      <li>
+       stack
+      </li>
+      <li>
+       queue
+      </li>
+      <li>
+       priority_queue
+      </li>
+     </ul>
+    </li>
+   </ul>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    <code>
+     Tips
+    </code>
+    :
+   </p>
+   <ul>
+    <li>
+     <p>
+      Insert or Erase operations will invalidates array based containers, e.g. vector, deque
+     </p>
+     <details>
+      <summary>
+       container_removal.cc
+      </summary>
+      <script src="https://gist.github.com/xipengwang/1d2306e5284516b9328e117a760e3233.js">
+      </script>
+     </details>
+    </li>
+   </ul>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h3 id="Iterators">
+    Iterators
+    <a class="anchor-link" href="#Iterators">
+     ¶
+    </a>
+   </h3>
+   <ul>
+    <li>
+     Random Acess Iterators: vector, deque, array
+     <ul>
+      <li>
+       <code>
+        std::vector&lt;T&gt;::iterator iter
+       </code>
+       :
+       <code>
+        iter++
+       </code>
+       ,
+       <code>
+        iter--
+       </code>
+       ,
+       <code>
+        iter += 2
+       </code>
+      </li>
+     </ul>
+    </li>
+    <li>
+     Bidirectional Iterators: list, set, map
+     <ul>
+      <li>
+       <code>
+        iter++
+       </code>
+       ,
+       <code>
+        iter--
+       </code>
+      </li>
+     </ul>
+    </li>
+    <li>
+     Forward Iterator: forward_list:
+     <ul>
+      <li>
+       <code>
+        iter++
+       </code>
+      </li>
+     </ul>
+    </li>
+    <li>
+     Unordered containers provide at least forward iterators
+    </li>
+    <li>
+     Input Iterator
+     <ul>
+      <li>
+       read and process values while iterating forward
+      </li>
+     </ul>
+    </li>
+    <li>
+     Output Iterator
+     <ul>
+      <li>
+       output values while iterating forward
+      </li>
+     </ul>
+    </li>
+    <li>
+     Const Iterator
+     <ul>
+      <li>
+       `std::vector
+       <t>
+        ::const_iterator
+       </t>
+      </li>
+     </ul>
+    </li>
+    <li>
+     Iterator functions:
+     <ul>
+      <li>
+       <code>
+        std::advance
+       </code>
+       ,
+       <code>
+        std::distance
+       </code>
+       ,
+       <code>
+        std::next
+       </code>
+      </li>
+     </ul>
+    </li>
+    <li>
+     <p>
+      Iterator Adaptor
+     </p>
+     <ul>
+      <li>
+       <p>
+        Insert Iterator
+       </p>
+       <details>
+        <summary>
+         insert_iterator.cc
+        </summary>
+        <script src="https://gist.github.com/xipengwang/d4253747a2e5556aa78eb078d55e3317.js">
+        </script>
+       </details>
+      </li>
+      <li>
+       Stream Iterator
+      </li>
+      <li>
+       Reverse Iterator
+      </li>
+      <li>
+       Move Iterator
+      </li>
+     </ul>
+    </li>
+   </ul>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h3 id="Functors">
+    Functors
+    <a class="anchor-link" href="#Functors">
+     ¶
+    </a>
+   </h3>
+   <ul>
+    <li>
+     Build-in functors
+     <ul>
+      <li>
+       <code>
+        std::less&lt;T&gt;()
+       </code>
+       ,
+       <code>
+        greater
+       </code>
+       ,
+       <code>
+        less_equal
+       </code>
+       ,
+       <code>
+        not_equal_to
+       </code>
+       ,
+       <code>
+        logical_and
+       </code>
+       ,
+       <code>
+        multiplies
+       </code>
+       ,
+       <code>
+        plus
+       </code>
+       ,
+       <code>
+        modulus
+       </code>
+       , etc.
+      </li>
+     </ul>
+    </li>
+   </ul>
+   <p>
+    <code>
+     Tips
+    </code>
+    :
+   </p>
+   <ul>
+    <li>
+     <code>
+      mutable
+     </code>
+     lambda function.
+    </li>
+   </ul>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h3 id="Algorithms">
+    Algorithms
+    <a class="anchor-link" href="#Algorithms">
+     ¶
+    </a>
+   </h3>
+   <ul>
+    <li>
+     <p>
+      Mostly used to replace loops
+     </p>
+     <ul>
+      <li>
+       <code>
+        std::min_element
+       </code>
+       ,
+       <code>
+        std::sort
+       </code>
+       ,
+       <code>
+        std::copy
+       </code>
+       ,
+       <code>
+        std::reverse
+       </code>
+       ,
+       <code>
+        std::find_if
+       </code>
+       ,
+       <code>
+        std::remove_if
+       </code>
+      </li>
+     </ul>
+    </li>
+    <li>
+     <p>
+      Non-modifying algorithms
+     </p>
+     <ul>
+      <li>
+       Counting:
+       <ul>
+        <li>
+         <code>
+          count
+         </code>
+         ,
+         <code>
+          count_if
+         </code>
+         ,
+        </li>
+       </ul>
+      </li>
+      <li>
+       Min and Max:
+       <ul>
+        <li>
+         <code>
+          min_element
+         </code>
+         (first min),
+         <code>
+          max_element
+         </code>
+         (first max),
+         <code>
+          minmax_element
+         </code>
+         (first min, last max),
+        </li>
+       </ul>
+      </li>
+      <li>
+       Linear Search:
+       <ul>
+        <li>
+         <code>
+          find
+         </code>
+         ,
+         <code>
+          find_if
+         </code>
+         ,
+         <code>
+          find_if_not
+         </code>
+         ,
+         <code>
+          search_n
+         </code>
+         ,
+         <code>
+          search
+         </code>
+         ,
+         <code>
+          find_end
+         </code>
+         ,
+         <code>
+          find_first_of
+         </code>
+         ,
+         <code>
+          adjacent_find
+         </code>
+        </li>
+       </ul>
+      </li>
+      <li>
+       Comparing Ranges:
+       <ul>
+        <li>
+         <code>
+          equal
+         </code>
+         ,
+         <code>
+          is_permutation
+         </code>
+         ,
+         <code>
+          mismatch
+         </code>
+         ,
+         <code>
+          lexicographical_compare
+         </code>
+        </li>
+       </ul>
+      </li>
+      <li>
+       Check Attributes:
+       <ul>
+        <li>
+         <code>
+          is_sorted
+         </code>
+         ,
+         <code>
+          is_sorted_until
+         </code>
+         ,
+         <code>
+          is_partitioned
+         </code>
+         ,
+         <code>
+          is_heap
+         </code>
+         ,
+         <code>
+          is_heap_until
+         </code>
+         ,
+         <code>
+          all_of
+         </code>
+         ,
+         <code>
+          any_of
+         </code>
+         ,
+         <code>
+          none_of
+         </code>
+        </li>
+       </ul>
+      </li>
+     </ul>
+    </li>
+    <li>
+     <p>
+      Modifying algorithms
+     </p>
+     <ul>
+      <li>
+       Copy:
+       <ul>
+        <li>
+         <code>
+          copy
+         </code>
+         ,
+         <code>
+          copy_if
+         </code>
+         ,
+         <code>
+          copy_n
+         </code>
+         ,
+         <code>
+          copy_backward
+         </code>
+        </li>
+       </ul>
+      </li>
+      <li>
+       Move: (If move semantics are not defined, copy will be used.)
+       <ul>
+        <li>
+         <code>
+          move
+         </code>
+         ,
+         <code>
+          move_backward
+         </code>
+        </li>
+       </ul>
+      </li>
+      <li>
+       <p>
+        Transform:
+       </p>
+       <ul>
+        <li>
+         <code>
+          std::transform()
+         </code>
+        </li>
+        <li>
+         <details>
+          <summary>
+           transform.cc
+          </summary>
+          <script src="https://gist.github.com/xipengwang/b4e37f96953b453ca6cf5cc696545745.js">
+          </script>
+         </details>
+        </li>
+       </ul>
+      </li>
+      <li>
+       Swap:
+       <ul>
+        <li>
+         <code>
+          swap_ranges
+         </code>
+        </li>
+       </ul>
+      </li>
+      <li>
+       Fill:
+       <ul>
+        <li>
+         <code>
+          fill
+         </code>
+         ,
+         <code>
+          fill_n
+         </code>
+         ,
+         <code>
+          generate
+         </code>
+         ,
+         <code>
+          generate_n
+         </code>
+        </li>
+       </ul>
+      </li>
+      <li>
+       Replace:
+       <ul>
+        <li>
+         <code>
+          replace
+         </code>
+         ,
+         <code>
+          replace_if
+         </code>
+         ,
+         <code>
+          replace_copy
+         </code>
+         ,
+         <code>
+          replace_copy_if
+         </code>
+        </li>
+       </ul>
+      </li>
+      <li>
+       Remove:
+       <ul>
+        <li>
+         <code>
+          remove
+         </code>
+         ,
+         <code>
+          remove_if
+         </code>
+         ,
+         <code>
+          remove_copy
+         </code>
+         ,
+         <code>
+          remove_copy_if
+         </code>
+         ,
+         <code>
+          unique
+         </code>
+         (remove consecutive elements),
+         <code>
+          unique_copy
+         </code>
+        </li>
+       </ul>
+      </li>
+      <li>
+       Order-changing
+       <ul>
+        <li>
+         <code>
+          reverse
+         </code>
+         ,
+         <code>
+          reverse_copy
+         </code>
+         ,
+         <code>
+          rotate
+         </code>
+         ,
+         <code>
+          rotate_copy
+         </code>
+         ,
+         <code>
+          next_permutation
+         </code>
+         ,
+         <code>
+          prev_permutation
+         </code>
+         ,
+         <code>
+          random_shuffle
+         </code>
+         ,
+         <code>
+          shuffle
+         </code>
+        </li>
+       </ul>
+      </li>
+     </ul>
+    </li>
+   </ul>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <ul>
+    <li>
+     Sorting
+    </li>
+   </ul>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h3 id="Type-Traits">
+    Type Traits
+    <a class="anchor-link" href="#Type-Traits">
+     ¶
+    </a>
+   </h3>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <ul>
+    <li>
+     <p>
+      Conditional compilation
+     </p>
+     <ul>
+      <li>
+       <details>
+        <summary>
+         type_traits.cc
+        </summary>
+        <script src="https://gist.github.com/xipengwang/8fd1bc288214627d2186123a9e983a84.js">
+        </script>
+       </details>
+      </li>
+     </ul>
+    </li>
+    <li>
+     Altering types
+     <ul>
+      <li>
+       <code>
+        std::remove_const
+       </code>
+       ,
+       <code>
+        std::add_const
+       </code>
+       ,
+       <code>
+        std::conditional
+       </code>
+       ,
+       <code>
+        std::conjunction
+       </code>
+      </li>
+     </ul>
+    </li>
+   </ul>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h3 id="Concepts">
+    Concepts
+    <a class="anchor-link" href="#Concepts">
+     ¶
+    </a>
+   </h3>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h3 id="String-View">
+    String View
+    <a class="anchor-link" href="#String-View">
+     ¶
+    </a>
+   </h3>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h3 id="Filesystem">
+    Filesystem
+    <a class="anchor-link" href="#Filesystem">
+     ¶
+    </a>
+   </h3>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    <code>
+     Tips
+    </code>
+    :
+   </p>
+   <ul>
+    <li>
+     Efficient insertion in vector:
+     <code>
+      vec.insert(vec.end(), vec2.begin(), vec2.end())
+     </code>
+     instead of
+     <code>
+      std::copy(vec2.begin(), vec2.end(), std::back_inserter(vec))
+     </code>
+    </li>
+   </ul>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h2 id="C++-Design">
+    C++ Design
+    <a class="anchor-link" href="#C++-Design">
+     ¶
+    </a>
+   </h2>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <ul>
+    <li>
+     Composition is preferred over inheritance for code reuse purpose.
+    </li>
+   </ul>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h2 id="C++-Core-Guideline-Tips">
+    C++ Core Guideline Tips
+    <a class="anchor-link" href="#C++-Core-Guideline-Tips">
+     ¶
+    </a>
+   </h2>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h3 id="Interfaces">
+    Interfaces
+    <a class="anchor-link" href="#Interfaces">
+     ¶
+    </a>
+   </h3>
+   <ul>
+    <li>
+     <p>
+      <a href="https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#i2-avoid-non-const-global-variables">
+       I.2
+      </a>
+      Avoid non-const global variables.
+     </p>
+    </li>
+    <li>
+     <p>
+      <a href="https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#i4-make-interfaces-precisely-and-strongly-typed">
+       I.4
+      </a>
+      Make interfaces precisely and strong typed.
+     </p>
+    </li>
+    <li>
+     <p>
+      <a href="https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#i5-state-preconditions-if-any">
+       I.5
+      </a>
+      State preconditions in callee if the arguments have meaning that might constrain their proper use.
+     </p>
+     <ul>
+      <li>
+       E.g. using
+       <a href="https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#i6-prefer-expects-for-expressing-preconditions">
+        Expects
+       </a>
+      </li>
+     </ul>
+    </li>
+    <li>
+     <p>
+      <a href="https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#i7-state-postconditions">
+       I.7
+      </a>
+      State postconditions before function returns.
+     </p>
+     <ul>
+      <li>
+       E.g. using
+       <a href="https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#i8-prefer-ensures-for-expressing-postconditions">
+        Ensures
+       </a>
+      </li>
+     </ul>
+    </li>
+    <li>
+     <p>
+      <a href="https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#i11-never-transfer-ownership-by-a-raw-pointer-t-or-reference-t">
+       I.11
+      </a>
+      Never transfer ownership by a raw pointer (T*) or reference (T&amp;).
+     </p>
+     <ul>
+      <li>
+       Pass ownership use smart pointers or
+       <code>
+        gsl::owner
+       </code>
+       .
+      </li>
+      <li>
+       Every object passed as a raw pointer (or iterator) is assumed to be owned by the caller, so that its lifetime is handled by the caller.
+      </li>
+     </ul>
+    </li>
+    <li>
+     <p>
+      <a href="https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#i12-declare-a-pointer-that-must-not-be-null-as-not_null">
+       I.12
+      </a>
+      Declare a pointer that must not be null as
+      <code>
+       not_null
+      </code>
+      .
+     </p>
+     <ul>
+      <li>
+       Use
+       <code>
+        gsl::not_null
+       </code>
+       .
+      </li>
+     </ul>
+    </li>
+    <li>
+     <p>
+      <a href="https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#i13-do-not-pass-an-array-as-a-single-pointer">
+       I.13
+      </a>
+      Do not pass an array as a single pointer.
+     </p>
+     <ul>
+      <li>
+       Use
+       <code>
+        gsl::span
+       </code>
+       or
+       <code>
+        std::span
+       </code>
+      </li>
+     </ul>
+    </li>
+    <li>
+     <p>
+      <a href="https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#i23-keep-the-number-of-function-arguments-low">
+       I.23
+      </a>
+      Keep the number of function arguments low (&lt;5).
+     </p>
+     <ul>
+      <li>
+       Use default parameters or overloads
+      </li>
+     </ul>
+    </li>
+    <li>
+     <p>
+      <a href="https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#i24-avoid-adjacent-parameters-that-can-be-invoked-by-the-same-arguments-in-either-order-with-different-meaning">
+       I.24
+      </a>
+      Avoid adjacent parameters that can be invoked by the same arguments in either order with different meaning.
+     </p>
+    </li>
+    <li>
+     <p>
+      <a href="https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#i25-prefer-empty-abstract-classes-as-interfaces-to-class-hierarchies">
+       I.25
+      </a>
+      Prefer empty abstract classes as interfaces to class hierarchies
+     </p>
+    </li>
+    <li>
+     <p>
+      <a href="https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#i27-for-stable-library-abi-consider-the-pimpl-idiom">
+       I.27
+      </a>
+      For stable library ABI, consider the Pimpl idiom.
+     </p>
+     <details>
+      <summary>
+       impl_idiom.cc
+      </summary>
+      <script src="https://gist.github.com/xipengwang/913e467bf4acbeb5054e01871a5ce506.js">
+      </script>
+     </details>
+    </li>
+   </ul>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <ul>
+    <li>
+     <code>
+      Tips
+     </code>
+     <ul>
+      <li>
+       Always mark constructor as
+       <code>
+        explicit
+       </code>
+       when it only takes a single argument.
+      </li>
+      <li>
+       Use
+       <code>
+        Rule 0
+       </code>
+       or
+       <code>
+        Rule 5
+       </code>
+       when defining compiler generated class functions.
+      </li>
+      <li>
+       <a href="https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#c67-a-polymorphic-class-should-suppress-public-copymove">
+        A polymorphic class should suppress public copy/move.
+       </a>
+      </li>
+     </ul>
+    </li>
+   </ul>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h2 id="Guideline-Support-Library-(gsl)">
+    Guideline Support Library (gsl)
+    <a class="anchor-link" href="#Guideline-Support-Library-(gsl)">
+     ¶
+    </a>
+   </h2>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h3 id="gsl::span">
+    <code>
+     gsl::span
+    </code>
+    <a class="anchor-link" href="#gsl::span">
+     ¶
+    </a>
+   </h3>
+   <details>
+    <summary>
+     gsl_span.cc
+    </summary>
+    <script src="https://gist.github.com/xipengwang/a4192fb7ab95b1fdfa12ba4dfac05b9f.js">
+    </script>
+   </details>
+   <h3 id="gsl::not_null">
+    <code>
+     gsl::not_null
+    </code>
+    <a class="anchor-link" href="#gsl::not_null">
+     ¶
+    </a>
+   </h3>
+   <details>
+    <summary>
+     gsl_span.cc
+    </summary>
+    <script src="https://gist.github.com/xipengwang/6450f4882a4d5bbc0b2ea7ba442965f0.js">
+    </script>
+   </details>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h2 id="Unit-Test">
+    Unit Test
+    <a class="anchor-link" href="#Unit-Test">
+     ¶
+    </a>
+   </h2>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h3 id="Test-Driven-Development">
+    Test Driven Development
+    <a class="anchor-link" href="#Test-Driven-Development">
+     ¶
+    </a>
+   </h3>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h3 id="GoogleTest">
+    GoogleTest
+    <a class="anchor-link" href="#GoogleTest">
+     ¶
+    </a>
+   </h3>
+   <ul>
+    <li>
+     Macros:
+     <ul>
+      <li>
+       Nonfatal assertion
+       <ul>
+        <li>
+         <code>
+          EXPECT_EQ(expected, tested)
+         </code>
+         ,
+         <code>
+          EXPECT_TRUE() &lt;&lt; "Error message"
+         </code>
+         ,
+         <code>
+          EXPECT_STREQ
+         </code>
+        </li>
+       </ul>
+      </li>
+      <li>
+       Fatal assertion
+       <ul>
+        <li>
+         <code>
+          ASSERT_EQ()
+         </code>
+         ,
+         <code>
+          ASSERT_TRUE()
+         </code>
+        </li>
+       </ul>
+      </li>
+      <li>
+       Floating
+       <ul>
+        <li>
+         <code>
+          EXPECT_FLOAT_EQ()
+         </code>
+         ,
+         <code>
+          EXPECT_NEAR()
+         </code>
+        </li>
+       </ul>
+      </li>
+     </ul>
+    </li>
+    <li>
+     Death test
+     <ul>
+      <li>
+       <code>
+        TEST(mapping_DeathTest, simple_test) {}
+       </code>
+       : Death tests run before other tests
+      </li>
+      <li>
+       <code>
+        EXPECT_DEATH
+       </code>
+       ,
+       <code>
+        EXPECT_EXIT
+       </code>
+      </li>
+     </ul>
+    </li>
+    <li>
+     Exception test
+     <ul>
+      <li>
+       <code>
+        TEST(mapping_ExceptionTest)
+       </code>
+      </li>
+      <li>
+       <code>
+        EXPECT_THROW
+       </code>
+       ,
+       <code>
+        EXPECT_ANY_THROW
+       </code>
+       ,
+       <code>
+        EXPECT_NO_THROW
+       </code>
+       ,
+       <code>
+        FAIL()
+       </code>
+      </li>
+     </ul>
+    </li>
+    <li>
+     TestFixture
+     <ul>
+      <li>
+       Common setup for a group of tests
+       <ul>
+        <li>
+         <code>
+          class MappingTest : public ::testing::Test {public: virtual void SetUp(); virtual void TearDown();}
+         </code>
+        </li>
+        <li>
+         <code>
+          TEST_F(MappingTest, simple_test)
+         </code>
+        </li>
+       </ul>
+      </li>
+     </ul>
+    </li>
+   </ul>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h3 id="BoostTest">
+    BoostTest
+    <a class="anchor-link" href="#BoostTest">
+     ¶
+    </a>
+   </h3>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h2 id="Building-System-and-Generators">
+    Building System and Generators
+    <a class="anchor-link" href="#Building-System-and-Generators">
+     ¶
+    </a>
+   </h2>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h3 id="Modern-Cmake">
+    Modern Cmake
+    <a class="anchor-link" href="#Modern-Cmake">
+     ¶
+    </a>
+   </h3>
+   <ul>
+    <li>
+     <a href="https://youtu.be/eC9-iRN2b04">
+      Tutorial
+     </a>
+     <a href="https://youtu.be/bsXLMQ6WgIk">
+      Tutorial
+     </a>
+     <a href="https://youtu.be/lI2nwZSMvlE">
+      Tutorial
+     </a>
+     <a href="https://cliutils.gitlab.io/modern-cmake/">
+      Tutorial
+     </a>
+     <a href="https://github.com/dev-cafe/cmake-cookbook">
+      Tutorial
+     </a>
+     <a href="https://cmake.org/cmake/help/git-stage/index.html#guides">
+      Tutorial
+     </a>
+    </li>
+   </ul>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <ul>
+    <li>
+     <code>
+      cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=1 -DCMAKE_INSTALL_PREFIX "  " ..
+     </code>
+    </li>
+    <li>
+     <code>
+      cmake --build .
+     </code>
+    </li>
+    <li>
+     <code>
+      cmake --install . --prefix "/home/myuser/installdir"
+     </code>
+    </li>
+   </ul>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <ul>
+    <li>
+     Modern cmake module properties
+     <ul>
+      <li>
+       <code>
+        PUBLIC
+       </code>
+       : both the producer and consumer see the definition
+      </li>
+      <li>
+       <code>
+        PRIVATE
+       </code>
+       : only the producer sees the definition
+      </li>
+      <li>
+       <code>
+        INTERFACE
+       </code>
+       : only the consumer see the definition
+      </li>
+     </ul>
+    </li>
+   </ul>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <ul>
+    <li>
+     Useful build-in commands and variables
+     <ul>
+      <li>
+       <code>
+        cmake_minimum_required(VERSION 3.12)
+       </code>
+      </li>
+      <li>
+       <code>
+        project(MyProject VERSION 0.0.0)
+       </code>
+      </li>
+      <li>
+       <code>
+        add_subdirectory()
+       </code>
+      </li>
+      <li>
+       <code>
+        add_executable
+       </code>
+      </li>
+      <li>
+       <code>
+        add_library
+       </code>
+      </li>
+      <li>
+       <code>
+        target_link_libraries
+       </code>
+      </li>
+      <li>
+       <code>
+        target_include_directories
+       </code>
+      </li>
+      <li>
+       <code>
+        target_compile_definition
+       </code>
+      </li>
+      <li>
+       <code>
+        target_compile_features
+       </code>
+       :
+       <a href="https://apimirror.com/cmake~3.11/prop_gbl/cmake_cxx_known_features#prop_gbl:CMAKE_CXX_KNOWN_FEATURES">
+        feature list
+       </a>
+      </li>
+      <li>
+       <code>
+        ${CMAKE_SOURCE_DIR}
+       </code>
+       : Top level of the source tree
+      </li>
+      <li>
+       <code>
+        ${CAMKE_BINARY_DIR}
+       </code>
+       : Top level of the build tree
+      </li>
+      <li>
+       <code>
+        ${PROJECT_NAME}$
+       </code>
+       ,
+       <code>
+        ${PROJECT_SOURCE_DIR}
+       </code>
+       ,
+       <code>
+        ${PROJECT_BINARY_DIR}$
+       </code>
+      </li>
+      <li>
+       <code>
+        ${CMAKE_CURRENT_SOURCE_DIR}
+       </code>
+       : Source directory of the current cmake file
+      </li>
+      <li>
+       <code>
+        ${CMAKE_CURRENT_LIST_FILE}
+       </code>
+      </li>
+     </ul>
+    </li>
+    <li>
+     script
+     <ul>
+      <li>
+       <code>
+        set(MY_VARIABLE "variable")
+       </code>
+      </li>
+      <li>
+       <code>
+        message(STATUS "hello world ${MY_VARIABLE}")
+       </code>
+      </li>
+      <li>
+       <code>
+        if() endif()
+       </code>
+      </li>
+      <li>
+       <code>
+        foreach(arg IN LIST ARGN/ARGV) endforeach()
+       </code>
+      </li>
+      <li>
+       <code>
+        function() endfunction()
+       </code>
+      </li>
+     </ul>
+    </li>
+   </ul>
+  </div>
+ </div>
+</div>
+
+<div> This blog is converted from <a href="https://github.com/xipengwang/xipengwang.github.io/tree/master/notebooks/c_plus_plus_notes.ipynb">c_plus_plus_notes.ipynb</a></div>
