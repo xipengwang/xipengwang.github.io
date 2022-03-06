@@ -1,0 +1,32 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>Tomato Timer</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+        <link href="./tomato-scripts/style.css" rel="stylesheet" type="text/css">
+        <script src="./tomato-scripts/tomato.js"></script>
+        <!-- Place favicon.ico in the root directory -->
+
+    </head>
+    <body>
+
+        <p id="show_timer"></p>
+        <button type="button" id="start_timer"
+                onclick="startTimer()">
+            Start
+        <button type="button" id="clear_timer"
+                onclick="clearTimer()">
+            Stop
+        </button>
+        <select id = "timer_list" onchange = "changeTimer()" >
+            <option> 25 Minutes</option>
+            <option> 45 Minutes </option>
+            <option> 1 Minutes </option>
+            <option> 10 Minutes </option>
+        </select>
+    </body>
+</html>
