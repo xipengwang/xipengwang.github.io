@@ -44,7 +44,12 @@ paper-reading-mixture-models-for-least-square-optimization:
 		--description "Paper Reading - Gaussian mixture models and robust kernels for least square optimization" --tag PaperReading
 
 blog: expectation–maximization factor-graph grid-mapping mutual-information inertial-navigation rigid-body-transformation \
-	stereo-rectification gaussian-distribution-marginalization lie-theory torque continuous-time-estimation c_plus_plus
+	stereo-rectification gaussian-distribution-marginalization lie-theory torque continuous-time-estimation c_plus_plus \
+	docker
+
+docker:
+	$(CONVERTER) --nbpath docker_tutorial.ipynb --date 2022-04-25 \
+		--description "Docker Tutorial" --tag Notebook
 
 expectation–maximization:
 	$(CONVERTER) --nbpath expectation–maximization.ipynb --date 2021-05-10 \

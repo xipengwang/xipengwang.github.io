@@ -1,0 +1,269 @@
+---
+layout: notebook
+title: Docker Tutorial
+description: Docker Tutorial
+tag: Notebook
+---
+
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h2 id="Basics">
+    Basics
+    <a class="anchor-link" href="#Basics">
+     ¶
+    </a>
+   </h2>
+   <ul>
+    <li>
+     <a href="https://hub.docker.com/">
+      Docker Hub
+     </a>
+     : Docker Hub is the world's easiest way to create, manage, and deliver your team's container applications.
+    </li>
+    <li>
+     CONTAINER is a running environment of an IMAGE
+    </li>
+    <li>
+    </li>
+   </ul>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h2 id="Basic-Commands">
+    Basic Commands
+    <a class="anchor-link" href="#Basic-Commands">
+     ¶
+    </a>
+   </h2>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <ul>
+    <li>
+     <p>
+      Pull images
+     </p>
+     <p>
+      <code>
+       docker pull ubuntu:20.04
+      </code>
+     </p>
+     <p>
+      <code>
+       docker pull [RegistryDomain]/[IMAGENAME]:[TAG]
+      </code>
+     </p>
+    </li>
+   </ul>
+   <ul>
+    <li>
+     <p>
+      List images
+     </p>
+     <p>
+      <code>
+       docker images
+      </code>
+     </p>
+    </li>
+   </ul>
+   <ul>
+    <li>
+     <p>
+      Run container
+     </p>
+     <p>
+      <code>
+       docker run -p[HOST PORT]:[CONTAINER PORT] -d --name [DOCKER NAME] --net [NETWORK NAME] -e [ENVIRONMENT_VARIABLE_NAME=VALUE] -v [HOST_DIR]:[CONTAINER_DIR] [IMAGE ID]
+      </code>
+     </p>
+    </li>
+   </ul>
+   <ul>
+    <li>
+     <p>
+      Create a docker network
+     </p>
+     <p>
+      <code>
+       docker network create [NETWORK NAME]
+      </code>
+     </p>
+     <p>
+      <code>
+       docker network ls
+      </code>
+     </p>
+    </li>
+   </ul>
+   <ul>
+    <li>
+     <p>
+      List container process
+     </p>
+     <p>
+      <code>
+       docker ps -a
+      </code>
+     </p>
+    </li>
+   </ul>
+   <ul>
+    <li>
+     <p>
+      Start/stop/Remove container
+     </p>
+     <p>
+      <code>
+       docker start/stop/rm [CONTAINER ID]
+      </code>
+     </p>
+    </li>
+   </ul>
+   <ul>
+    <li>
+     <p>
+      Logs
+     </p>
+     <p>
+      <code>
+       docker logs [CONTAINER ID]
+      </code>
+     </p>
+    </li>
+   </ul>
+   <ul>
+    <li>
+     <p>
+      Execute docker
+     </p>
+     <p>
+      <code>
+       docker exec -it [CONTAINER ID] /bin/bash
+      </code>
+     </p>
+     <p>
+      <code>
+       docker exec -it [CONTAINER ID] /bin/sh
+      </code>
+     </p>
+    </li>
+    <li>
+     <p>
+      Tag
+     </p>
+     <p>
+      <code>
+       docker tag [IMAGE]:[TAG] [RegistryDomain]/[IMAGENAME]:[TAG]
+      </code>
+     </p>
+    </li>
+   </ul>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h2 id="Docker-Compose">
+    Docker Compose
+    <a class="anchor-link" href="#Docker-Compose">
+     ¶
+    </a>
+   </h2>
+   <ul>
+    <li>
+     <p>
+      Start all containers
+     </p>
+     <p>
+      <code>
+       docker-compose -d -f [COMPOSE FILE NAME] up
+      </code>
+     </p>
+    </li>
+   </ul>
+   <ul>
+    <li>
+     <p>
+      Stop all containers
+     </p>
+     <p>
+      <code>
+       docker-compose -f [COMPOSE FILE NAME] down
+      </code>
+     </p>
+    </li>
+   </ul>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h2 id="Docker--Build">
+    Docker  Build
+    <a class="anchor-link" href="#Docker--Build">
+     ¶
+    </a>
+   </h2>
+   <ul>
+    <li>
+     <p>
+      Build docker image using Dockerfile
+     </p>
+     <p>
+      <code>
+       docker build -t [IMAGE NAME:TAG_ID] .
+      </code>
+     </p>
+    </li>
+   </ul>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    Reference:
+   </p>
+   <ul>
+    <li>
+     <a href="https://github.com/xipengwang/docker-react-tutorial">
+      Tutorial repository
+     </a>
+    </li>
+   </ul>
+  </div>
+ </div>
+</div>
+
+<div> This blog is converted from <a href="https://github.com/xipengwang/xipengwang.github.io/tree/master/notebooks/docker_tutorial.ipynb">docker_tutorial.ipynb</a></div>
