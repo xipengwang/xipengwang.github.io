@@ -45,7 +45,11 @@ paper-reading-mixture-models-for-least-square-optimization:
 
 blog: expectation–maximization factor-graph grid-mapping mutual-information inertial-navigation rigid-body-transformation \
 	stereo-rectification gaussian-distribution-marginalization lie-theory torque continuous-time-estimation c_plus_plus \
-	docker imap
+	docker imap camera
+
+camera:
+	$(CONVERTER) --nbpath camera.ipynb --date 2022-04-26 \
+		--description "Camera basics" --tag Notebook
 
 imap:
 	$(CONVERTER) --nbpath imap.ipynb --date 2022-04-26 \

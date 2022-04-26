@@ -1,0 +1,378 @@
+---
+layout: notebook
+title: Multi-view Geometry
+description: Camera basics
+tag: Notebook
+---
+
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h2 id="Camera-Intrinsics-and-Extrinsics">
+    Camera Intrinsics and Extrinsics
+    <a class="anchor-link" href="#Camera-Intrinsics-and-Extrinsics">
+     ¶
+    </a>
+   </h2>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h3 id="Basics">
+    Basics
+    <a class="anchor-link" href="#Basics">
+     ¶
+    </a>
+   </h3>
+   <p>
+    The projection is shown as below, where $S$ is the sensor frame, $I$ is the image frame, $C$ is the camera frame, and $W$ is the world frame. $I$ frame normally has only a constant offset to $C$, which is so called camera constant.
+   </p>
+   $$
+\begin{align}
+\begin{bmatrix} u \\ v \\ 1
+\end{bmatrix} = T_{SC} T_{IC} T_{CW} \begin{bmatrix} X \\ Y \\ Z \\ 1
+\end{bmatrix}
+\end{align}
+$$
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    Extrinsic parameter is $T_{CW}$ which typically has 6 DoF - 3 for position and 3 for orientation. $O^W_C$ is the world origin expressed in the camera frame $C$. $O^C_W$ is the camera origin expressed in the world frame $W$.
+   </p>
+   $$
+\begin{align}
+T_{CW} = 
+\begin{bmatrix}
+R_{CW},&amp; O^W_{C} \\
+0,&amp; 1
+\end{bmatrix}
+\end{align}
+$$$$
+\begin{align}
+T_{CW} = 
+\begin{bmatrix}
+R_{CW},&amp; -R_{CW} O^C_W \\
+0,&amp; 1
+\end{bmatrix}
+\end{align}
+$$
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    Intrinsic parameter is $T_{SC} T_{IC}$ without considering non-linear distortions. If we consider image plane is at the negative z direction. Then camera constant $c$ will be negative. $x_H$ and $y_H$ are translation from image frame center to sensor frame center.
+   </p>
+   $$
+\begin{align}
+T_{SC} T_{IC} &amp; = 
+\begin{bmatrix}
+1,&amp; 0, &amp; x_H \\
+0,&amp; 1, &amp; y_H \\
+0,&amp; 0, &amp; 1
+\end{bmatrix}\begin{bmatrix}
+c,&amp; 0, &amp; 0 \\
+0,&amp; c, &amp; 0 \\
+0,&amp; 0, &amp; 1
+\end{bmatrix} \\ 
+&amp; = \begin{bmatrix}
+1,&amp; s, &amp; x_H \\
+0,&amp; 1+m, &amp; y_H \\
+0,&amp; 0, &amp; 1
+\end{bmatrix}\begin{bmatrix}
+c,&amp; 0, &amp; 0 \\
+0,&amp; c, &amp; 0 \\
+0,&amp; 0, &amp; 1
+\end{bmatrix}
+\end{align}
+$$$$
+\begin{align}
+K = T_{SC} T_{IC} &amp; = 
+\begin{bmatrix}
+c_x,&amp; s_{xy}, &amp; x_H \\
+0,&amp; c_y, &amp; y_H \\
+0,&amp; 0, &amp; 1
+\end{bmatrix}
+\end{align}
+$$
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    Non-linear distortion could be caused by non-perfect lens so that each pixel projected onto sensor plane is shifted a little based on its position. $q$ are. the parameters for distortion models, such as barrel distortion, tangent distortion, etc.
+   </p>
+   $$
+\begin{align}
+x_a =&amp; x_s + \Delta(x_s, q) \\
+y_a =&amp; y_s + \Delta(y_s, q)
+\end{align}
+$$$$
+\begin{align}
+x_a = H(x_s)x_s
+\end{align}
+$$
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h3 id="Mapping">
+    Mapping
+    <a class="anchor-link" href="#Mapping">
+     ¶
+    </a>
+   </h3>
+   <h4 id="Inverse-map-from-$x_a$-to-$x_s$">
+    Inverse map from $x_a$ to $x_s$
+    <a class="anchor-link" href="#Inverse-map-from-$x_a$-to-$x_s$">
+     ¶
+    </a>
+   </h4>
+   $$
+\begin{align}
+[x_{s}]_{i+1}= [H([x_{s}]_i)]^{-1}x_a
+\end{align}
+$$
+   <h4 id="Inverse-map-from-$x_s$-to-$X_c$">
+    Inverse map from $x_s$ to $X_c$
+    <a class="anchor-link" href="#Inverse-map-from-$x_s$-to-$X_c$">
+     ¶
+    </a>
+   </h4>
+   $$
+\begin{align}
+X_c = \lambda K^{-1}\begin{bmatrix} u \\ v \\ 1
+\end{bmatrix}
+\end{align}
+$$$$
+\begin{align}
+X_W = O_W^C + \lambda R_{CW}^{-1}K^{-1}\begin{bmatrix} u \\ v \\ 1
+\end{bmatrix}
+\end{align}
+$$
+   <p>
+    Where $\lambda$ is the depth.
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+ <div class="input">
+  <div class="prompt input_prompt">
+   In [37]:
+  </div>
+  <div class="inner_cell">
+   <div class="input_area collapsed">
+    <div class="collapse_expand_button fa fa-1x fa-minus-square-o">
+    </div>
+    <div class="highlight hl-ipython3">
+     <pre><span></span><span class="c1"># Mapping and inverse mapping</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Map world points to sensor frame'</span><span class="p">)</span>
+<span class="n">p_w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'p_w: </span><span class="si">{</span><span class="n">p_W</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+<span class="n">T_cw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> 
+                <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
+<span class="n">R_cw</span> <span class="o">=</span> <span class="n">T_cw</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span>
+<span class="n">O_w</span> <span class="o">=</span> <span class="o">-</span><span class="n">R_cw</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">T_cw</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+
+<span class="n">p_c</span> <span class="o">=</span> <span class="n">T_cw</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">p_w</span><span class="p">)</span>
+
+<span class="n">depth</span> <span class="o">=</span> <span class="n">p_c</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+<span class="n">p_c</span> <span class="o">=</span> <span class="n">p_c</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span>                
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'p_c: </span><span class="si">{</span><span class="n">p_c</span><span class="si">}</span><span class="s1">'</span><span class="p">,</span> <span class="sa">f</span><span class="s1">'depth: </span><span class="si">{</span><span class="n">depth</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+
+<span class="n">K</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="o">-</span><span class="mi">500</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">200</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">500</span><span class="p">,</span> <span class="mi">200</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
+<span class="n">p_i</span> <span class="o">=</span> <span class="n">K</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">p_c</span><span class="p">)</span>
+<span class="n">uv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">p_i</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="n">p_i</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">p_i</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="n">p_i</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="mi">1</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'p_s: </span><span class="si">{</span><span class="n">uv</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">Map sensor points to world frame'</span><span class="p">)</span>
+<span class="n">ray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">K</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">uv</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'ray: </span><span class="si">{</span><span class="n">ray</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+
+<span class="n">p_c</span> <span class="o">=</span> <span class="n">depth</span> <span class="o">*</span> <span class="n">ray</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'p_c: </span><span class="si">{</span><span class="n">p_c</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+
+<span class="n">p_W</span> <span class="o">=</span> <span class="n">O_w</span> <span class="o">+</span> <span class="n">depth</span> <span class="o">*</span> <span class="n">R_cw</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">ray</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'p_w: </span><span class="si">{</span><span class="n">p_W</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+<span class="c1">#</span>
+</pre>
+    </div>
+   </div>
+  </div>
+ </div>
+ <div class="output_wrapper">
+  <div class="output">
+   <div class="output_area">
+    <div class="prompt">
+    </div>
+    <div class="output_subarea output_stream output_stdout output_text">
+     <pre>Map world points to sensor frame
+p_w: [ 1.  0. -5.]
+p_c: [ 2  0 -5] depth: -5
+p_s: [400. 200.   1.]
+
+Map sensor points to world frame
+ray: [-0.4  0.   1. ]
+p_c: [ 2. -0. -5.]
+p_w: [ 1.  0. -5.]
+</pre>
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h3 id="Calibration">
+    Calibration
+    <a class="anchor-link" href="#Calibration">
+     ¶
+    </a>
+   </h3>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h4 id="DLT:-Direct-Linear-Transform">
+    DLT: Direct Linear Transform
+    <a class="anchor-link" href="#DLT:-Direct-Linear-Transform">
+     ¶
+    </a>
+   </h4>
+   <p>
+    Key ideas:
+   </p>
+   <ul>
+    <li>
+     Projection matrix $P = T_{SC} T_{IC} T_{CW}$ has 11 DoF.
+    </li>
+    <li>
+     Given a 2D-to-3D correspondence, we can get two constraints for solving P.
+    </li>
+    <li>
+     We need at least 6 correspondences so that we will have 12 constraints to solve $P$ with 11 DoF.
+    </li>
+    <li>
+     Use SVD to find the solution - right singular vector with least singular value.
+    </li>
+    <li>
+     $ P = [KR| -KRO_W^C]$, so once we get $P$, we can get $KR$ and $O_C^C$
+    </li>
+    <li>
+     Use QR decomposition on $(KR)^{-1}$ to find $K$ and $R$
+    </li>
+   </ul>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h4 id="Zhang's-homography-approach">
+    Zhang's homography approach
+    <a class="anchor-link" href="#Zhang's-homography-approach">
+     ¶
+    </a>
+   </h4>
+   <p>
+    Key ideas:
+   </p>
+   <ul>
+    <li>
+     Use planer object so that $Z_W$ is always 0.
+    </li>
+    <li>
+     Instead of getting $P$, we are solving equations to get homography matrix $H$.
+    </li>
+    <li>
+     We need at least 4 points on each image to solve $H$.
+    </li>
+    <li>
+     Each homography solution gives 2 constraints on $K^TK$.
+    </li>
+    <li>
+     $K^TK$ is a symmetric matrix with 6 DoF. So we need at least 3 images with each giving us 2 constraints on $K^TK$.
+    </li>
+    <li>
+     Find $K^TK$, then do Choleskey decomposition to find $K$.
+    </li>
+   </ul>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h4 id="Non-linear-Optimization-with-Gauss-Newton-or-LM">
+    Non-linear Optimization with Gauss-Newton or LM
+    <a class="anchor-link" href="#Non-linear-Optimization-with-Gauss-Newton-or-LM">
+     ¶
+    </a>
+   </h4>
+   <p>
+    Key ideas:
+   </p>
+   <ul>
+    <li>
+     Use Zhang's approach for initialization.
+    </li>
+    <li>
+     $K, q, R_i, t_i = \underset{K, q, R_i, t_i}{\operatorname{argmin}} {\sum_n\sum_i}\|x_{ni} - \hat{x}(K, q, R_i, t_i, X_{ni})\|^2$.
+    </li>
+    <li>
+     Note that we can set the planar object corner as world origin (0, 0, 0).
+    </li>
+   </ul>
+  </div>
+ </div>
+</div>
+
+<div> This blog is converted from <a href="https://github.com/xipengwang/xipengwang.github.io/tree/master/notebooks/camera.ipynb">camera.ipynb</a></div>
