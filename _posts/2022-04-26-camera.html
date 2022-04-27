@@ -374,5 +374,319 @@ p_w: [ 1.  0. -5.]
   </div>
  </div>
 </div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h3 id="Perspective-n-Points">
+    Perspective-n-Points
+    <a class="anchor-link" href="#Perspective-n-Points">
+     ¶
+    </a>
+   </h3>
+   <p>
+    Given n points in 3D world and its correspondence in 2D image, find the calibrated camera extrinsic pose.
+   </p>
+   <h4 id="P3P">
+    P3P
+    <a class="anchor-link" href="#P3P">
+     ¶
+    </a>
+   </h4>
+   <p>
+    key ideas:
+   </p>
+   <ul>
+    <li>
+     There are 4 solutions in front of camera. We need one additional point to resolve the ambiguity.
+    </li>
+   </ul>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h3 id="Fundamental-Matrix-and-Essential-Matrix">
+    Fundamental Matrix and Essential Matrix
+    <a class="anchor-link" href="#Fundamental-Matrix-and-Essential-Matrix">
+     ¶
+    </a>
+   </h3>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h4 id="Fundamental-Matrix">
+    Fundamental Matrix
+    <a class="anchor-link" href="#Fundamental-Matrix">
+     ¶
+    </a>
+   </h4>
+   <p>
+    Based on the $O_1O_2$, $O_1X$ and $O_2X$ form a plane, aka $O_1X (\cdot O_1O_2 \times O_1X) = 0$, we can get
+   </p>
+   $$
+\begin{align}
+x_1^T (R_1^{-1}K_1^{-1})^T S_{b_{12}} R_2^{-1}K_2^{-1}x_2 = 0
+\end{align}
+$$
+   <p>
+    Where $S_b$ is the skew matrix of vector $O_1O_2$.
+   </p>
+   $$
+\begin{align}
+x_1^TF_{12}x_2 &amp;= 0 \\
+F_{12} &amp;= K_1^{-T}R_1^{-T} S_{b_{12}} R_2^{-1}K_2^{-1}
+\end{align}
+$$
+   <p>
+    Then suppose we have projection matrix $P_1 = [A_1 | a_1] = [KR | -KRO_1]$, then we can get $b_{12} = O_1O_2 = A_2^{-1}a_2 - A_1^{-1}a_1$. Then 
+$$
+\begin{align}
+F = A_1^{-T}S_{b_{12}}A_2^{-1}
+\end{align}
+$$
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h4 id="Essential-Matrix">
+    Essential Matrix
+    <a class="anchor-link" href="#Essential-Matrix">
+     ¶
+    </a>
+   </h4>
+   $$
+\begin{align}
+x_1^TK_1^{-T}E_{12}K_2^{-1}x_2 &amp;= 0 \\
+F &amp;= K_1^{-T}E_{12}K_2^{-1} \\
+E_{12} &amp;= R_1^{-T} S_{b_{12}} R_2^{-1}
+\end{align}
+$$
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h4 id="Epipolar-Constraint">
+    Epipolar Constraint
+    <a class="anchor-link" href="#Epipolar-Constraint">
+     ¶
+    </a>
+   </h4>
+   <p>
+    Important elements:
+   </p>
+   <ul>
+    <li>
+     Epipolar axis: $b_{12} = O_1O_2$
+    </li>
+    <li>
+     Epipolar plane: $O_1O_2X$
+    </li>
+    <li>
+     Epipoles: For image 1, the epipole is the point that camera center $O_2$ projected onto image 1.
+     <ul>
+      <li>
+       Which is also the intersected point between $O_1O_2$ and image 1 plane.
+      </li>
+      <li>
+       Epipole in image 1 is in the null space of $F_{12}^T$ because $e_1^TF_{12}x_2 = 0$ is always true.
+       <ul>
+        <li>
+         This can be obtained using eigen decomposition and find the eigen vector with eigen value as 0.
+        </li>
+        <li>
+         <strong>
+          So Fundamental Matrix F has rank as 2...
+         </strong>
+        </li>
+       </ul>
+      </li>
+     </ul>
+    </li>
+    <li>
+     Epipolar line: For image 1, the epipolar line is the line that ray $O_2X$ projected onto image 1.
+     <ul>
+      <li>
+       Which is also the intersected line between epipolar plane $O_1O_2X$ and image 1 plane.
+      </li>
+      <li>
+       $F_{12}x_2$ is the epipolar line in image 1 because $x_1$ lies on it, aka $x_1^TF_{12}x_2 = 0$
+      </li>
+     </ul>
+    </li>
+   </ul>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h4 id="Direct-Solution-for-Estimating-Fundamental-Matrix-and-Essential-Matrix">
+    Direct Solution for Estimating Fundamental Matrix and Essential Matrix
+    <a class="anchor-link" href="#Direct-Solution-for-Estimating-Fundamental-Matrix-and-Essential-Matrix">
+     ¶
+    </a>
+   </h4>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    Key ideas:
+   </p>
+   <ul>
+    <li>
+     Use DLT to solve $F$ similar as estimating homography matrix $H$. $x_1^TF_{12}x_2 = 0$
+     <ul>
+      <li>
+       There are 8 unknowns in F so we need at least 8 correspondences.
+      </li>
+      <li>
+       $Rank(F) = 2$
+       <ul>
+        <li>
+         $F = USV^T$, then $F \approx U\hat{S}V^T$ where $\hat{S}$ is generated by setting the least singular value as 0.
+        </li>
+       </ul>
+      </li>
+      <li>
+       In reality, using normalized pixel values makes solution more numerically stable.
+      </li>
+     </ul>
+    </li>
+    <li>
+     Use DLT to solve $E$ similar as estimating homography matrix $H$. ${x_k}_1^TE_{12}{x_k}_2 = 0$
+     <ul>
+      <li>
+       There are 8 unknowns in F so we need at least 8 correspondences.
+      </li>
+      <li>
+       $Rank(F) = 2$
+       <ul>
+        <li>
+         $F = USV^T$, then $F \approx U\hat{S}V^T$ where $\hat{S}$ is generated by setting the least singular
+        </li>
+        <li>
+         <strong>
+          We also need to make first two singular value the same. We can all set them as 1.
+         </strong>
+         so it is skew-symmetric??
+        </li>
+       </ul>
+      </li>
+     </ul>
+    </li>
+    <li>
+     5 Point algorithm for finding $E$
+     <ul>
+      <li>
+       RANSAC idea:
+       <ul>
+        <li>
+         Minimal number of points to fit a model: $s$
+        </li>
+        <li>
+         Outlier ratio: $e$
+        </li>
+        <li>
+         Draw a single inlier probability $p = 1-e$
+        </li>
+        <li>
+         Draw $s$ inliers $p = (1-e)^s$
+        </li>
+        <li>
+         Failing 1 time probability $p_f = 1-(1-e)^s$
+        </li>
+        <li>
+         Failing T time probability $p_f = (1-(1-e)^s)^T$
+        </li>
+        <li>
+         If we want to have success probability at least p, then $p &gt; 1-p_f$.
+        </li>
+        <li>
+         <strong>
+          $T = \frac{log(1-p)}{log(1-(1-e)^s)}$
+         </strong>
+        </li>
+       </ul>
+      </li>
+     </ul>
+    </li>
+   </ul>
+   <h5 id="Find-$R$-and-$t$-from-$E$">
+    Find $R$ and $t$ from $E$
+    <a class="anchor-link" href="#Find-$R$-and-$t$-from-$E$">
+     ¶
+    </a>
+   </h5>
+   <ul>
+    <li>
+     $E_{12} = R_{21} [t_{12}]_\times $ which assumes camera 2 is at the world origin.
+    </li>
+    <li>
+     $E_{12} = [t_{12}]_\times R_{12}^T $ which assumes camera 1 is at the world origin.
+    </li>
+    <li>
+     <a href="https://youtu.be/zX5NeY-GTO0?t=2934">
+      4 solutions
+     </a>
+    </li>
+   </ul>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h2 id="Optical-Flow">
+    Optical Flow
+    <a class="anchor-link" href="#Optical-Flow">
+     ¶
+    </a>
+   </h2>
+   <p>
+    The goal is to find $ \Delta u, \Delta v = \underset{\Delta u, \Delta v}{\operatorname{argmin}} \|I_1(u, v) - I_2(u + \Delta u, v + \Delta v)\|^2$.
+   </p>
+   <p>
+    We can minimize the error iteratively as in
+    <a href="https://arxiv.org/abs/1603.03590">
+     this
+    </a>
+    . 
+$$
+\Delta u, \Delta v = \underset{\Delta u, \Delta v}{\operatorname{argmin}} \|I_1(u, v) - I_2(u + u^* + \Delta u, v + v^* + \Delta v)\|^2 \\
+u^* += \Delta u \\
+v^* += \Delta v
+$$
+   </p>
+  </div>
+ </div>
+</div>
 
 <div> This blog is converted from <a href="https://github.com/xipengwang/xipengwang.github.io/tree/master/notebooks/camera.ipynb">camera.ipynb</a></div>
