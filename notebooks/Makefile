@@ -45,7 +45,11 @@ paper-reading-mixture-models-for-least-square-optimization:
 
 blog: expectation–maximization factor-graph grid-mapping mutual-information inertial-navigation rigid-body-transformation \
 	stereo-rectification gaussian-distribution-marginalization lie-theory torque continuous-time-estimation c_plus_plus \
-	docker imap camera
+	docker imap camera gaussian-process
+
+gaussian-process:
+	$(CONVERTER) --nbpath gaussian_process.ipynb --date 2022-04-01 \
+		--description "Gaussian process for ground height prediction" --tag Notebook
 
 camera:
 	$(CONVERTER) --nbpath camera.ipynb --date 2022-04-26 \
