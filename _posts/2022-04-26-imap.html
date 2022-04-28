@@ -120,9 +120,9 @@ tag: Notebook
  </div>
  <div class="inner_cell">
   <div class="text_cell_render border-box-sizing rendered_html">
-   <h3 id="Scene-Representation">
-    Scene Representation
-    <a class="anchor-link" href="#Scene-Representation">
+   <h3 id="Scene-Representation---iMAP">
+    Scene Representation - iMAP
+    <a class="anchor-link" href="#Scene-Representation---iMAP">
      ¶
     </a>
    </h3>
@@ -154,9 +154,9 @@ tag: Notebook
  </div>
  <div class="inner_cell">
   <div class="text_cell_render border-box-sizing rendered_html">
-   <h4 id="How-to-get-predicted-color-and-depth-for-a-pixel">
-    How to get predicted color and depth for a pixel
-    <a class="anchor-link" href="#How-to-get-predicted-color-and-depth-for-a-pixel">
+   <h4 id="Retrieve-predicted-color-and-depth-for-a-pixel">
+    Retrieve predicted color and depth for a pixel
+    <a class="anchor-link" href="#Retrieve-predicted-color-and-depth-for-a-pixel">
      ¶
     </a>
    </h4>
@@ -201,9 +201,9 @@ tag: Notebook
  </div>
  <div class="inner_cell">
   <div class="text_cell_render border-box-sizing rendered_html">
-   <h3 id="Joint-SLAM-Optimization">
-    Joint SLAM Optimization
-    <a class="anchor-link" href="#Joint-SLAM-Optimization">
+   <h3 id="Joint-SLAM-Optimization---iMAP">
+    Joint SLAM Optimization - iMAP
+    <a class="anchor-link" href="#Joint-SLAM-Optimization---iMAP">
      ¶
     </a>
    </h3>
@@ -251,9 +251,9 @@ tag: Notebook
  </div>
  <div class="inner_cell">
   <div class="text_cell_render border-box-sizing rendered_html">
-   <h3 id="Tracking">
-    Tracking
-    <a class="anchor-link" href="#Tracking">
+   <h3 id="Tracking---iMAP">
+    Tracking - iMAP
+    <a class="anchor-link" href="#Tracking---iMAP">
      ¶
     </a>
    </h3>
@@ -293,9 +293,9 @@ tag: Notebook
  </div>
  <div class="inner_cell">
   <div class="text_cell_render border-box-sizing rendered_html">
-   <h3 id="Active-Sampling">
-    Active Sampling
-    <a class="anchor-link" href="#Active-Sampling">
+   <h3 id="Active-Sampling---iMAP">
+    Active Sampling - iMAP
+    <a class="anchor-link" href="#Active-Sampling---iMAP">
      ¶
     </a>
    </h3>
@@ -310,9 +310,9 @@ tag: Notebook
  </div>
  <div class="inner_cell">
   <div class="text_cell_render border-box-sizing rendered_html">
-   <h3 id="Keyframe-Selection">
-    Keyframe Selection
-    <a class="anchor-link" href="#Keyframe-Selection">
+   <h3 id="Keyframe-Selection---iMAP">
+    Keyframe Selection - iMAP
+    <a class="anchor-link" href="#Keyframe-Selection---iMAP">
      ¶
     </a>
    </h3>
@@ -357,6 +357,203 @@ $$
  </div>
  <div class="inner_cell">
   <div class="text_cell_render border-box-sizing rendered_html">
+   <h3 id="Scene-Representation">
+    Scene Representation
+    <a class="anchor-link" href="#Scene-Representation">
+     ¶
+    </a>
+   </h3>
+   <p>
+    iMAP uses a single MLP NN to represent the whole scene while NICE-SLAM uses a hierarchical scene representation. My understanding is that it allows to capture local structure better because a single NN for scene representation has to be updated globally. However, I think this also increases the memory usage similar to voxel grid maps.
+   </p>
+   <h4 id="Network-structure">
+    Network structure
+    <a class="anchor-link" href="#Network-structure">
+     ¶
+    </a>
+   </h4>
+   <ul>
+    <li>
+     4 Feature grids:
+     <ul>
+      <li>
+       color feature grid $\psi_w$ : 16x16cm, trainable parameters
+      </li>
+      <li>
+       geometry feature grid $\phi_0$ : 2m x 2m, coarse grid, trainable parameters
+      </li>
+      <li>
+       geometry feature grid $\phi_1$ : 32cm x 32cm, middle level grid, trainable parameters
+      </li>
+      <li>
+       geometry feature grid $\phi_2$ : 16cm x 16cm, fine level grid, trainable parameters
+      </li>
+     </ul>
+    </li>
+    <li>
+     4 Feature decoder:
+     <ul>
+      <li>
+       color feature decoder: $g(h(p), \psi_w(p)) \rightarrow rgb$:
+       <ul>
+        <li>
+         $rgb$ color channel
+        </li>
+        <li>
+         $h()$ positional encoding, trainable parameters
+        </li>
+        <li>
+         $\psi_w()$ tri-linear interpolation, trainable parameters
+        </li>
+       </ul>
+      </li>
+      <li>
+       geometry decode $f_0(h(p), \phi_0(p)) \rightarrow o_0$:
+       <ul>
+        <li>
+         $o$ is occupancy probability
+        </li>
+        <li>
+         $\phi_0()$ tri-linear interpolation, fixed pretrained parameters
+        </li>
+       </ul>
+      </li>
+      <li>
+       geometry decode $f_1(h(p), \phi_1(p)) \rightarrow o_1$:
+       <ul>
+        <li>
+         $\phi_1()$ tri-linear interpolation, fixed pretrained parameters
+        </li>
+       </ul>
+      </li>
+      <li>
+       geometry decode $f_2(h(p), \phi_2(p)) \rightarrow \Delta o$:
+       <ul>
+        <li>
+         $\phi_2()$ tri-linear interpolation, fixed pretrained parameters
+        </li>
+       </ul>
+      </li>
+     </ul>
+    </li>
+    <li>
+     Hidden feature dimension of 32 and 5 fully-connected blocks
+    </li>
+   </ul>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h4 id="Retrieve-predicted-color-and-depth-for-a-pixel">
+    Retrieve predicted color and depth for a pixel
+    <a class="anchor-link" href="#Retrieve-predicted-color-and-depth-for-a-pixel">
+     ¶
+    </a>
+   </h4>
+   <p>
+    Same as iMAP except that:
+   </p>
+   <ul>
+    <li>
+     The network directly predict occupancy
+    </li>
+    <li>
+     Sample more points near the depth observation
+    </li>
+    <li>
+     Depth has coarse depth obtained using $o_0$ and fine depth obtained using $o_1+\Delta o$
+    </li>
+   </ul>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h3 id="Joint-SLAM-Optimization">
+    Joint SLAM Optimization
+    <a class="anchor-link" href="#Joint-SLAM-Optimization">
+     ¶
+    </a>
+   </h3>
+   <h4 id="Optimization-Parameters">
+    Optimization Parameters
+    <a class="anchor-link" href="#Optimization-Parameters">
+     ¶
+    </a>
+   </h4>
+   <ul>
+    <li>
+     Keyframe Poses (6 DoF): $T$
+    </li>
+    <li>
+     Network Parameter: $\theta$
+    </li>
+   </ul>
+   <h4 id="Objective-function">
+    Objective function
+    <a class="anchor-link" href="#Objective-function">
+     ¶
+    </a>
+   </h4>
+   <ul>
+    <li>
+     Photometric loss: $ I[u, v] - \hat{I}[u, v]$
+    </li>
+    <li>
+     Geometric loss including using both coarse and fine depths: ${D}[u, v] - \hat{D}[u, v]$
+    </li>
+   </ul>
+   <h4 id="Multi-stage-training">
+    Multi-stage training
+    <a class="anchor-link" href="#Multi-stage-training">
+     ¶
+    </a>
+   </h4>
+   <pre><code>- First: Only train mid-level feature grid
+- Second: Train both mid-level and fine-level grid
+- Finally: Train all: coarse level feature, mid-level, fine-level feature, color feature, color decoder, poses.
+- ** ??? When to switch to next stage? How to run in real-time? ** </code></pre>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h3 id="Tracking">
+    Tracking
+    <a class="anchor-link" href="#Tracking">
+     ¶
+    </a>
+   </h3>
+   <p>
+    Same as iMAP and also filters pixels with large depth/color re-rendering loss.
+   </p>
+   <h3 id="Keyframe-Selection">
+    Keyframe Selection
+    <a class="anchor-link" href="#Keyframe-Selection">
+     ¶
+    </a>
+   </h3>
+   <p>
+    Same as iMAP.
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
    <h2 id="iSDF:-Real-Time-Neural-Signed-Distance-Fields-for-Robot-Perception">
     iSDF: Real-Time Neural Signed Distance Fields for Robot Perception
     <a class="anchor-link" href="#iSDF:-Real-Time-Neural-Signed-Distance-Fields-for-Robot-Perception">
@@ -371,12 +568,79 @@ $$
  </div>
  <div class="inner_cell">
   <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    Key ideas:
+   </p>
+   <ul>
+    <li>
+     Use posed images so this means it has to have an additional tracking system. I assume it would be a sparse feature based SLAM system.
+    </li>
+    <li>
+     Directly regress Signed distance function (SDF) and normals.
+    </li>
+    <li>
+     I think Atlas paper below is more interesting.
+    </li>
+   </ul>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
    <h2 id="Atlas:-End-to-End-3D-Scene-Reconstruction-from-Posed-Images">
     Atlas: End-to-End 3D Scene Reconstruction from Posed Images
     <a class="anchor-link" href="#Atlas:-End-to-End-3D-Scene-Reconstruction-from-Posed-Images">
      ¶
     </a>
    </h2>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h2 id="CodeSLAM-—-Learning-a-Compact,-Optimisable-Representation-for-Dense-Visual-SLAM">
+    CodeSLAM — Learning a Compact, Optimisable Representation for Dense Visual SLAM
+    <a class="anchor-link" href="#CodeSLAM-—-Learning-a-Compact,-Optimisable-Representation-for-Dense-Visual-SLAM">
+     ¶
+    </a>
+   </h2>
+   <p>
+    Key ideas:
+   </p>
+   <ul>
+    <li>
+     Pre-train a decoder network and encoder network (Not used in SLAM).
+    </li>
+    <li>
+     Given an RGB image and a code (essentially a feature embedding vector), decoder network will output a depth map.
+    </li>
+    <li>
+     SLAM system minimizes geometric errors by optimizing over
+     <strong>
+      camera poses
+     </strong>
+     and
+     <strong>
+      code
+     </strong>
+     , while decoder network weights are fixed.
+    </li>
+    <li>
+     Important Note: The paper still uses LM based iterative non-linear least square solvers so
+     <strong>
+      in order to calculate Jacobian with respect to the code, they use a linear decoder network
+     </strong>
+    </li>
+    <li>
+     I think this paper can be considered as a pioneering work but also outdated.
+    </li>
+   </ul>
   </div>
  </div>
 </div>
@@ -438,6 +702,65 @@ $$
      </code>
     </li>
    </ul>
+   <p>
+    Interesting Deep SLAM Papers:
+   </p>
+   <ul>
+    <li>
+     Teed et al.
+     <code>
+      RAFT: Recurrent All-Pairs Field Transforms for Optical Flow
+     </code>
+     (ECCV 2020 best paper)
+    </li>
+    <li>
+     Guizilini et al.
+     <code>
+      Learning Optical Flow, Depth, and Scene Flow without Real-World Labels
+     </code>
+    </li>
+    <li>
+     Teed et al.
+     <code>
+      DROID-SLAM: Deep Visual SLAM for Monocular, Stereo, and RGB-D Cameras
+     </code>
+    </li>
+   </ul>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h2 id="Deep-SLAM-papers">
+    Deep SLAM papers
+    <a class="anchor-link" href="#Deep-SLAM-papers">
+     ¶
+    </a>
+   </h2>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h3 id="RAFT:-Recurrent-All-Pairs-Field-Transforms-for-Optical-Flow">
+    RAFT: Recurrent All-Pairs Field Transforms for Optical Flow
+    <a class="anchor-link" href="#RAFT:-Recurrent-All-Pairs-Field-Transforms-for-Optical-Flow">
+     ¶
+    </a>
+   </h3>
+   <p>
+    This is one of my favorite deep learning paper so far. The idea is so simple and clear which mimic the
+    <a href="{% post_url 2022-04-26-camera%}#Optical-Flow">
+     traditional ways for estimating flow
+    </a>
+    .
+   </p>
   </div>
  </div>
 </div>
