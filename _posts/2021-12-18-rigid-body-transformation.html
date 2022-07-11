@@ -692,5 +692,88 @@ T_{trans}T_{rot}$. $T_{trans}$ is a pure translation and $T_{rot}$ is a pure rot
   </div>
  </div>
 </div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h1 id="Time-Derivative-of-Rotation-Matrices">
+    Time Derivative of Rotation Matrices
+    <a class="anchor-link" href="#Time-Derivative-of-Rotation-Matrices">
+     ¶
+    </a>
+   </h1>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    We have a rotation matrix $R^{wb}$ and we are interested to know the time derivative of it as $\dot{R^{wb}}$. The rotation matrix has 9 elements, however we know that the degree of freedom of the angular velocity is 3 which can be represented as a magnitude value $\theta$ and a normalized direction vector $\omega$. Then the question is how do we get $\dot{R^{wb}}$?
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    Firstly, we specify the rotation vector $\omega_b$ in the body frame. Then in the body frame $b$, for each axis we can get $\dot{v} = [\omega_b]_\times v$. Put them into a matrix form, we can get 
+$$
+\begin{align}
+\dot{I_b} = [\omega_b]_\times 
+\begin{bmatrix} 
+1, &amp;0, &amp;0 \\
+0, &amp;1, &amp;0 \\
+0, &amp;0, &amp;1
+\end{bmatrix}
+\end{align}
+$$
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    The math notation might be very rigorous here, but the main idea is that each column is the linear velocity of an axis. If we integrate over time, we can get $R^{bb'} = \int{\dot{I_b(t)}}dt = \int{[\omega_b]_\times}dt$, then the new rotation matrix in the world frame will be $R^{wb'} = R^{wb}R^{bb'} = \int{\dot{R^{wb}}}dt$.
+   </p>
+   <p>
+    Then we found $\dot{R_{wb}} = R_{wb}[\omega_b]_\times$.
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h2 id="Summary">
+    Summary
+    <a class="anchor-link" href="#Summary">
+     ¶
+    </a>
+   </h2>
+   <p>
+    In this blog, I emphasize only on using $\omega_b$ because it can be measured by IMU in its body frame.
+   </p>
+   $$
+\begin{align}
+\dot{R_{wb}} &amp;= R_{wb}[\omega_b]_\times \\
+\dot{R_{bw}} &amp;= -[\omega_b]_\times R_{bw}
+\end{align}
+$$
+  </div>
+ </div>
+</div>
 
 <div> This blog is converted from <a href="https://github.com/xipengwang/xipengwang.github.io/tree/master/notebooks/rigid-body-transformation.ipynb">rigid-body-transformation.ipynb</a></div>
