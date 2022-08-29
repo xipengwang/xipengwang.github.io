@@ -32,9 +32,9 @@ tag: Notebook
  </div>
  <div class="inner_cell">
   <div class="text_cell_render border-box-sizing rendered_html">
-   <h3 id="Basics">
-    Basics
-    <a class="anchor-link" href="#Basics">
+   <h3 id="Basics-of-Pinhole-Camera-Model">
+    Basics of Pinhole Camera Model
+    <a class="anchor-link" href="#Basics-of-Pinhole-Camera-Model">
      ¶
     </a>
    </h3>
@@ -128,16 +128,22 @@ $$
  <div class="inner_cell">
   <div class="text_cell_render border-box-sizing rendered_html">
    <p>
-    Non-linear distortion could be caused by non-perfect lens so that each pixel projected onto sensor plane is shifted a little based on its position. $q$ are. the parameters for distortion models, such as barrel distortion, tangent distortion, etc.
+    Non-linear distortion could be caused by non-perfect lens so that each pixel projected onto sensor plane is shifted a little based on its position. $x_u$ and $y_u$ are undistorted projected points on the normalized image plane where $depth = 1$ ($x_u = \frac{X_C}{Z_C}, y_u = \frac{Y_C}{Z_C}$, $Z_C$ is the depth). $q$ are the parameters for distortion models, such as barrel distortion, tangent distortion, etc.
    </p>
    $$
 \begin{align}
-x_a =&amp; x_s + \Delta(x_s, q) \\
-y_a =&amp; y_s + \Delta(y_s, q)
+x_d =&amp; x_u + \Delta(x_u, q) \\
+y_d =&amp; y_u + \Delta(y_u, q)
 \end{align}
 $$$$
 \begin{align}
-x_a = H(x_s)x_s
+x_d = H(x_u)x_u
+\end{align}
+$$$$
+\begin{align}
+\begin{bmatrix} u \\ v \\ 1
+\end{bmatrix} = T_{SC} T_{IC} \begin{bmatrix} x_d \\ y_d \\ 1
+\end{bmatrix}
 \end{align}
 $$
   </div>
@@ -154,32 +160,42 @@ $$
      ¶
     </a>
    </h3>
-   <h4 id="Inverse-map-from-$x_a$-to-$x_s$">
-    Inverse map from $x_a$ to $x_s$
-    <a class="anchor-link" href="#Inverse-map-from-$x_a$-to-$x_s$">
+   <h4 id="Inverse-map-from-$uv$-to-$x_d$">
+    Inverse map from $uv$ to $x_d$
+    <a class="anchor-link" href="#Inverse-map-from-$uv$-to-$x_d$">
      ¶
     </a>
    </h4>
    $$
 \begin{align}
-[x_{s}]_{i+1}= [H([x_{s}]_i)]^{-1}x_a
+x_d = K^{-1}\begin{bmatrix} u \\ v \\ 1
+\end{bmatrix}
 \end{align}
 $$
-   <h4 id="Inverse-map-from-$x_s$-to-$X_c$">
-    Inverse map from $x_s$ to $X_c$
-    <a class="anchor-link" href="#Inverse-map-from-$x_s$-to-$X_c$">
+   <h4 id="Inverse-map-from-$x_d$-to-$x_u$">
+    Inverse map from $x_d$ to $x_u$
+    <a class="anchor-link" href="#Inverse-map-from-$x_d$-to-$x_u$">
      ¶
     </a>
    </h4>
    $$
 \begin{align}
-X_c = \lambda K^{-1}\begin{bmatrix} u \\ v \\ 1
-\end{bmatrix}
+[x_{u}]_{i+1}= [H([x_{u}]_i)]^{-1}x_d
+\end{align}
+$$
+   <h4 id="Inverse-map-from-$x_u$-to-$X_c$">
+    Inverse map from $x_u$ to $X_c$
+    <a class="anchor-link" href="#Inverse-map-from-$x_u$-to-$X_c$">
+     ¶
+    </a>
+   </h4>
+   $$
+\begin{align}
+X_C = \lambda x_u
 \end{align}
 $$$$
 \begin{align}
-X_W = O_W^C + \lambda R_{CW}^{-1}K^{-1}\begin{bmatrix} u \\ v \\ 1
-\end{bmatrix}
+X_W = O_W^C + R_{CW}^{-1} X_C
 \end{align}
 $$
    <p>
@@ -191,7 +207,7 @@ $$
 <div class="cell border-box-sizing code_cell rendered">
  <div class="input">
   <div class="prompt input_prompt">
-   In [37]:
+   In [3]:
   </div>
   <div class="inner_cell">
    <div class="input_area collapsed">
@@ -204,7 +220,7 @@ $$
 
 <span class="nb">print</span><span class="p">(</span><span class="s1">'Map world points to sensor frame'</span><span class="p">)</span>
 <span class="n">p_w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'p_w: </span><span class="si">{</span><span class="n">p_W</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'p_w: </span><span class="si">{</span><span class="n">p_w</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
 <span class="n">T_cw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> 
                 <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
                 <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
@@ -219,8 +235,11 @@ $$
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'p_c: </span><span class="si">{</span><span class="n">p_c</span><span class="si">}</span><span class="s1">'</span><span class="p">,</span> <span class="sa">f</span><span class="s1">'depth: </span><span class="si">{</span><span class="n">depth</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
 
 <span class="n">K</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="o">-</span><span class="mi">500</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">200</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">500</span><span class="p">,</span> <span class="mi">200</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
-<span class="n">p_i</span> <span class="o">=</span> <span class="n">K</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">p_c</span><span class="p">)</span>
-<span class="n">uv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">p_i</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="n">p_i</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">p_i</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="n">p_i</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="mi">1</span><span class="p">])</span>
+
+<span class="c1"># Depth = 1</span>
+<span class="n">p_nc</span> <span class="o">=</span> <span class="n">p_c</span> <span class="o">/</span> <span class="n">depth</span>
+
+<span class="n">uv</span> <span class="o">=</span> <span class="n">K</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">p_nc</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'p_s: </span><span class="si">{</span><span class="n">uv</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">Map sensor points to world frame'</span><span class="p">)</span>
 <span class="n">ray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">K</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">uv</span><span class="p">)</span>
@@ -230,7 +249,7 @@ $$
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'p_c: </span><span class="si">{</span><span class="n">p_c</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
 
 <span class="n">p_W</span> <span class="o">=</span> <span class="n">O_w</span> <span class="o">+</span> <span class="n">depth</span> <span class="o">*</span> <span class="n">R_cw</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">ray</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'p_w: </span><span class="si">{</span><span class="n">p_W</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'p_w: </span><span class="si">{</span><span class="n">p_w</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
 <span class="c1">#</span>
 </pre>
     </div>
@@ -244,14 +263,14 @@ $$
     </div>
     <div class="output_subarea output_stream output_stdout output_text">
      <pre>Map world points to sensor frame
-p_w: [ 1.  0. -5.]
+p_w: [ 1  0 -5  1]
 p_c: [ 2  0 -5] depth: -5
 p_s: [400. 200.   1.]
 
 Map sensor points to world frame
 ray: [-0.4  0.   1. ]
 p_c: [ 2. -0. -5.]
-p_w: [ 1.  0. -5.]
+p_w: [ 1  0 -5  1]
 </pre>
     </div>
    </div>
@@ -656,6 +675,50 @@ $$
      </a>
     </li>
    </ul>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h3 id="Camera-Models">
+    Camera Models
+    <a class="anchor-link" href="#Camera-Models">
+     ¶
+    </a>
+   </h3>
+   <h4 id="Pinhole-Camera-Model">
+    Pinhole Camera Model
+    <a class="anchor-link" href="#Pinhole-Camera-Model">
+     ¶
+    </a>
+   </h4>
+   <h4 id="Unified-Camera-Model">
+    Unified Camera Model
+    <a class="anchor-link" href="#Unified-Camera-Model">
+     ¶
+    </a>
+   </h4>
+   <h4 id="Extended-Unified-Camera-Model">
+    Extended Unified Camera Model
+    <a class="anchor-link" href="#Extended-Unified-Camera-Model">
+     ¶
+    </a>
+   </h4>
+   <h4 id="Kannala-Brandt-Camera-Model">
+    Kannala-Brandt Camera Model
+    <a class="anchor-link" href="#Kannala-Brandt-Camera-Model">
+     ¶
+    </a>
+   </h4>
+   <h4 id="Double-Sphere-Camera-Model">
+    Double Sphere Camera Model
+    <a class="anchor-link" href="#Double-Sphere-Camera-Model">
+     ¶
+    </a>
+   </h4>
   </div>
  </div>
 </div>
