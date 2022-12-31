@@ -51,6 +51,10 @@ gaussian-process:
 	$(CONVERTER) --nbpath gaussian_process.ipynb --date 2022-04-01 \
 		--description "Gaussian process for ground height prediction" --tag Notebook
 
+symforce:
+	$(CONVERTER) --nbpath symforce.ipynb --date 2022-12-31 \
+		--description "Symforce basics" --tag Notebook
+
 camera:
 	$(CONVERTER) --nbpath camera.ipynb --date 2022-04-26 \
 		--description "Camera basics" --tag Notebook
