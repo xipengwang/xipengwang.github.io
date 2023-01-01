@@ -358,20 +358,19 @@ tag: Notebook
 <div class="cell border-box-sizing code_cell rendered">
  <div class="input">
   <div class="prompt input_prompt">
-   In [3]:
+   In [119]:
   </div>
   <div class="inner_cell">
-   <div class="input_area collapsed">
+   <div class="input_area">
     <div class="collapse_expand_button fa fa-1x fa-minus-square-o">
     </div>
     <div class="highlight hl-ipython3">
-     <pre><span></span><span class="c1"># sym</span>
+     <pre><span></span><span class="c1"># sym runtime code</span>
 <span class="kn">import</span> <span class="nn">sym</span>
 <span class="kn">import</span> <span class="nn">symforce.symbolic</span> <span class="k">as</span> <span class="nn">sf</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"sym package rotation matrix type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">sym</span><span class="o">.</span><span class="n">Pose3</span><span class="o">.</span><span class="n">identity</span><span class="p">()</span><span class="o">.</span><span class="n">R</span><span class="o">.</span><span class="n">to_rotation_matrix</span><span class="p">())</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"symbolic package rotation matrix type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">sf</span><span class="o">.</span><span class="n">Pose3</span><span class="o">.</span><span class="n">identity</span><span class="p">()</span><span class="o">.</span><span class="n">R</span><span class="o">.</span><span class="n">to_rotation_matrix</span><span class="p">())</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"symbolic package rotation matrix to_numpy type: </span><span class="si">{</span> <span class="nb">type</span><span class="p">(</span><span class="n">sf</span><span class="o">.</span><span class="n">Pose3</span><span class="o">.</span><span class="n">identity</span><span class="p">()</span><span class="o">.</span><span class="n">R</span><span class="o">.</span><span class="n">to_rotation_matrix</span><span class="p">()</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">())</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-<span class="c1">#</span>
 </pre>
     </div>
    </div>
@@ -485,62 +484,6 @@ symbolic package rotation matrix to_numpy type: &lt;class 'numpy.ndarray'&gt;
 </pre>
     </div>
    </div>
-  </div>
- </div>
-</div>
-<div class="cell border-box-sizing text_cell rendered">
- <div class="prompt input_prompt">
- </div>
- <div class="inner_cell">
-  <div class="text_cell_render border-box-sizing rendered_html">
-   <h3 id="Ops-Package">
-    Ops Package
-    <a class="anchor-link" href="#Ops-Package">
-     ¶
-    </a>
-   </h3>
-  </div>
- </div>
-</div>
-<div class="cell border-box-sizing text_cell rendered">
- <div class="prompt input_prompt">
- </div>
- <div class="inner_cell">
-  <div class="text_cell_render border-box-sizing rendered_html">
-   <h4 id="Storage-Ops">
-    Storage Ops
-    <a class="anchor-link" href="#Storage-Ops">
-     ¶
-    </a>
-   </h4>
-  </div>
- </div>
-</div>
-<div class="cell border-box-sizing text_cell rendered">
- <div class="prompt input_prompt">
- </div>
- <div class="inner_cell">
-  <div class="text_cell_render border-box-sizing rendered_html">
-   <h4 id="Group-Ops">
-    Group Ops
-    <a class="anchor-link" href="#Group-Ops">
-     ¶
-    </a>
-   </h4>
-  </div>
- </div>
-</div>
-<div class="cell border-box-sizing text_cell rendered">
- <div class="prompt input_prompt">
- </div>
- <div class="inner_cell">
-  <div class="text_cell_render border-box-sizing rendered_html">
-   <h4 id="Lie-Group-Ops">
-    Lie Group Ops
-    <a class="anchor-link" href="#Lie-Group-Ops">
-     ¶
-    </a>
-   </h4>
   </div>
  </div>
 </div>
@@ -766,10 +709,10 @@ After modifying id: 1024
 <div class="cell border-box-sizing code_cell rendered">
  <div class="input">
   <div class="prompt input_prompt">
-   In [114]:
+   In [118]:
   </div>
   <div class="inner_cell">
-   <div class="input_area">
+   <div class="input_area collapsed">
     <div class="collapse_expand_button fa fa-1x fa-minus-square-o">
     </div>
     <div class="highlight hl-ipython3">
@@ -780,10 +723,14 @@ After modifying id: 1024
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"tangent dim: </span><span class="si">{</span><span class="n">w_T_b</span><span class="o">.</span><span class="n">tangent_dim</span><span class="p">()</span><span class="si">}</span><span class="s2">, storage dim: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">w_T_b</span><span class="o">.</span><span class="n">to_storage</span><span class="p">())</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"storage_D_tangent shape: </span><span class="si">{</span><span class="n">w_T_b</span><span class="o">.</span><span class="n">storage_D_tangent</span><span class="p">()</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 <span class="c1"># display(pose.to_tangent())</span>
-<span class="n">p_w</span> <span class="o">=</span> <span class="n">sf</span><span class="o">.</span><span class="n">Matrix</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">symbolic</span>
-<span class="n">p_b</span> <span class="o">=</span> <span class="n">sf</span><span class="o">.</span><span class="n">Matrix</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">p_w</span> <span class="o">=</span> <span class="n">sf</span><span class="o">.</span><span class="n">Matrix</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">symbolic</span><span class="p">(</span><span class="s2">"w"</span><span class="p">)</span>
+<span class="n">p_b</span> <span class="o">=</span> <span class="n">sf</span><span class="o">.</span><span class="n">Matrix</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">symbolic</span><span class="p">(</span><span class="s2">"b"</span><span class="p">)</span>
 <span class="n">residual</span> <span class="o">=</span> <span class="n">w_T_b</span><span class="p">[</span><span class="s2">"T"</span><span class="p">]</span> <span class="o">*</span> <span class="n">p_b</span> <span class="o">-</span> <span class="n">p_w</span>
+<span class="n">residual_D_tangent</span> <span class="o">=</span> <span class="n">residual</span><span class="o">.</span><span class="n">jacobian</span><span class="p">(</span><span class="n">w_T_b</span><span class="p">[</span><span class="s2">"T"</span><span class="p">])</span>
 <span class="n">display</span><span class="p">(</span><span class="n">residual</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">residual_D_tangent</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">residual_D_tangent</span><span class="p">)</span>
+<span class="c1">#</span>
 </pre>
     </div>
    </div>
@@ -804,7 +751,843 @@ storage_D_tangent shape: (7, 6)
     <div class="prompt">
     </div>
     <div class="output_latex output_subarea">
-     $\displaystyle \left[\begin{matrix}0\\0\\0\end{matrix}\right]$
+     $\displaystyle \left[\begin{matrix}T.t0 + b_{0} \left(- 2 T.R_{y}^{2} - 2 T.R_{z}^{2} + 1\right) + b_{1} \left(- 2 T.R_{w} T.R_{z} + 2 T.R_{x} T.R_{y}\right) + b_{2} \cdot \left(2 T.R_{w} T.R_{y} + 2 T.R_{x} T.R_{z}\right) - w_{0}\\T.t1 + b_{0} \cdot \left(2 T.R_{w} T.R_{z} + 2 T.R_{x} T.R_{y}\right) + b_{1} \left(- 2 T.R_{x}^{2} - 2 T.R_{z}^{2} + 1\right) + b_{2} \left(- 2 T.R_{w} T.R_{x} + 2 T.R_{y} T.R_{z}\right) - w_{1}\\T.t2 + b_{0} \left(- 2 T.R_{w} T.R_{y} + 2 T.R_{x} T.R_{z}\right) + b_{1} \cdot \left(2 T.R_{w} T.R_{x} + 2 T.R_{y} T.R_{z}\right) + b_{2} \left(- 2 T.R_{x}^{2} - 2 T.R_{y}^{2} + 1\right) - w_{2}\end{matrix}\right]$
+    </div>
+   </div>
+   <div class="output_area">
+    <div class="prompt">
+    </div>
+    <div class="output_latex output_subarea">
+     $\displaystyle \left( 3, \  6\right)$
+    </div>
+   </div>
+   <div class="output_area">
+    <div class="prompt">
+    </div>
+    <div class="output_latex output_subarea">
+     $\displaystyle \left[\begin{matrix}b_{1} \cdot \left(2 T.R_{w} T.R_{y} + 2 T.R_{x} T.R_{z}\right) + b_{2} \cdot \left(2 T.R_{w} T.R_{z} - 2 T.R_{x} T.R_{y}\right) &amp; b_{0} \left(- 2 T.R_{w} T.R_{y} - 2 T.R_{x} T.R_{z}\right) + b_{2} \left(T.R_{w}^{2} + T.R_{x}^{2} - T.R_{y}^{2} - T.R_{z}^{2}\right) &amp; b_{0} \left(- 2 T.R_{w} T.R_{z} + 2 T.R_{x} T.R_{y}\right) + b_{1} \left(- T.R_{w}^{2} - T.R_{x}^{2} + T.R_{y}^{2} + T.R_{z}^{2}\right) &amp; 1 &amp; 0 &amp; 0\\b_{1} \left(- 2 T.R_{w} T.R_{x} + 2 T.R_{y} T.R_{z}\right) + b_{2} \left(- T.R_{w}^{2} + T.R_{x}^{2} - T.R_{y}^{2} + T.R_{z}^{2}\right) &amp; b_{0} \cdot \left(2 T.R_{w} T.R_{x} - 2 T.R_{y} T.R_{z}\right) + b_{2} \cdot \left(2 T.R_{w} T.R_{z} + 2 T.R_{x} T.R_{y}\right) &amp; b_{0} \left(T.R_{w}^{2} - T.R_{x}^{2} + T.R_{y}^{2} - T.R_{z}^{2}\right) + b_{1} \left(- 2 T.R_{w} T.R_{z} - 2 T.R_{x} T.R_{y}\right) &amp; 0 &amp; 1 &amp; 0\\b_{1} \left(T.R_{w}^{2} - T.R_{x}^{2} - T.R_{y}^{2} + T.R_{z}^{2}\right) + b_{2} \left(- 2 T.R_{w} T.R_{x} - 2 T.R_{y} T.R_{z}\right) &amp; b_{0} \left(- T.R_{w}^{2} + T.R_{x}^{2} + T.R_{y}^{2} - T.R_{z}^{2}\right) + b_{2} \left(- 2 T.R_{w} T.R_{y} + 2 T.R_{x} T.R_{z}\right) &amp; b_{0} \cdot \left(2 T.R_{w} T.R_{x} + 2 T.R_{y} T.R_{z}\right) + b_{1} \cdot \left(2 T.R_{w} T.R_{y} - 2 T.R_{x} T.R_{z}\right) &amp; 0 &amp; 0 &amp; 1\end{matrix}\right]$
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h3 id="Ops-Package">
+    Ops Package
+    <a class="anchor-link" href="#Ops-Package">
+     ¶
+    </a>
+   </h3>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h4 id="Storage-Ops">
+    Storage Ops
+    <a class="anchor-link" href="#Storage-Ops">
+     ¶
+    </a>
+   </h4>
+   <p>
+    Data type that can be serialized to and from a vector of scalar quantities.
+    <code>
+     .storage_dim()
+    </code>
+    ,
+    <code>
+     .to_storage()
+    </code>
+    ,
+    <code>
+     .from_storage()
+    </code>
+    ,
+    <code>
+     .symbolic()
+    </code>
+    ,
+    <code>
+     .evalf()
+    </code>
+    ,
+    <code>
+     .subs()
+    </code>
+    ,
+    <code>
+     .simplify()
+    </code>
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+ <div class="input">
+  <div class="prompt input_prompt">
+   In [156]:
+  </div>
+  <div class="inner_cell">
+   <div class="input_area">
+    <div class="collapse_expand_button fa fa-1x fa-minus-square-o">
+    </div>
+    <div class="highlight hl-ipython3">
+     <pre><span></span><span class="c1"># Storage Ops</span>
+
+<span class="kn">from</span> <span class="nn">symforce.ops</span> <span class="kn">import</span> <span class="n">StorageOps</span>
+
+<span class="c1"># Element-wise operations on Values object with multiple types of elements</span>
+<span class="n">values</span> <span class="o">=</span> <span class="n">Values</span><span class="p">(</span>
+    <span class="n">pose</span><span class="o">=</span><span class="n">sf</span><span class="o">.</span><span class="n">Pose3</span><span class="p">(),</span>
+    <span class="n">scalar</span><span class="o">=</span><span class="n">sf</span><span class="o">.</span><span class="n">Symbol</span><span class="p">(</span><span class="s2">"x"</span><span class="p">),</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Storage dim: </span><span class="si">{</span><span class="n">StorageOps</span><span class="o">.</span><span class="n">storage_dim</span><span class="p">(</span><span class="n">values</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>  <span class="c1"># 4 quaternion + 3 position + 1 scalar</span>
+
+<span class="c1"># Serialize geometric type and reconstruct</span>
+<span class="n">T</span> <span class="o">=</span> <span class="n">sf</span><span class="o">.</span><span class="n">Pose3</span><span class="o">.</span><span class="n">symbolic</span><span class="p">(</span><span class="s2">"T"</span><span class="p">)</span>
+<span class="n">T_serialized</span> <span class="o">=</span> <span class="n">StorageOps</span><span class="o">.</span><span class="n">to_storage</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
+<span class="n">T_recovered</span> <span class="o">=</span> <span class="n">StorageOps</span><span class="o">.</span><span class="n">from_storage</span><span class="p">(</span><span class="n">sf</span><span class="o">.</span><span class="n">Pose3</span><span class="p">,</span> <span class="n">T_serialized</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">T_serialized</span><span class="p">)</span>
+<span class="k">assert</span><span class="p">(</span><span class="n">T</span> <span class="o">==</span> <span class="n">T_recovered</span><span class="p">)</span>
+</pre>
+    </div>
+   </div>
+  </div>
+ </div>
+ <div class="output_wrapper">
+  <div class="output">
+   <div class="output_area">
+    <div class="prompt">
+    </div>
+    <div class="output_subarea output_stream output_stdout output_text">
+     <pre>Storage dim: 8
+</pre>
+    </div>
+   </div>
+   <div class="output_area">
+    <div class="prompt">
+    </div>
+    <div class="output_latex output_subarea">
+     $\displaystyle \left[ T.R_{x}, \  T.R_{y}, \  T.R_{z}, \  T.R_{w}, \  T.t0, \  T.t1, \  T.t2\right]$
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h4 id="Group-Ops">
+    Group Ops
+    <a class="anchor-link" href="#Group-Ops">
+     ¶
+    </a>
+   </h4>
+   <p>
+    Mathematical group that implements closure, associativity, identity and invertibility.
+Methods:
+    <code>
+     .identity()
+    </code>
+    ,
+    <code>
+     .inverse()
+    </code>
+    ,
+    <code>
+     .compose()
+    </code>
+    ,
+    <code>
+     .between()
+    </code>
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+ <div class="input">
+  <div class="prompt input_prompt">
+   In [157]:
+  </div>
+  <div class="inner_cell">
+   <div class="input_area">
+    <div class="collapse_expand_button fa fa-1x fa-minus-square-o">
+    </div>
+    <div class="highlight hl-ipython3">
+     <pre><span></span><span class="c1"># Group Ops</span>
+<span class="kn">from</span> <span class="nn">symforce.ops</span> <span class="kn">import</span> <span class="n">GroupOps</span>
+<span class="c1"># Identity of a pose</span>
+<span class="n">w_T_b</span> <span class="o">=</span> <span class="n">sf</span><span class="o">.</span><span class="n">Pose3</span><span class="p">()</span>
+<span class="n">display</span><span class="p">(</span><span class="n">GroupOps</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="n">w_T_b</span><span class="p">))</span>
+<span class="c1"># Inverse of a vector</span>
+<span class="n">p_b</span> <span class="o">=</span> <span class="n">sf</span><span class="o">.</span><span class="n">V3</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">GroupOps</span><span class="o">.</span><span class="n">inverse</span><span class="p">(</span><span class="n">p_b</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+
+<span class="c1"># Compose a pose and a point (wrong, they are not the same group)</span>
+<span class="n">p_w</span> <span class="o">=</span> <span class="n">w_T_b</span> <span class="o">*</span> <span class="n">p_b</span> <span class="c1"># GroupOps.compose(w_T_b, p_b)</span>
+<span class="c1"># display(p_w)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">GroupOps</span><span class="o">.</span><span class="n">compose</span><span class="p">(</span><span class="n">p_b</span><span class="p">,</span> <span class="n">GroupOps</span><span class="o">.</span><span class="n">inverse</span><span class="p">(</span><span class="n">p_b</span><span class="p">))</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+</pre>
+    </div>
+   </div>
+  </div>
+ </div>
+ <div class="output_wrapper">
+  <div class="output">
+   <div class="output_area">
+    <div class="prompt">
+    </div>
+    <div class="output_text output_subarea">
+     <pre>&lt;Pose3 R=&lt;Rot3 &lt;Q xyzw=[0, 0, 0, 1]&gt;&gt;, t=(0, 0, 0)&gt;</pre>
+    </div>
+   </div>
+   <div class="output_area">
+    <div class="prompt">
+    </div>
+    <div class="output_latex output_subarea">
+     $\displaystyle \left[\begin{matrix}-1 &amp; -1 &amp; -1\end{matrix}\right]$
+    </div>
+   </div>
+   <div class="output_area">
+    <div class="prompt">
+    </div>
+    <div class="output_latex output_subarea">
+     $\displaystyle \left[\begin{matrix}0 &amp; 0 &amp; 0\end{matrix}\right]$
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+ <div class="input">
+  <div class="prompt input_prompt">
+   In [174]:
+  </div>
+  <div class="inner_cell">
+   <div class="input_area">
+    <div class="collapse_expand_button fa fa-1x fa-minus-square-o">
+    </div>
+    <div class="highlight hl-ipython3">
+     <pre><span></span><span class="c1"># Relative rotation -&gt; b1_R_b2 = GroupOps.between(w_R_b1, w_R_b2)</span>
+<span class="n">w_R_b1</span> <span class="o">=</span> <span class="n">sf</span><span class="o">.</span><span class="n">Rot3</span><span class="o">.</span><span class="n">from_angle_axis</span><span class="p">(</span>
+    <span class="n">angle</span><span class="o">=</span><span class="n">sf</span><span class="o">.</span><span class="n">Scalar</span><span class="p">(</span><span class="mf">0.2</span><span class="p">),</span>
+    <span class="n">axis</span><span class="o">=</span><span class="n">sf</span><span class="o">.</span><span class="n">V3</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">normalized</span><span class="p">(),</span>
+<span class="p">)</span>
+<span class="n">w_R_b2</span> <span class="o">=</span> <span class="n">sf</span><span class="o">.</span><span class="n">Rot3</span><span class="o">.</span><span class="n">from_angle_axis</span><span class="p">(</span>
+    <span class="n">angle</span><span class="o">=</span><span class="n">sf</span><span class="o">.</span><span class="n">Scalar</span><span class="p">(</span><span class="mf">0.1</span><span class="p">),</span>
+    <span class="n">axis</span><span class="o">=</span><span class="n">sf</span><span class="o">.</span><span class="n">V3</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">normalized</span><span class="p">(),</span>
+<span class="p">)</span>
+<span class="n">b1_R_b2</span> <span class="o">=</span> <span class="n">GroupOps</span><span class="o">.</span><span class="n">between</span><span class="p">(</span><span class="n">w_R_b1</span><span class="p">,</span> <span class="n">w_R_b2</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">w_R_b2</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">GroupOps</span><span class="o">.</span><span class="n">simplify</span><span class="p">(</span><span class="n">GroupOps</span><span class="o">.</span><span class="n">compose</span><span class="p">(</span><span class="n">w_R_b1</span><span class="p">,</span> <span class="n">b1_R_b2</span><span class="p">)))</span>
+</pre>
+    </div>
+   </div>
+  </div>
+ </div>
+ <div class="output_wrapper">
+  <div class="output">
+   <div class="output_area">
+    <div class="prompt">
+    </div>
+    <div class="output_text output_subarea">
+     <pre>&lt;Rot3 &lt;Q xyzw=[0.00499791692706783*sqrt(10), 0, 0.0149937507812035*sqrt(10), 0.998750260394966]&gt;&gt;</pre>
+    </div>
+   </div>
+   <div class="output_area">
+    <div class="prompt">
+    </div>
+    <div class="output_text output_subarea">
+     <pre>&lt;Rot3 &lt;Q xyzw=[0.00499791692706783*sqrt(10), 0, 0.0149937507812035*sqrt(10), 0.998750260394966]&gt;&gt;</pre>
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h4 id="Lie-Group-Ops">
+    Lie Group Ops
+    <a class="anchor-link" href="#Lie-Group-Ops">
+     ¶
+    </a>
+   </h4>
+   <p>
+    Group that is also a differentiable manifold, e.g. SO3, SE3.
+Methods:
+    <code>
+     .tangent_dim()
+    </code>
+    ,
+    <code>
+     .from_tangent()
+    </code>
+    ,
+    <code>
+     to_tangent()
+    </code>
+    ,
+    <code>
+     .retract()
+    </code>
+    ,
+    <code>
+     .local_coordinates()
+    </code>
+    ,
+    <code>
+     .storage_D_tangent()
+    </code>
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+ <div class="input">
+  <div class="prompt input_prompt">
+   In [220]:
+  </div>
+  <div class="inner_cell">
+   <div class="input_area">
+    <div class="collapse_expand_button fa fa-1x fa-minus-square-o">
+    </div>
+    <div class="highlight hl-ipython3">
+     <pre><span></span><span class="c1"># Lie Group Ops: basics</span>
+<span class="kn">from</span> <span class="nn">symforce.ops</span> <span class="kn">import</span> <span class="n">LieGroupOps</span>
+<span class="n">R</span> <span class="o">=</span> <span class="n">sf</span><span class="o">.</span><span class="n">Rot3</span><span class="o">.</span><span class="n">symbolic</span><span class="p">(</span><span class="s1">'theta'</span><span class="p">)</span>
+<span class="c1"># Underlying dimension of a 3D rotation's tangent space</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"3D rotation tangent space: </span><span class="si">{</span><span class="n">LieGroupOps</span><span class="o">.</span><span class="n">tangent_dim</span><span class="p">(</span><span class="n">R</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="n">R_tangent</span> <span class="o">=</span> <span class="n">sf</span><span class="o">.</span><span class="n">V3</span><span class="p">(</span><span class="n">LieGroupOps</span><span class="o">.</span><span class="n">to_tangent</span><span class="p">(</span><span class="n">R</span><span class="p">))</span>
+<span class="n">display</span><span class="p">(</span><span class="n">R_tangent</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+<span class="n">R_reconstruct_</span> <span class="o">=</span> <span class="n">sf</span><span class="o">.</span><span class="n">Rot3</span><span class="o">.</span><span class="n">from_angle_axis</span><span class="p">(</span><span class="n">R_tangent</span><span class="o">.</span><span class="n">norm</span><span class="p">(),</span> <span class="n">R_tangent</span><span class="o">.</span><span class="n">normalized</span><span class="p">())</span>
+<span class="n">R_reconstruct</span> <span class="o">=</span> <span class="n">LieGroupOps</span><span class="o">.</span><span class="n">from_tangent</span><span class="p">(</span><span class="n">sf</span><span class="o">.</span><span class="n">Rot3</span><span class="p">,</span> <span class="n">R_tangent</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">R_reconstruct_</span> <span class="o">==</span> <span class="n">R_reconstruct</span>
+</pre>
+    </div>
+   </div>
+  </div>
+ </div>
+ <div class="output_wrapper">
+  <div class="output">
+   <div class="output_area">
+    <div class="prompt">
+    </div>
+    <div class="output_subarea output_stream output_stdout output_text">
+     <pre>3D rotation tangent space: 3
+</pre>
+    </div>
+   </div>
+   <div class="output_area">
+    <div class="prompt">
+    </div>
+    <div class="output_latex output_subarea">
+     $\displaystyle \left[\begin{matrix}\frac{2 \theta_{x} \left(2 \min\left(0, \operatorname{sign}{\left(\theta_{w} \right)}\right) + 1\right) \operatorname{acos}{\left(\min\left(1.0, \left|{\theta_{w}}\right|\right) \right)}}{\sqrt{1 - \min\left(1.0, \left|{\theta_{w}}\right|\right)^{2}}} &amp; \frac{2 \theta_{y} \left(2 \min\left(0, \operatorname{sign}{\left(\theta_{w} \right)}\right) + 1\right) \operatorname{acos}{\left(\min\left(1.0, \left|{\theta_{w}}\right|\right) \right)}}{\sqrt{1 - \min\left(1.0, \left|{\theta_{w}}\right|\right)^{2}}} &amp; \frac{2 \theta_{z} \left(2 \min\left(0, \operatorname{sign}{\left(\theta_{w} \right)}\right) + 1\right) \operatorname{acos}{\left(\min\left(1.0, \left|{\theta_{w}}\right|\right) \right)}}{\sqrt{1 - \min\left(1.0, \left|{\theta_{w}}\right|\right)^{2}}}\end{matrix}\right]$
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+ <div class="input">
+  <div class="prompt input_prompt">
+   In [219]:
+  </div>
+  <div class="inner_cell">
+   <div class="input_area">
+    <div class="collapse_expand_button fa fa-1x fa-minus-square-o">
+    </div>
+    <div class="highlight hl-ipython3">
+     <pre><span></span><span class="c1"># Lie Group Ops, retract: R_perturbed = R * delta_R, local_coordinates: delta_R = R.inv() * R_perturbed</span>
+
+<span class="c1"># Retract perturbs the given element in the tangent space and returns the updated element</span>
+<span class="n">R</span> <span class="o">=</span> <span class="n">sf</span><span class="o">.</span><span class="n">Rot3</span><span class="o">.</span><span class="n">from_yaw_pitch_roll</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">R_tangent_delta</span> <span class="o">=</span> <span class="n">sf</span><span class="o">.</span><span class="n">V3</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span>
+<span class="n">R_perturbed</span> <span class="o">=</span> <span class="n">LieGroupOps</span><span class="o">.</span><span class="n">retract</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="n">R_tangent_delta</span><span class="p">)</span>
+<span class="c1"># Local coordinates compute the tangent space perturbation between one element and another</span>
+<span class="n">R_tangent_delta_reconstruct</span> <span class="o">=</span> <span class="n">LieGroupOps</span><span class="o">.</span><span class="n">local_coordinates</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="n">R_perturbed</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">R_tangent_delta</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">R_tangent_delta_reconstruct</span><span class="p">)</span>
+</pre>
+    </div>
+   </div>
+  </div>
+ </div>
+ <div class="output_wrapper">
+  <div class="output">
+   <div class="output_area">
+    <div class="prompt">
+    </div>
+    <div class="output_latex output_subarea">
+     $\displaystyle \left[\begin{matrix}0 &amp; 0 &amp; 0.1\end{matrix}\right]$
+    </div>
+   </div>
+   <div class="output_area">
+    <div class="prompt">
+    </div>
+    <div class="output_latex output_subarea">
+     $\displaystyle \left[ -1.1106857525106 \cdot 10^{-16}, \  0, \  0.1\right]$
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h3 id="Geo-Package-Ops-Operations">
+    Geo Package Ops Operations
+    <a class="anchor-link" href="#Geo-Package-Ops-Operations">
+     ¶
+    </a>
+   </h3>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h4 id="Geo-Storage-Operations">
+    Geo Storage Operations
+    <a class="anchor-link" href="#Geo-Storage-Operations">
+     ¶
+    </a>
+   </h4>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+ <div class="input">
+  <div class="prompt input_prompt">
+   In [228]:
+  </div>
+  <div class="inner_cell">
+   <div class="input_area collapsed">
+    <div class="collapse_expand_button fa fa-1x fa-minus-square-o">
+    </div>
+    <div class="highlight hl-ipython3">
+     <pre><span></span><span class="c1"># Geo Storage Operations</span>
+<span class="n">rot</span> <span class="o">=</span> <span class="n">sf</span><span class="o">.</span><span class="n">Rot3</span><span class="p">()</span>
+<span class="n">elements</span> <span class="o">=</span> <span class="n">rot</span><span class="o">.</span><span class="n">to_storage</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Symbolic to_storage test:"</span><span class="p">)</span>
+<span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">elements</span><span class="p">)</span> <span class="o">==</span> <span class="n">rot</span><span class="o">.</span><span class="n">storage_dim</span><span class="p">()</span>
+<span class="n">display</span><span class="p">(</span><span class="n">elements</span><span class="p">)</span>
+<span class="c1"># Construction from scalar list</span>
+<span class="n">rot2</span> <span class="o">=</span> <span class="n">sf</span><span class="o">.</span><span class="n">Rot3</span><span class="o">.</span><span class="n">from_storage</span><span class="p">(</span><span class="n">elements</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">rot</span> <span class="o">==</span> <span class="n">rot2</span>
+<span class="c1"># Symbolic operations</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Symbolic subs test:"</span><span class="p">)</span>
+<span class="n">rot_sym</span> <span class="o">=</span> <span class="n">sf</span><span class="o">.</span><span class="n">Rot3</span><span class="o">.</span><span class="n">symbolic</span><span class="p">(</span><span class="s2">"rot_sym"</span><span class="p">)</span>
+<span class="n">rot_num</span> <span class="o">=</span> <span class="n">rot_sym</span><span class="o">.</span><span class="n">subs</span><span class="p">(</span><span class="n">rot_sym</span><span class="p">,</span> <span class="n">rot</span><span class="p">)</span>
+
+<span class="n">display</span><span class="p">(</span><span class="n">rot_sym</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">rot_num</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">rot_num</span><span class="o">.</span><span class="n">simplify</span><span class="p">())</span>  <span class="c1"># Simplify internal symbolic expressions</span>
+<span class="n">display</span><span class="p">(</span><span class="n">rot_num</span><span class="o">.</span><span class="n">evalf</span><span class="p">())</span>  <span class="c1"># Numerical evaluation</span>
+<span class="c1">#</span>
+</pre>
+    </div>
+   </div>
+  </div>
+ </div>
+ <div class="output_wrapper">
+  <div class="output">
+   <div class="output_area">
+    <div class="prompt">
+    </div>
+    <div class="output_subarea output_stream output_stdout output_text">
+     <pre>Symbolic to_storage test:
+</pre>
+    </div>
+   </div>
+   <div class="output_area">
+    <div class="prompt">
+    </div>
+    <div class="output_latex output_subarea">
+     $\displaystyle \left[ 0, \  0, \  0, \  1\right]$
+    </div>
+   </div>
+   <div class="output_area">
+    <div class="prompt">
+    </div>
+    <div class="output_subarea output_stream output_stdout output_text">
+     <pre>Symbolic subs test:
+</pre>
+    </div>
+   </div>
+   <div class="output_area">
+    <div class="prompt">
+    </div>
+    <div class="output_text output_subarea">
+     <pre>&lt;Rot3 &lt;Q xyzw=[rot_sym_x, rot_sym_y, rot_sym_z, rot_sym_w]&gt;&gt;</pre>
+    </div>
+   </div>
+   <div class="output_area">
+    <div class="prompt">
+    </div>
+    <div class="output_text output_subarea">
+     <pre>&lt;Rot3 &lt;Q xyzw=[0, 0, 0, 1]&gt;&gt;</pre>
+    </div>
+   </div>
+   <div class="output_area">
+    <div class="prompt">
+    </div>
+    <div class="output_text output_subarea">
+     <pre>&lt;Rot3 &lt;Q xyzw=[0, 0, 0, 1]&gt;&gt;</pre>
+    </div>
+   </div>
+   <div class="output_area">
+    <div class="prompt">
+    </div>
+    <div class="output_text output_subarea">
+     <pre>&lt;Rot3 &lt;Q xyzw=[0, 0, 0, 1.00000000000000]&gt;&gt;</pre>
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h4 id="Geo-Group-Operations">
+    Geo Group Operations
+    <a class="anchor-link" href="#Geo-Group-Operations">
+     ¶
+    </a>
+   </h4>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+ <div class="input">
+  <div class="prompt input_prompt">
+   In [226]:
+  </div>
+  <div class="inner_cell">
+   <div class="input_area collapsed">
+    <div class="collapse_expand_button fa fa-1x fa-minus-square-o">
+    </div>
+    <div class="highlight hl-ipython3">
+     <pre><span></span><span class="c1"># Geo Group Operations</span>
+<span class="n">R1</span> <span class="o">=</span> <span class="n">sf</span><span class="o">.</span><span class="n">Rot3</span><span class="o">.</span><span class="n">random</span><span class="p">()</span>
+<span class="n">R2</span> <span class="o">=</span> <span class="n">sf</span><span class="o">.</span><span class="n">Rot3</span><span class="o">.</span><span class="n">random</span><span class="p">()</span>
+
+<span class="c1"># Composition</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Composition test:"</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">R1</span><span class="o">.</span><span class="n">compose</span><span class="p">(</span><span class="n">R2</span><span class="p">))</span>  <span class="c1"># For rotations this is the same as R1 * R2</span>
+<span class="c1"># Identity</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Identity test:"</span><span class="p">)</span>
+<span class="n">R_identity</span> <span class="o">=</span> <span class="n">sf</span><span class="o">.</span><span class="n">Rot3</span><span class="o">.</span><span class="n">identity</span><span class="p">()</span>
+<span class="n">display</span><span class="p">(</span><span class="n">R1</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">R_identity</span> <span class="o">*</span> <span class="n">R1</span><span class="p">)</span>
+<span class="c1"># Inverse</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Inverse test:"</span><span class="p">)</span>
+<span class="n">R1_inv</span> <span class="o">=</span> <span class="n">R1</span><span class="o">.</span><span class="n">inverse</span><span class="p">()</span>
+<span class="n">display</span><span class="p">(</span><span class="n">R_identity</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">R1_inv</span> <span class="o">*</span> <span class="n">R1</span><span class="p">)</span>
+<span class="c1"># Between</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Between test:"</span><span class="p">)</span>
+<span class="n">R_delta</span> <span class="o">=</span> <span class="n">R1</span><span class="o">.</span><span class="n">between</span><span class="p">(</span><span class="n">R2</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">R1</span> <span class="o">*</span> <span class="n">R_delta</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">R2</span><span class="p">)</span>
+<span class="c1">#</span>
+</pre>
+    </div>
+   </div>
+  </div>
+ </div>
+ <div class="output_wrapper">
+  <div class="output">
+   <div class="output_area">
+    <div class="prompt">
+    </div>
+    <div class="output_subarea output_stream output_stdout output_text">
+     <pre>Composition test:
+</pre>
+    </div>
+   </div>
+   <div class="output_area">
+    <div class="prompt">
+    </div>
+    <div class="output_text output_subarea">
+     <pre>&lt;Rot3 &lt;Q xyzw=[0.653650322359889, -0.691680810177783, -0.212217870334203, -0.221996595517666]&gt;&gt;</pre>
+    </div>
+   </div>
+   <div class="output_area">
+    <div class="prompt">
+    </div>
+    <div class="output_subarea output_stream output_stdout output_text">
+     <pre>Identity test:
+</pre>
+    </div>
+   </div>
+   <div class="output_area">
+    <div class="prompt">
+    </div>
+    <div class="output_text output_subarea">
+     <pre>&lt;Rot3 &lt;Q xyzw=[-0.791212654348329, -0.357369165559331, -0.282587404337844, 0.407938934175323]&gt;&gt;</pre>
+    </div>
+   </div>
+   <div class="output_area">
+    <div class="prompt">
+    </div>
+    <div class="output_text output_subarea">
+     <pre>&lt;Rot3 &lt;Q xyzw=[-0.791212654348329, -0.357369165559331, -0.282587404337844, 0.407938934175323]&gt;&gt;</pre>
+    </div>
+   </div>
+   <div class="output_area">
+    <div class="prompt">
+    </div>
+    <div class="output_subarea output_stream output_stdout output_text">
+     <pre>Inverse test:
+</pre>
+    </div>
+   </div>
+   <div class="output_area">
+    <div class="prompt">
+    </div>
+    <div class="output_text output_subarea">
+     <pre>&lt;Rot3 &lt;Q xyzw=[0, 0, 0, 1]&gt;&gt;</pre>
+    </div>
+   </div>
+   <div class="output_area">
+    <div class="prompt">
+    </div>
+    <div class="output_text output_subarea">
+     <pre>&lt;Rot3 &lt;Q xyzw=[0, 0, 0, 1.00000000000000]&gt;&gt;</pre>
+    </div>
+   </div>
+   <div class="output_area">
+    <div class="prompt">
+    </div>
+    <div class="output_subarea output_stream output_stdout output_text">
+     <pre>Between test:
+</pre>
+    </div>
+   </div>
+   <div class="output_area">
+    <div class="prompt">
+    </div>
+    <div class="output_text output_subarea">
+     <pre>&lt;Rot3 &lt;Q xyzw=[0.210623061771348, -0.00887545816305885, -0.930166453588175, -0.300581970037551]&gt;&gt;</pre>
+    </div>
+   </div>
+   <div class="output_area">
+    <div class="prompt">
+    </div>
+    <div class="output_text output_subarea">
+     <pre>&lt;Rot3 &lt;Q xyzw=[0.210623061771348, -0.00887545816305891, -0.930166453588175, -0.300581970037551]&gt;&gt;</pre>
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h4 id="Geo-Tangent-Operations">
+    Geo Tangent Operations
+    <a class="anchor-link" href="#Geo-Tangent-Operations">
+     ¶
+    </a>
+   </h4>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+ <div class="input">
+  <div class="prompt input_prompt">
+   In [233]:
+  </div>
+  <div class="inner_cell">
+   <div class="input_area collapsed">
+    <div class="collapse_expand_button fa fa-1x fa-minus-square-o">
+    </div>
+    <div class="highlight hl-ipython3">
+     <pre><span></span><span class="c1"># Geo Tangent Operations</span>
+<span class="c1"># To/From tangent space vector about identity element</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"To/From tangent space vector test:"</span><span class="p">)</span>
+<span class="n">R1</span> <span class="o">=</span> <span class="n">sf</span><span class="o">.</span><span class="n">Rot3</span><span class="o">.</span><span class="n">random</span><span class="p">()</span>
+<span class="n">tangent_vec</span> <span class="o">=</span> <span class="n">R1</span><span class="o">.</span><span class="n">to_tangent</span><span class="p">()</span>
+<span class="n">R1_recovered</span> <span class="o">=</span> <span class="n">sf</span><span class="o">.</span><span class="n">Rot3</span><span class="o">.</span><span class="n">from_tangent</span><span class="p">(</span><span class="n">tangent_vec</span><span class="p">)</span>
+
+<span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">tangent_vec</span><span class="p">)</span> <span class="o">==</span> <span class="n">R1</span><span class="o">.</span><span class="n">tangent_dim</span><span class="p">()</span>
+<span class="n">display</span><span class="p">(</span><span class="n">R1</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">R1_recovered</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Tangent space perturbations test:"</span><span class="p">)</span>
+<span class="c1"># Tangent space perturbations</span>
+<span class="c1"># Perturb R1 by the given vector in the tangent space around R1</span>
+<span class="n">R_perturb_delta</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">2.3</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">]</span>
+<span class="n">R2</span> <span class="o">=</span> <span class="n">R1</span><span class="o">.</span><span class="n">retract</span><span class="p">(</span><span class="n">R_perturb_delta</span><span class="p">)</span>
+
+<span class="c1"># Compute the tangent vector pointing from R1 to R2, in the tangent space around R1</span>
+<span class="n">recovered_tangent_vec</span> <span class="o">=</span> <span class="n">R1</span><span class="o">.</span><span class="n">local_coordinates</span><span class="p">(</span><span class="n">R2</span><span class="p">)</span>
+<span class="n">recovered_tangent_vec2</span> <span class="o">=</span> <span class="n">R1</span><span class="o">.</span><span class="n">between</span><span class="p">(</span><span class="n">R2</span><span class="p">)</span><span class="o">.</span><span class="n">to_tangent</span><span class="p">()</span>
+<span class="n">display</span><span class="p">(</span><span class="n">R_perturb_delta</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">recovered_tangent_vec</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">recovered_tangent_vec2</span><span class="p">)</span>
+
+<span class="n">jacobian</span> <span class="o">=</span> <span class="n">R1</span><span class="o">.</span><span class="n">storage_D_tangent</span><span class="p">()</span>
+<span class="k">assert</span> <span class="n">jacobian</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="n">R1</span><span class="o">.</span><span class="n">storage_dim</span><span class="p">(),</span> <span class="n">R1</span><span class="o">.</span><span class="n">tangent_dim</span><span class="p">())</span>
+<span class="c1">#</span>
+</pre>
+    </div>
+   </div>
+  </div>
+ </div>
+ <div class="output_wrapper">
+  <div class="output">
+   <div class="output_area">
+    <div class="prompt">
+    </div>
+    <div class="output_subarea output_stream output_stdout output_text">
+     <pre>To/From tangent space vector test:
+</pre>
+    </div>
+   </div>
+   <div class="output_area">
+    <div class="prompt">
+    </div>
+    <div class="output_text output_subarea">
+     <pre>&lt;Rot3 &lt;Q xyzw=[0.205544235406664, -0.0361582276632704, -0.977639522350119, -0.0257898081104291]&gt;&gt;</pre>
+    </div>
+   </div>
+   <div class="output_area">
+    <div class="prompt">
+    </div>
+    <div class="output_text output_subarea">
+     <pre>&lt;Rot3 &lt;Q xyzw=[-0.205544235406664, 0.0361582276632704, 0.977639522350119, 0.0257898081104292]&gt;&gt;</pre>
+    </div>
+   </div>
+   <div class="output_area">
+    <div class="prompt">
+    </div>
+    <div class="output_subarea output_stream output_stdout output_text">
+     <pre>Tangent space perturbations test:
+</pre>
+    </div>
+   </div>
+   <div class="output_area">
+    <div class="prompt">
+    </div>
+    <div class="output_latex output_subarea">
+     $\displaystyle \left[ 0.1, \  2.3, \  -0.5\right]$
+    </div>
+   </div>
+   <div class="output_area">
+    <div class="prompt">
+    </div>
+    <div class="output_latex output_subarea">
+     $\displaystyle \left[ 0.1, \  2.3, \  -0.5\right]$
+    </div>
+   </div>
+   <div class="output_area">
+    <div class="prompt">
+    </div>
+    <div class="output_latex output_subarea">
+     $\displaystyle \left[ 0.1, \  2.3, \  -0.5\right]$
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h4 id="Special-SE(n)">
+    Special SE(n)
+    <a class="anchor-link" href="#Special-SE(n)">
+     ¶
+    </a>
+   </h4>
+   <p>
+    Perturbation on SE(3) is done separately on SO(3) and R(3).
+   </p>
+   <pre><code>Pose3(R=self.R.retract(vec[:3], epsilon=epsilon),
+t=ops.LieGroupOps.retract(self.t, vec[3:], epsilon=epsilon))
+</code></pre>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+ <div class="input">
+  <div class="prompt input_prompt">
+   In [259]:
+  </div>
+  <div class="inner_cell">
+   <div class="input_area">
+    <div class="collapse_expand_button fa fa-1x fa-minus-square-o">
+    </div>
+    <div class="highlight hl-ipython3">
+     <pre><span></span><span class="c1"># SE(n)</span>
+<span class="n">T</span> <span class="o">=</span> <span class="n">sf</span><span class="o">.</span><span class="n">Pose3</span><span class="p">(</span><span class="n">sf</span><span class="o">.</span><span class="n">Rot3</span><span class="o">.</span><span class="n">random</span><span class="p">(),</span> <span class="n">sf</span><span class="o">.</span><span class="n">V3</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="n">display</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
+<span class="n">T_tangent_delta</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">]</span>
+<span class="n">T_perturb</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">retract</span><span class="p">(</span><span class="n">T_tangent_delta</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">T_perturb</span><span class="p">)</span>
+<span class="n">T_perturb_reconstruct</span> <span class="o">=</span>  <span class="n">T</span><span class="o">.</span><span class="n">compose</span><span class="p">(</span><span class="n">sf</span><span class="o">.</span><span class="n">Pose3</span><span class="o">.</span><span class="n">from_tangent</span><span class="p">(</span><span class="n">T_tangent_delta</span><span class="p">))</span>
+<span class="n">display</span><span class="p">(</span><span class="n">T_perturb_reconstruct</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">T_perturb_reconstruct</span> <span class="o">!=</span> <span class="n">T_perturb</span> <span class="c1"># This is expected since SE(3) is modeled as SO(3) + R(3)</span>
+<span class="n">T_perturb_reconstruct</span> <span class="o">=</span> <span class="n">sf</span><span class="o">.</span><span class="n">Pose3</span><span class="p">(</span><span class="n">T</span><span class="o">.</span><span class="n">rotation</span><span class="p">()</span><span class="o">.</span><span class="n">compose</span><span class="p">(</span><span class="n">sf</span><span class="o">.</span><span class="n">Rot3</span><span class="o">.</span><span class="n">from_tangent</span><span class="p">(</span><span class="n">T_tangent_delta</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">])),</span> 
+                                             <span class="n">T</span><span class="o">.</span><span class="n">t</span> <span class="o">+</span> <span class="n">sf</span><span class="o">.</span><span class="n">V3</span><span class="p">(</span><span class="n">T_tangent_delta</span><span class="p">[</span><span class="mi">3</span><span class="p">:]))</span>
+<span class="k">assert</span> <span class="n">T_perturb_reconstruct</span> <span class="o">==</span> <span class="n">T_perturb</span>
+<span class="n">display</span><span class="p">(</span><span class="n">T_perturb_reconstruct</span><span class="p">)</span>
+</pre>
+    </div>
+   </div>
+  </div>
+ </div>
+ <div class="output_wrapper">
+  <div class="output">
+   <div class="output_area">
+    <div class="prompt">
+    </div>
+    <div class="output_text output_subarea">
+     <pre>&lt;Pose3 R=&lt;Rot3 &lt;Q xyzw=[-0.786164569658020, -0.406853477120950, -0.308209471241873, -0.348457227512671]&gt;&gt;, t=(0, 0, 1)&gt;</pre>
+    </div>
+   </div>
+   <div class="output_area">
+    <div class="prompt">
+    </div>
+    <div class="output_text output_subarea">
+     <pre>&lt;Pose3 R=&lt;Rot3 &lt;Q xyzw=[-0.805545422953996, -0.398861926943418, -0.343397355446605, -0.272183745042075]&gt;&gt;, t=(0.100000000000000, 0, 1.10000000000000)&gt;</pre>
+    </div>
+   </div>
+   <div class="output_area">
+    <div class="prompt">
+    </div>
+    <div class="output_text output_subarea">
+     <pre>&lt;Pose3 R=&lt;Rot3 &lt;Q xyzw=[-0.805545422953996, -0.398861926943418, -0.343397355446605, -0.272183745042075]&gt;&gt;, t=(0.124710314191249, 0.0557405950682781, 0.963389569850190)&gt;</pre>
+    </div>
+   </div>
+   <div class="output_area">
+    <div class="prompt">
+    </div>
+    <div class="output_text output_subarea">
+     <pre>&lt;Pose3 R=&lt;Rot3 &lt;Q xyzw=[-0.805545422953996, -0.398861926943418, -0.343397355446605, -0.272183745042075]&gt;&gt;, t=(0.100000000000000, 0, 1.10000000000000)&gt;</pre>
     </div>
    </div>
   </div>
