@@ -1654,6 +1654,317 @@ t=ops.LieGroupOps.retract(self.t, vec[3:], epsilon=epsilon))
 <div class="cell border-box-sizing code_cell rendered">
  <div class="input">
   <div class="prompt input_prompt">
+   In [83]:
+  </div>
+  <div class="inner_cell">
+   <div class="input_area">
+    <div class="collapse_expand_button fa fa-1x fa-minus-square-o">
+    </div>
+    <div class="highlight hl-ipython3">
+     <pre><span></span><span class="kn">from</span> <span class="nn">symforce.values</span> <span class="kn">import</span> <span class="n">Values</span>
+<span class="n">inputs</span> <span class="o">=</span> <span class="n">Values</span><span class="p">(</span>
+    <span class="n">w_T_b</span> <span class="o">=</span> <span class="n">sf</span><span class="o">.</span><span class="n">Pose3</span><span class="o">.</span><span class="n">symbolic</span><span class="p">(</span><span class="s2">"T"</span><span class="p">),</span>
+    <span class="n">b_t_p</span> <span class="o">=</span> <span class="n">sf</span><span class="o">.</span><span class="n">V3</span><span class="o">.</span><span class="n">symbolic</span><span class="p">(</span><span class="s2">"p"</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">namespace</span> <span class="o">=</span> <span class="s2">"my_sym"</span>
+<span class="n">outputs</span> <span class="o">=</span> <span class="n">Values</span><span class="p">()</span>
+<span class="n">outputs</span><span class="p">[</span><span class="s2">"w_t_p"</span><span class="p">]</span> <span class="o">=</span> <span class="n">inputs</span><span class="p">[</span><span class="s2">"w_T_b"</span><span class="p">]</span> <span class="o">*</span> <span class="n">inputs</span><span class="o">.</span><span class="n">attr</span><span class="o">.</span><span class="n">b_t_p</span>
+
+<span class="n">input_values</span> <span class="o">=</span> <span class="n">Values</span><span class="p">(</span><span class="n">inputs</span><span class="o">=</span><span class="n">inputs</span><span class="p">)</span>
+<span class="n">output_values</span> <span class="o">=</span> <span class="n">Values</span><span class="p">(</span><span class="n">outputs</span><span class="o">=</span><span class="n">outputs</span><span class="p">)</span>
+<span class="n">point_projection_condegen</span> <span class="o">=</span> <span class="n">codegen</span><span class="o">.</span><span class="n">Codegen</span><span class="p">(</span>
+    <span class="n">inputs</span><span class="o">=</span><span class="n">input_values</span><span class="p">,</span>
+    <span class="n">outputs</span><span class="o">=</span><span class="n">output_values</span><span class="p">,</span>
+    <span class="n">config</span><span class="o">=</span><span class="n">codegen</span><span class="o">.</span><span class="n">CppConfig</span><span class="p">(),</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">"point_projection"</span><span class="p">,</span>   
+<span class="p">)</span>
+
+<span class="n">point_projection_condegen_data</span> <span class="o">=</span> <span class="n">point_projection_condegen</span><span class="o">.</span><span class="n">generate_function</span><span class="p">(</span><span class="n">namespace</span><span class="o">=</span><span class="n">namespace</span><span class="p">)</span>
+
+<span class="c1"># Print what we generated</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Files generated in </span><span class="si">{}</span><span class="s2">:</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">point_projection_condegen_data</span><span class="o">.</span><span class="n">output_dir</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">point_projection_condegen_data</span><span class="o">.</span><span class="n">generated_files</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"  |- </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">point_projection_condegen_data</span><span class="o">.</span><span class="n">output_dir</span><span class="p">)))</span>
+<span class="c1">#display_code_file(point_projection_condegen_data.function_dir / "point_projection.h", "C++")</span>
+<span class="n">display_code_file</span><span class="p">(</span><span class="n">point_projection_condegen_data</span><span class="o">.</span><span class="n">cpp_types_dir</span> <span class="o">/</span> <span class="n">namespace</span> <span class="o">/</span> <span class="s2">"outputs_t.hpp"</span><span class="p">,</span> <span class="s2">"C++"</span><span class="p">)</span>
+</pre>
+    </div>
+   </div>
+  </div>
+ </div>
+ <div class="output_wrapper">
+  <div class="output">
+   <div class="output_area">
+    <div class="prompt">
+    </div>
+    <div class="output_subarea output_stream output_stdout output_text">
+     <pre>Files generated in /tmp/sf_codegen_point_projection_w_jrccmx:
+
+  |- lcmtypes/point_projection.lcm
+  |- cpp/symforce/my_sym/point_projection.h
+</pre>
+    </div>
+   </div>
+   <div class="output_area">
+    <div class="prompt">
+    </div>
+    <div class="output_html rendered_html output_subarea">
+     <div class="highlight" style="background: #f8f8f8">
+      <pre style="line-height: 125%;"><span></span><span style="color: #3D7B7B; font-style: italic">/** THIS IS AN AUTOMATICALLY GENERATED FILE.  DO NOT MODIFY</span>
+<span style="color: #3D7B7B; font-style: italic"> * BY HAND!!</span>
+<span style="color: #3D7B7B; font-style: italic"> *</span>
+<span style="color: #3D7B7B; font-style: italic"> * Generated by lcm-gen</span>
+<span style="color: #3D7B7B; font-style: italic"> **/</span><span style="color: #bbbbbb"></span>
+
+<span style="color: #9C6500">#include</span><span style="color: #bbbbbb"> </span><span style="color: #3D7B7B; font-style: italic">&lt;lcm/lcm_coretypes.h&gt;</span><span style="color: #9C6500"></span>
+
+<span style="color: #9C6500">#ifndef __my_sym_inputs_t_hpp__</span>
+<span style="color: #9C6500">#define __my_sym_inputs_t_hpp__</span>
+
+<span style="color: #9C6500">#include</span><span style="color: #bbbbbb"> </span><span style="color: #3D7B7B; font-style: italic">&lt;ostream&gt;</span><span style="color: #9C6500"></span>
+<span style="color: #9C6500">#include</span><span style="color: #bbbbbb"> </span><span style="color: #3D7B7B; font-style: italic">"lcmtypes/eigen_lcm/Vector3d.hpp"</span><span style="color: #9C6500"></span>
+<span style="color: #9C6500">#include</span><span style="color: #bbbbbb"> </span><span style="color: #3D7B7B; font-style: italic">"lcmtypes/eigen_lcm/Vector7d.hpp"</span><span style="color: #9C6500"></span>
+
+<span style="color: #008000; font-weight: bold">namespace</span><span style="color: #bbbbbb"> </span><span style="color: #0000FF; font-weight: bold">my_sym</span><span style="color: #bbbbbb"></span>
+{<span style="color: #bbbbbb"></span>
+
+<span style="color: #008000; font-weight: bold">class</span><span style="color: #bbbbbb"> </span><span style="color: #0000FF; font-weight: bold">inputs_t</span><span style="color: #bbbbbb"></span>
+{<span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">    </span><span style="color: #008000; font-weight: bold">public</span><span style="color: #666666">:</span><span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">        </span><span style="color: #666666">::</span>eigen_lcm<span style="color: #666666">::</span>Vector7d<span style="color: #bbbbbb"> </span>w_T_b;<span style="color: #bbbbbb"></span>
+
+<span style="color: #bbbbbb">        </span><span style="color: #666666">::</span>eigen_lcm<span style="color: #666666">::</span>Vector3d<span style="color: #bbbbbb"> </span>b_t_p;<span style="color: #bbbbbb"></span>
+
+<span style="color: #bbbbbb">    </span><span style="color: #008000; font-weight: bold">public</span><span style="color: #666666">:</span><span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">        </span>inputs_t()<span style="color: #bbbbbb"> </span><span style="color: #666666">=</span><span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">default</span>;<span style="color: #bbbbbb"></span>
+
+<span style="color: #bbbbbb">        </span><span style="color: #3D7B7B; font-style: italic">/**</span>
+<span style="color: #3D7B7B; font-style: italic">         * Member constructor</span>
+<span style="color: #3D7B7B; font-style: italic">         */</span><span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">        </span><span style="color: #008000; font-weight: bold">inline</span><span style="color: #bbbbbb"> </span>inputs_t(<span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">            </span><span style="color: #008000; font-weight: bold">const</span><span style="color: #bbbbbb"> </span><span style="color: #666666">::</span>eigen_lcm<span style="color: #666666">::</span>Vector7d<span style="color: #666666">&amp;</span><span style="color: #bbbbbb"> </span>w_T_b_arg,<span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">            </span><span style="color: #008000; font-weight: bold">const</span><span style="color: #bbbbbb"> </span><span style="color: #666666">::</span>eigen_lcm<span style="color: #666666">::</span>Vector3d<span style="color: #666666">&amp;</span><span style="color: #bbbbbb"> </span>b_t_p_arg<span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">        </span>);<span style="color: #bbbbbb"></span>
+
+<span style="color: #bbbbbb">        </span><span style="color: #3D7B7B; font-style: italic">/**</span>
+<span style="color: #3D7B7B; font-style: italic">         * Encode a message into binary form.</span>
+<span style="color: #3D7B7B; font-style: italic">         *</span>
+<span style="color: #3D7B7B; font-style: italic">         * @param buf The output buffer.</span>
+<span style="color: #3D7B7B; font-style: italic">         * @param offset Encoding starts at thie byte offset into @p buf.</span>
+<span style="color: #3D7B7B; font-style: italic">         * @param maxlen Maximum number of bytes to write.  This should generally be</span>
+<span style="color: #3D7B7B; font-style: italic">         *  equal to getEncodedSize().</span>
+<span style="color: #3D7B7B; font-style: italic">         * @return The number of bytes encoded, or &lt;0 on error.</span>
+<span style="color: #3D7B7B; font-style: italic">         */</span><span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">        </span><span style="color: #008000; font-weight: bold">inline</span><span style="color: #bbbbbb"> </span>__lcm_buffer_size<span style="color: #bbbbbb"> </span><span style="color: #0000FF">encode</span>(<span style="color: #B00040">void</span><span style="color: #bbbbbb"> </span><span style="color: #666666">*</span>buf,<span style="color: #bbbbbb"> </span>__lcm_buffer_size<span style="color: #bbbbbb"> </span>offset,<span style="color: #bbbbbb"> </span>__lcm_buffer_size<span style="color: #bbbbbb"> </span>maxlen)<span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">const</span>;<span style="color: #bbbbbb"></span>
+
+<span style="color: #bbbbbb">        </span><span style="color: #3D7B7B; font-style: italic">/**</span>
+<span style="color: #3D7B7B; font-style: italic">         * Check how many bytes are required to encode this message.</span>
+<span style="color: #3D7B7B; font-style: italic">         */</span><span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">        </span><span style="color: #008000; font-weight: bold">inline</span><span style="color: #bbbbbb"> </span>__lcm_buffer_size<span style="color: #bbbbbb"> </span><span style="color: #0000FF">getEncodedSize</span>()<span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">const</span>;<span style="color: #bbbbbb"></span>
+
+<span style="color: #bbbbbb">        </span><span style="color: #3D7B7B; font-style: italic">/**</span>
+<span style="color: #3D7B7B; font-style: italic">         * Decode a message from binary form into this instance.</span>
+<span style="color: #3D7B7B; font-style: italic">         *</span>
+<span style="color: #3D7B7B; font-style: italic">         * @param buf The buffer containing the encoded message.</span>
+<span style="color: #3D7B7B; font-style: italic">         * @param offset The byte offset into @p buf where the encoded message starts.</span>
+<span style="color: #3D7B7B; font-style: italic">         * @param maxlen The maximum number of bytes to read while decoding.</span>
+<span style="color: #3D7B7B; font-style: italic">         * @return The number of bytes decoded, or &lt;0 if an error occured.</span>
+<span style="color: #3D7B7B; font-style: italic">         */</span><span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">        </span><span style="color: #008000; font-weight: bold">inline</span><span style="color: #bbbbbb"> </span>__lcm_buffer_size<span style="color: #bbbbbb"> </span><span style="color: #0000FF">decode</span>(<span style="color: #008000; font-weight: bold">const</span><span style="color: #bbbbbb"> </span><span style="color: #B00040">void</span><span style="color: #bbbbbb"> </span><span style="color: #666666">*</span>buf,<span style="color: #bbbbbb"> </span>__lcm_buffer_size<span style="color: #bbbbbb"> </span>offset,<span style="color: #bbbbbb"> </span>__lcm_buffer_size<span style="color: #bbbbbb"> </span>maxlen);<span style="color: #bbbbbb"></span>
+
+<span style="color: #bbbbbb">        </span><span style="color: #3D7B7B; font-style: italic">/**</span>
+<span style="color: #3D7B7B; font-style: italic">         * Retrieve the 64-bit fingerprint identifying the structure of the message.</span>
+<span style="color: #3D7B7B; font-style: italic">         * Note that the fingerprint is the same for all instances of the same</span>
+<span style="color: #3D7B7B; font-style: italic">         * message type, and is a fingerprint on the message type definition, not on</span>
+<span style="color: #3D7B7B; font-style: italic">         * the message contents.</span>
+<span style="color: #3D7B7B; font-style: italic">         */</span><span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">        </span><span style="color: #008000; font-weight: bold">inline</span><span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">static</span><span style="color: #bbbbbb"> </span><span style="color: #B00040">int64_t</span><span style="color: #bbbbbb"> </span><span style="color: #0000FF">getHash</span>();<span style="color: #bbbbbb"></span>
+
+<span style="color: #bbbbbb">        </span><span style="color: #008000; font-weight: bold">using</span><span style="color: #bbbbbb"> </span>type_name_array_t<span style="color: #bbbbbb"> </span><span style="color: #666666">=</span><span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">const</span><span style="color: #bbbbbb"> </span><span style="color: #B00040">char</span>[<span style="color: #666666">9</span>];<span style="color: #bbbbbb"></span>
+
+<span style="color: #bbbbbb">        </span><span style="color: #008000; font-weight: bold">inline</span><span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">static</span><span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">constexpr</span><span style="color: #bbbbbb"> </span>type_name_array_t<span style="color: #666666">*</span><span style="color: #bbbbbb"> </span><span style="color: #0000FF">getTypeNameArrayPtr</span>();<span style="color: #bbbbbb"></span>
+
+<span style="color: #bbbbbb">        </span><span style="color: #3D7B7B; font-style: italic">/**</span>
+<span style="color: #3D7B7B; font-style: italic">         * Returns "inputs_t"</span>
+<span style="color: #3D7B7B; font-style: italic">         */</span><span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">        </span><span style="color: #008000; font-weight: bold">inline</span><span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">static</span><span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">constexpr</span><span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">const</span><span style="color: #bbbbbb"> </span><span style="color: #B00040">char</span><span style="color: #666666">*</span><span style="color: #bbbbbb"> </span><span style="color: #0000FF">getTypeName</span>();<span style="color: #bbbbbb"></span>
+
+<span style="color: #bbbbbb">        </span><span style="color: #3D7B7B; font-style: italic">/**</span>
+<span style="color: #3D7B7B; font-style: italic">         * Returns "my_sym"</span>
+<span style="color: #3D7B7B; font-style: italic">         */</span><span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">        </span><span style="color: #008000; font-weight: bold">inline</span><span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">static</span><span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">const</span><span style="color: #bbbbbb"> </span><span style="color: #B00040">char</span><span style="color: #bbbbbb"> </span><span style="color: #666666">*</span><span style="color: #bbbbbb"> </span><span style="color: #0000FF">getPackageName</span>();<span style="color: #bbbbbb"></span>
+
+<span style="color: #bbbbbb">        </span><span style="color: #3D7B7B; font-style: italic">// LCM support functions. Users should not call these</span>
+<span style="color: #bbbbbb">        </span><span style="color: #008000; font-weight: bold">inline</span><span style="color: #bbbbbb"> </span>__lcm_buffer_size<span style="color: #bbbbbb"> </span><span style="color: #0000FF">_encodeNoHash</span>(<span style="color: #B00040">void</span><span style="color: #bbbbbb"> </span><span style="color: #666666">*</span>buf,<span style="color: #bbbbbb"> </span>__lcm_buffer_size<span style="color: #bbbbbb"> </span>offset,<span style="color: #bbbbbb"> </span>__lcm_buffer_size<span style="color: #bbbbbb"> </span>maxlen)<span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">const</span>;<span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">        </span><span style="color: #008000; font-weight: bold">inline</span><span style="color: #bbbbbb"> </span>__lcm_buffer_size<span style="color: #bbbbbb"> </span><span style="color: #0000FF">_getEncodedSizeNoHash</span>()<span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">const</span>;<span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">        </span><span style="color: #008000; font-weight: bold">inline</span><span style="color: #bbbbbb"> </span>__lcm_buffer_size<span style="color: #bbbbbb"> </span><span style="color: #0000FF">_decodeNoHash</span>(<span style="color: #008000; font-weight: bold">const</span><span style="color: #bbbbbb"> </span><span style="color: #B00040">void</span><span style="color: #bbbbbb"> </span><span style="color: #666666">*</span>buf,<span style="color: #bbbbbb"> </span>__lcm_buffer_size<span style="color: #bbbbbb"> </span>offset,<span style="color: #bbbbbb"> </span>__lcm_buffer_size<span style="color: #bbbbbb"> </span>maxlen);<span style="color: #bbbbbb"></span>
+<span style="color: #9C6500">#if !defined(SKYDIO_DISABLE_LCM_NO_INLINE)</span>
+<span style="color: #bbbbbb">        </span>__attribute__((noinline))<span style="color: #bbbbbb"></span>
+<span style="color: #9C6500">#endif</span>
+<span style="color: #bbbbbb">        </span><span style="color: #008000; font-weight: bold">static</span><span style="color: #bbbbbb"> </span><span style="color: #B00040">uint64_t</span><span style="color: #bbbbbb"> </span>_computeHash(<span style="color: #008000; font-weight: bold">const</span><span style="color: #bbbbbb"> </span>__lcm_hash_ptr<span style="color: #bbbbbb"> </span><span style="color: #666666">*</span>p)<span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">        </span>{<span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">            </span><span style="color: #008000; font-weight: bold">const</span><span style="color: #bbbbbb"> </span>__lcm_hash_ptr<span style="color: #bbbbbb"> </span><span style="color: #666666">*</span>fp;<span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">            </span><span style="color: #008000; font-weight: bold">for</span>(fp<span style="color: #bbbbbb"> </span><span style="color: #666666">=</span><span style="color: #bbbbbb"> </span>p;<span style="color: #bbbbbb"> </span>fp<span style="color: #bbbbbb"> </span><span style="color: #666666">!=</span><span style="color: #bbbbbb"> </span><span style="color: #008000">NULL</span>;<span style="color: #bbbbbb"> </span>fp<span style="color: #bbbbbb"> </span><span style="color: #666666">=</span><span style="color: #bbbbbb"> </span>fp<span style="color: #666666">-&gt;</span>parent)<span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">                </span><span style="color: #008000; font-weight: bold">if</span>(fp<span style="color: #666666">-&gt;</span>v<span style="color: #bbbbbb"> </span><span style="color: #666666">==</span><span style="color: #bbbbbb"> </span>inputs_t<span style="color: #666666">::</span>getHash)<span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">                    </span><span style="color: #008000; font-weight: bold">return</span><span style="color: #bbbbbb"> </span><span style="color: #666666">0</span>;<span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">            </span><span style="color: #008000; font-weight: bold">const</span><span style="color: #bbbbbb"> </span>__lcm_hash_ptr<span style="color: #bbbbbb"> </span>cp<span style="color: #bbbbbb"> </span><span style="color: #666666">=</span><span style="color: #bbbbbb"> </span>{<span style="color: #bbbbbb"> </span>p,<span style="color: #bbbbbb"> </span>inputs_t<span style="color: #666666">::</span>getHash<span style="color: #bbbbbb"> </span>};<span style="color: #bbbbbb"></span>
+
+<span style="color: #bbbbbb">            </span><span style="color: #B00040">uint64_t</span><span style="color: #bbbbbb"> </span>hash<span style="color: #bbbbbb"> </span><span style="color: #666666">=</span><span style="color: #bbbbbb"> </span><span style="color: #666666">0x530a92b1ccf7776aLL</span><span style="color: #bbbbbb"> </span><span style="color: #666666">+</span><span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">                </span><span style="color: #666666">::</span>eigen_lcm<span style="color: #666666">::</span>Vector7d<span style="color: #666666">::</span>_computeHash(<span style="color: #666666">&amp;</span>cp)<span style="color: #bbbbbb"> </span><span style="color: #666666">+</span><span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">         </span><span style="color: #666666">::</span>eigen_lcm<span style="color: #666666">::</span>Vector3d<span style="color: #666666">::</span>_computeHash(<span style="color: #666666">&amp;</span>cp);<span style="color: #bbbbbb"></span>
+
+<span style="color: #bbbbbb">            </span><span style="color: #008000; font-weight: bold">return</span><span style="color: #bbbbbb"> </span>(hash<span style="color: #666666">&lt;&lt;1</span>)<span style="color: #bbbbbb"> </span><span style="color: #666666">+</span><span style="color: #bbbbbb"> </span>((hash<span style="color: #666666">&gt;&gt;63</span>)<span style="color: #666666">&amp;1</span>);<span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">        </span>}<span style="color: #bbbbbb"></span>
+
+<span style="color: #bbbbbb">        </span><span style="color: #3D7B7B; font-style: italic">// Comparison operators.</span>
+<span style="color: #bbbbbb">        </span><span style="color: #008000; font-weight: bold">inline</span><span style="color: #bbbbbb"> </span><span style="color: #B00040">bool</span><span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">operator</span><span style="color: #666666">==</span>(<span style="color: #008000; font-weight: bold">const</span><span style="color: #bbbbbb"> </span>inputs_t<span style="color: #666666">&amp;</span><span style="color: #bbbbbb"> </span>other)<span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">const</span>;<span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">        </span><span style="color: #008000; font-weight: bold">inline</span><span style="color: #bbbbbb"> </span><span style="color: #B00040">bool</span><span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">operator</span><span style="color: #666666">!=</span>(<span style="color: #008000; font-weight: bold">const</span><span style="color: #bbbbbb"> </span>inputs_t<span style="color: #666666">&amp;</span><span style="color: #bbbbbb"> </span>other)<span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">const</span>;<span style="color: #bbbbbb"></span>
+
+<span style="color: #bbbbbb">        </span><span style="color: #3D7B7B; font-style: italic">// Ability to print to standard streams as well as the fmt library.</span>
+<span style="color: #bbbbbb">        </span><span style="color: #008000; font-weight: bold">friend</span><span style="color: #bbbbbb"> </span>std<span style="color: #666666">::</span>ostream<span style="color: #666666">&amp;</span><span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">operator</span><span style="color: #666666">&lt;&lt;</span>(std<span style="color: #666666">::</span>ostream<span style="color: #666666">&amp;</span><span style="color: #bbbbbb"> </span>stream,<span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">const</span><span style="color: #bbbbbb"> </span>inputs_t<span style="color: #666666">&amp;</span><span style="color: #bbbbbb"> </span>obj)<span style="color: #bbbbbb"> </span>{<span style="color: #bbbbbb"></span>
+<span style="color: #9C6500">#if defined(SKYMARSHAL_PRINTING_ENABLED)</span>
+<span style="color: #bbbbbb">            </span>stream<span style="color: #bbbbbb"> </span><span style="color: #666666">&lt;&lt;</span><span style="color: #bbbbbb"> </span><span style="color: #BA2121">"inputs_t("</span>;<span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">            </span>stream<span style="color: #bbbbbb"> </span><span style="color: #666666">&lt;&lt;</span><span style="color: #bbbbbb"> </span><span style="color: #BA2121">"w_T_b=&lt;EIGEN_LCM TYPE eigen_lcm.Vector7d&gt;"</span><span style="color: #bbbbbb"> </span><span style="color: #666666">&lt;&lt;</span><span style="color: #bbbbbb"> </span><span style="color: #BA2121">", "</span>;<span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">            </span>stream<span style="color: #bbbbbb"> </span><span style="color: #666666">&lt;&lt;</span><span style="color: #bbbbbb"> </span><span style="color: #BA2121">"b_t_p=&lt;EIGEN_LCM TYPE eigen_lcm.Vector3d&gt;"</span>;<span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">            </span>stream<span style="color: #bbbbbb"> </span><span style="color: #666666">&lt;&lt;</span><span style="color: #bbbbbb"> </span><span style="color: #BA2121">")"</span>;<span style="color: #bbbbbb"></span>
+<span style="color: #9C6500">#else</span>
+<span style="color: #bbbbbb">            </span>stream<span style="color: #bbbbbb"> </span><span style="color: #666666">&lt;&lt;</span><span style="color: #bbbbbb"> </span><span style="color: #BA2121">"&lt;FORMATTING DISABLED&gt;"</span>;<span style="color: #bbbbbb"></span>
+<span style="color: #9C6500">#endif</span>
+<span style="color: #bbbbbb">            </span><span style="color: #008000; font-weight: bold">return</span><span style="color: #bbbbbb"> </span>stream;<span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">        </span>}<span style="color: #bbbbbb"></span>
+};<span style="color: #bbbbbb"></span>
+
+inputs_t<span style="color: #666666">::</span>inputs_t(<span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">    </span><span style="color: #008000; font-weight: bold">const</span><span style="color: #bbbbbb"> </span><span style="color: #666666">::</span>eigen_lcm<span style="color: #666666">::</span>Vector7d<span style="color: #666666">&amp;</span><span style="color: #bbbbbb"> </span>w_T_b_arg,<span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">    </span><span style="color: #008000; font-weight: bold">const</span><span style="color: #bbbbbb"> </span><span style="color: #666666">::</span>eigen_lcm<span style="color: #666666">::</span>Vector3d<span style="color: #666666">&amp;</span><span style="color: #bbbbbb"> </span>b_t_p_arg<span style="color: #bbbbbb"></span>
+)<span style="color: #bbbbbb"> </span><span style="color: #666666">:</span><span style="color: #bbbbbb"> </span>w_T_b(w_T_b_arg),<span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">    </span>b_t_p(b_t_p_arg)<span style="color: #bbbbbb"> </span>{}<span style="color: #bbbbbb"></span>
+
+__lcm_buffer_size<span style="color: #bbbbbb"> </span>inputs_t<span style="color: #666666">::</span>encode(<span style="color: #B00040">void</span><span style="color: #bbbbbb"> </span><span style="color: #666666">*</span>buf,<span style="color: #bbbbbb"> </span>__lcm_buffer_size<span style="color: #bbbbbb"> </span>offset,<span style="color: #bbbbbb"> </span>__lcm_buffer_size<span style="color: #bbbbbb"> </span>maxlen)<span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">const</span><span style="color: #bbbbbb"></span>
+{<span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">    </span>__lcm_buffer_size<span style="color: #bbbbbb"> </span>pos<span style="color: #bbbbbb"> </span><span style="color: #666666">=</span><span style="color: #bbbbbb"> </span><span style="color: #666666">0</span>,<span style="color: #bbbbbb"> </span>tlen;<span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">    </span><span style="color: #B00040">int64_t</span><span style="color: #bbbbbb"> </span>hash<span style="color: #bbbbbb"> </span><span style="color: #666666">=</span><span style="color: #bbbbbb"> </span>(<span style="color: #B00040">int64_t</span>)getHash();<span style="color: #bbbbbb"></span>
+
+<span style="color: #bbbbbb">    </span>tlen<span style="color: #bbbbbb"> </span><span style="color: #666666">=</span><span style="color: #bbbbbb"> </span>__int64_t_encode_array(buf,<span style="color: #bbbbbb"> </span>offset<span style="color: #bbbbbb"> </span><span style="color: #666666">+</span><span style="color: #bbbbbb"> </span>pos,<span style="color: #bbbbbb"> </span>maxlen<span style="color: #bbbbbb"> </span><span style="color: #666666">-</span><span style="color: #bbbbbb"> </span>pos,<span style="color: #bbbbbb"> </span><span style="color: #666666">&amp;</span>hash,<span style="color: #bbbbbb"> </span><span style="color: #666666">1</span>);<span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">    </span><span style="color: #008000; font-weight: bold">if</span>(tlen<span style="color: #bbbbbb"> </span><span style="color: #666666">&lt;</span><span style="color: #bbbbbb"> </span><span style="color: #666666">0</span>)<span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">return</span><span style="color: #bbbbbb"> </span>tlen;<span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">else</span><span style="color: #bbbbbb"> </span>pos<span style="color: #bbbbbb"> </span><span style="color: #666666">+=</span><span style="color: #bbbbbb"> </span>tlen;<span style="color: #bbbbbb"></span>
+
+<span style="color: #bbbbbb">    </span>tlen<span style="color: #bbbbbb"> </span><span style="color: #666666">=</span><span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">this</span><span style="color: #666666">-&gt;</span>_encodeNoHash(buf,<span style="color: #bbbbbb"> </span>offset<span style="color: #bbbbbb"> </span><span style="color: #666666">+</span><span style="color: #bbbbbb"> </span>pos,<span style="color: #bbbbbb"> </span>maxlen<span style="color: #bbbbbb"> </span><span style="color: #666666">-</span><span style="color: #bbbbbb"> </span>pos);<span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">    </span><span style="color: #008000; font-weight: bold">if</span><span style="color: #bbbbbb"> </span>(tlen<span style="color: #bbbbbb"> </span><span style="color: #666666">&lt;</span><span style="color: #bbbbbb"> </span><span style="color: #666666">0</span>)<span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">return</span><span style="color: #bbbbbb"> </span>tlen;<span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">else</span><span style="color: #bbbbbb"> </span>pos<span style="color: #bbbbbb"> </span><span style="color: #666666">+=</span><span style="color: #bbbbbb"> </span>tlen;<span style="color: #bbbbbb"></span>
+
+<span style="color: #bbbbbb">    </span><span style="color: #008000; font-weight: bold">return</span><span style="color: #bbbbbb"> </span>pos;<span style="color: #bbbbbb"></span>
+}<span style="color: #bbbbbb"></span>
+
+__lcm_buffer_size<span style="color: #bbbbbb"> </span>inputs_t<span style="color: #666666">::</span>decode(<span style="color: #008000; font-weight: bold">const</span><span style="color: #bbbbbb"> </span><span style="color: #B00040">void</span><span style="color: #bbbbbb"> </span><span style="color: #666666">*</span>buf,<span style="color: #bbbbbb"> </span>__lcm_buffer_size<span style="color: #bbbbbb"> </span>offset,<span style="color: #bbbbbb"> </span>__lcm_buffer_size<span style="color: #bbbbbb"> </span>maxlen)<span style="color: #bbbbbb"></span>
+{<span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">    </span>__lcm_buffer_size<span style="color: #bbbbbb"> </span>pos<span style="color: #bbbbbb"> </span><span style="color: #666666">=</span><span style="color: #bbbbbb"> </span><span style="color: #666666">0</span>,<span style="color: #bbbbbb"> </span>thislen;<span style="color: #bbbbbb"></span>
+
+<span style="color: #bbbbbb">    </span><span style="color: #B00040">int64_t</span><span style="color: #bbbbbb"> </span>msg_hash;<span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">    </span>thislen<span style="color: #bbbbbb"> </span><span style="color: #666666">=</span><span style="color: #bbbbbb"> </span>__int64_t_decode_array(buf,<span style="color: #bbbbbb"> </span>offset<span style="color: #bbbbbb"> </span><span style="color: #666666">+</span><span style="color: #bbbbbb"> </span>pos,<span style="color: #bbbbbb"> </span>maxlen<span style="color: #bbbbbb"> </span><span style="color: #666666">-</span><span style="color: #bbbbbb"> </span>pos,<span style="color: #bbbbbb"> </span><span style="color: #666666">&amp;</span>msg_hash,<span style="color: #bbbbbb"> </span><span style="color: #666666">1</span>);<span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">    </span><span style="color: #008000; font-weight: bold">if</span><span style="color: #bbbbbb"> </span>(thislen<span style="color: #bbbbbb"> </span><span style="color: #666666">&lt;</span><span style="color: #bbbbbb"> </span><span style="color: #666666">0</span>)<span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">return</span><span style="color: #bbbbbb"> </span>thislen;<span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">else</span><span style="color: #bbbbbb"> </span>pos<span style="color: #bbbbbb"> </span><span style="color: #666666">+=</span><span style="color: #bbbbbb"> </span>thislen;<span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">    </span><span style="color: #008000; font-weight: bold">if</span><span style="color: #bbbbbb"> </span>(msg_hash<span style="color: #bbbbbb"> </span><span style="color: #666666">!=</span><span style="color: #bbbbbb"> </span>getHash())<span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">return</span><span style="color: #bbbbbb"> </span><span style="color: #666666">-1</span>;<span style="color: #bbbbbb"></span>
+
+<span style="color: #bbbbbb">    </span>thislen<span style="color: #bbbbbb"> </span><span style="color: #666666">=</span><span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">this</span><span style="color: #666666">-&gt;</span>_decodeNoHash(buf,<span style="color: #bbbbbb"> </span>offset<span style="color: #bbbbbb"> </span><span style="color: #666666">+</span><span style="color: #bbbbbb"> </span>pos,<span style="color: #bbbbbb"> </span>maxlen<span style="color: #bbbbbb"> </span><span style="color: #666666">-</span><span style="color: #bbbbbb"> </span>pos);<span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">    </span><span style="color: #008000; font-weight: bold">if</span><span style="color: #bbbbbb"> </span>(thislen<span style="color: #bbbbbb"> </span><span style="color: #666666">&lt;</span><span style="color: #bbbbbb"> </span><span style="color: #666666">0</span>)<span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">return</span><span style="color: #bbbbbb"> </span>thislen;<span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">else</span><span style="color: #bbbbbb"> </span>pos<span style="color: #bbbbbb"> </span><span style="color: #666666">+=</span><span style="color: #bbbbbb"> </span>thislen;<span style="color: #bbbbbb"></span>
+
+<span style="color: #bbbbbb">    </span><span style="color: #008000; font-weight: bold">return</span><span style="color: #bbbbbb"> </span>pos;<span style="color: #bbbbbb"></span>
+}<span style="color: #bbbbbb"></span>
+
+__lcm_buffer_size<span style="color: #bbbbbb"> </span>inputs_t<span style="color: #666666">::</span>getEncodedSize()<span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">const</span><span style="color: #bbbbbb"></span>
+{<span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">    </span><span style="color: #008000; font-weight: bold">return</span><span style="color: #bbbbbb"> </span><span style="color: #666666">8</span><span style="color: #bbbbbb"> </span><span style="color: #666666">+</span><span style="color: #bbbbbb"> </span>_getEncodedSizeNoHash();<span style="color: #bbbbbb"></span>
+}<span style="color: #bbbbbb"></span>
+
+<span style="color: #B00040">int64_t</span><span style="color: #bbbbbb"> </span>inputs_t<span style="color: #666666">::</span>getHash()<span style="color: #bbbbbb"></span>
+{<span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">    </span><span style="color: #008000; font-weight: bold">static</span><span style="color: #bbbbbb"> </span><span style="color: #B00040">int64_t</span><span style="color: #bbbbbb"> </span>hash<span style="color: #bbbbbb"> </span><span style="color: #666666">=</span><span style="color: #bbbbbb"> </span>_computeHash(<span style="color: #008000">NULL</span>);<span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">    </span><span style="color: #008000; font-weight: bold">return</span><span style="color: #bbbbbb"> </span>hash;<span style="color: #bbbbbb"></span>
+}<span style="color: #bbbbbb"></span>
+
+<span style="color: #008000; font-weight: bold">constexpr</span><span style="color: #bbbbbb"> </span>inputs_t<span style="color: #666666">::</span>type_name_array_t<span style="color: #666666">*</span><span style="color: #bbbbbb"> </span>inputs_t<span style="color: #666666">::</span>getTypeNameArrayPtr()<span style="color: #bbbbbb"> </span>{<span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">    </span><span style="color: #008000; font-weight: bold">return</span><span style="color: #bbbbbb"> </span><span style="color: #666666">&amp;</span><span style="color: #BA2121">"inputs_t"</span>;<span style="color: #bbbbbb"></span>
+}<span style="color: #bbbbbb"></span>
+
+<span style="color: #008000; font-weight: bold">constexpr</span><span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">const</span><span style="color: #bbbbbb"> </span><span style="color: #B00040">char</span><span style="color: #666666">*</span><span style="color: #bbbbbb"> </span>inputs_t<span style="color: #666666">::</span>getTypeName()<span style="color: #bbbbbb"></span>
+{<span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">    </span><span style="color: #008000; font-weight: bold">return</span><span style="color: #bbbbbb"> </span><span style="color: #666666">*</span>inputs_t<span style="color: #666666">::</span>getTypeNameArrayPtr();<span style="color: #bbbbbb"></span>
+}<span style="color: #bbbbbb"></span>
+
+<span style="color: #008000; font-weight: bold">const</span><span style="color: #bbbbbb"> </span><span style="color: #B00040">char</span><span style="color: #bbbbbb"> </span><span style="color: #666666">*</span><span style="color: #bbbbbb"> </span>inputs_t<span style="color: #666666">::</span>getPackageName()<span style="color: #bbbbbb"></span>
+{<span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">    </span><span style="color: #008000; font-weight: bold">return</span><span style="color: #bbbbbb"> </span><span style="color: #BA2121">"my_sym"</span>;<span style="color: #bbbbbb"></span>
+}<span style="color: #bbbbbb"></span>
+
+__lcm_buffer_size<span style="color: #bbbbbb"> </span>inputs_t<span style="color: #666666">::</span>_encodeNoHash(<span style="color: #B00040">void</span><span style="color: #bbbbbb"> </span><span style="color: #666666">*</span>buf,<span style="color: #bbbbbb"> </span>__lcm_buffer_size<span style="color: #bbbbbb"> </span>offset,<span style="color: #bbbbbb"> </span>__lcm_buffer_size<span style="color: #bbbbbb"> </span>maxlen)<span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">const</span><span style="color: #bbbbbb"></span>
+{<span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">    </span>__lcm_buffer_size<span style="color: #bbbbbb"> </span>pos<span style="color: #bbbbbb"> </span><span style="color: #666666">=</span><span style="color: #bbbbbb"> </span><span style="color: #666666">0</span>,<span style="color: #bbbbbb"> </span>tlen;<span style="color: #bbbbbb"></span>
+
+<span style="color: #bbbbbb">    </span>tlen<span style="color: #bbbbbb"> </span><span style="color: #666666">=</span><span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">this</span><span style="color: #666666">-&gt;</span>w_T_b._encodeNoHash(buf,<span style="color: #bbbbbb"> </span>offset<span style="color: #bbbbbb"> </span><span style="color: #666666">+</span><span style="color: #bbbbbb"> </span>pos,<span style="color: #bbbbbb"> </span>maxlen<span style="color: #bbbbbb"> </span><span style="color: #666666">-</span><span style="color: #bbbbbb"> </span>pos);<span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">    </span><span style="color: #008000; font-weight: bold">if</span>(tlen<span style="color: #bbbbbb"> </span><span style="color: #666666">&lt;</span><span style="color: #bbbbbb"> </span><span style="color: #666666">0</span>)<span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">return</span><span style="color: #bbbbbb"> </span>tlen;<span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">else</span><span style="color: #bbbbbb"> </span>pos<span style="color: #bbbbbb"> </span><span style="color: #666666">+=</span><span style="color: #bbbbbb"> </span>tlen;<span style="color: #bbbbbb"></span>
+
+<span style="color: #bbbbbb">    </span>tlen<span style="color: #bbbbbb"> </span><span style="color: #666666">=</span><span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">this</span><span style="color: #666666">-&gt;</span>b_t_p._encodeNoHash(buf,<span style="color: #bbbbbb"> </span>offset<span style="color: #bbbbbb"> </span><span style="color: #666666">+</span><span style="color: #bbbbbb"> </span>pos,<span style="color: #bbbbbb"> </span>maxlen<span style="color: #bbbbbb"> </span><span style="color: #666666">-</span><span style="color: #bbbbbb"> </span>pos);<span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">    </span><span style="color: #008000; font-weight: bold">if</span>(tlen<span style="color: #bbbbbb"> </span><span style="color: #666666">&lt;</span><span style="color: #bbbbbb"> </span><span style="color: #666666">0</span>)<span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">return</span><span style="color: #bbbbbb"> </span>tlen;<span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">else</span><span style="color: #bbbbbb"> </span>pos<span style="color: #bbbbbb"> </span><span style="color: #666666">+=</span><span style="color: #bbbbbb"> </span>tlen;<span style="color: #bbbbbb"></span>
+
+<span style="color: #bbbbbb">    </span><span style="color: #008000; font-weight: bold">return</span><span style="color: #bbbbbb"> </span>pos;<span style="color: #bbbbbb"></span>
+}<span style="color: #bbbbbb"></span>
+
+__lcm_buffer_size<span style="color: #bbbbbb"> </span>inputs_t<span style="color: #666666">::</span>_decodeNoHash(<span style="color: #008000; font-weight: bold">const</span><span style="color: #bbbbbb"> </span><span style="color: #B00040">void</span><span style="color: #bbbbbb"> </span><span style="color: #666666">*</span>buf,<span style="color: #bbbbbb"> </span>__lcm_buffer_size<span style="color: #bbbbbb"> </span>offset,<span style="color: #bbbbbb"> </span>__lcm_buffer_size<span style="color: #bbbbbb"> </span>maxlen)<span style="color: #bbbbbb"></span>
+{<span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">    </span>__lcm_buffer_size<span style="color: #bbbbbb"> </span>pos<span style="color: #bbbbbb"> </span><span style="color: #666666">=</span><span style="color: #bbbbbb"> </span><span style="color: #666666">0</span>,<span style="color: #bbbbbb"> </span>tlen;<span style="color: #bbbbbb"></span>
+
+<span style="color: #bbbbbb">    </span>tlen<span style="color: #bbbbbb"> </span><span style="color: #666666">=</span><span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">this</span><span style="color: #666666">-&gt;</span>w_T_b._decodeNoHash(buf,<span style="color: #bbbbbb"> </span>offset<span style="color: #bbbbbb"> </span><span style="color: #666666">+</span><span style="color: #bbbbbb"> </span>pos,<span style="color: #bbbbbb"> </span>maxlen<span style="color: #bbbbbb"> </span><span style="color: #666666">-</span><span style="color: #bbbbbb"> </span>pos);<span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">    </span><span style="color: #008000; font-weight: bold">if</span>(tlen<span style="color: #bbbbbb"> </span><span style="color: #666666">&lt;</span><span style="color: #bbbbbb"> </span><span style="color: #666666">0</span>)<span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">return</span><span style="color: #bbbbbb"> </span>tlen;<span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">else</span><span style="color: #bbbbbb"> </span>pos<span style="color: #bbbbbb"> </span><span style="color: #666666">+=</span><span style="color: #bbbbbb"> </span>tlen;<span style="color: #bbbbbb"></span>
+
+<span style="color: #bbbbbb">    </span>tlen<span style="color: #bbbbbb"> </span><span style="color: #666666">=</span><span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">this</span><span style="color: #666666">-&gt;</span>b_t_p._decodeNoHash(buf,<span style="color: #bbbbbb"> </span>offset<span style="color: #bbbbbb"> </span><span style="color: #666666">+</span><span style="color: #bbbbbb"> </span>pos,<span style="color: #bbbbbb"> </span>maxlen<span style="color: #bbbbbb"> </span><span style="color: #666666">-</span><span style="color: #bbbbbb"> </span>pos);<span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">    </span><span style="color: #008000; font-weight: bold">if</span>(tlen<span style="color: #bbbbbb"> </span><span style="color: #666666">&lt;</span><span style="color: #bbbbbb"> </span><span style="color: #666666">0</span>)<span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">return</span><span style="color: #bbbbbb"> </span>tlen;<span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">else</span><span style="color: #bbbbbb"> </span>pos<span style="color: #bbbbbb"> </span><span style="color: #666666">+=</span><span style="color: #bbbbbb"> </span>tlen;<span style="color: #bbbbbb"></span>
+
+<span style="color: #bbbbbb">    </span><span style="color: #008000; font-weight: bold">return</span><span style="color: #bbbbbb"> </span>pos;<span style="color: #bbbbbb"></span>
+}<span style="color: #bbbbbb"></span>
+
+__lcm_buffer_size<span style="color: #bbbbbb"> </span>inputs_t<span style="color: #666666">::</span>_getEncodedSizeNoHash()<span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">const</span><span style="color: #bbbbbb"></span>
+{<span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">    </span>__lcm_buffer_size<span style="color: #bbbbbb"> </span>enc_size<span style="color: #bbbbbb"> </span><span style="color: #666666">=</span><span style="color: #bbbbbb"> </span><span style="color: #666666">0</span>;<span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">    </span>enc_size<span style="color: #bbbbbb"> </span><span style="color: #666666">+=</span><span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">this</span><span style="color: #666666">-&gt;</span>w_T_b._getEncodedSizeNoHash();<span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">    </span>enc_size<span style="color: #bbbbbb"> </span><span style="color: #666666">+=</span><span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">this</span><span style="color: #666666">-&gt;</span>b_t_p._getEncodedSizeNoHash();<span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">    </span><span style="color: #008000; font-weight: bold">return</span><span style="color: #bbbbbb"> </span>enc_size;<span style="color: #bbbbbb"></span>
+}<span style="color: #bbbbbb"></span>
+
+<span style="color: #B00040">bool</span><span style="color: #bbbbbb"> </span>inputs_t<span style="color: #666666">::</span><span style="color: #008000; font-weight: bold">operator</span><span style="color: #666666">==</span>(<span style="color: #008000; font-weight: bold">const</span><span style="color: #bbbbbb"> </span>inputs_t<span style="color: #666666">&amp;</span><span style="color: #bbbbbb"> </span>other)<span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">const</span><span style="color: #bbbbbb"> </span>{<span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">  </span><span style="color: #008000; font-weight: bold">return</span><span style="color: #bbbbbb"> </span>(<span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">          </span>(w_T_b<span style="color: #666666">==</span>other.w_T_b)<span style="color: #bbbbbb"> </span><span style="color: #666666">&amp;&amp;</span><span style="color: #bbbbbb"> </span>
+<span style="color: #bbbbbb">          </span>(b_t_p<span style="color: #666666">==</span>other.b_t_p));<span style="color: #bbbbbb"></span>
+}<span style="color: #bbbbbb"></span>
+
+<span style="color: #B00040">bool</span><span style="color: #bbbbbb"> </span>inputs_t<span style="color: #666666">::</span><span style="color: #008000; font-weight: bold">operator</span><span style="color: #666666">!=</span>(<span style="color: #008000; font-weight: bold">const</span><span style="color: #bbbbbb"> </span>inputs_t<span style="color: #666666">&amp;</span><span style="color: #bbbbbb"> </span>other)<span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">const</span><span style="color: #bbbbbb"> </span>{<span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">  </span><span style="color: #008000; font-weight: bold">return</span><span style="color: #bbbbbb"> </span><span style="color: #666666">!</span>(<span style="color: #666666">*</span><span style="color: #008000; font-weight: bold">this</span><span style="color: #666666">==</span>other);<span style="color: #bbbbbb"></span>
+}<span style="color: #bbbbbb"></span>
+
+}<span style="color: #bbbbbb"></span>
+
+<span style="color: #9C6500">#endif</span>
+</pre>
+     </div>
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h4 id="Code-generation-using-python-functions">
+    Code generation using python functions
+    <a class="anchor-link" href="#Code-generation-using-python-functions">
+     ¶
+    </a>
+   </h4>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+ <div class="input">
+  <div class="prompt input_prompt">
    In [30]:
   </div>
   <div class="inner_cell">
@@ -1785,7 +2096,7 @@ Eigen<span style="color: #666666">::</span>Matrix<span style="color: #666666">&l
 <div class="cell border-box-sizing code_cell rendered">
  <div class="input">
   <div class="prompt input_prompt">
-   In [61]:
+   In [72]:
   </div>
   <div class="inner_cell">
    <div class="input_area collapsed">
@@ -1813,6 +2124,7 @@ Eigen<span style="color: #666666">::</span>Matrix<span style="color: #666666">&l
     <span class="n">func</span><span class="o">=</span><span class="n">transform_point</span><span class="p">,</span>
     <span class="c1"># config=codegen.PythonConfig(),</span>
     <span class="n">config</span><span class="o">=</span><span class="n">codegen</span><span class="o">.</span><span class="n">CppConfig</span><span class="p">(),</span>
+    <span class="n">input_types</span><span class="o">=</span><span class="p">[</span><span class="n">sf</span><span class="o">.</span><span class="n">Pose3</span><span class="p">,</span> <span class="n">sf</span><span class="o">.</span><span class="n">V3</span><span class="p">,</span> <span class="n">sf</span><span class="o">.</span><span class="n">Scalar</span><span class="p">],</span>
     <span class="n">name</span><span class="o">=</span><span class="s2">"my_transform_point"</span><span class="p">,</span>
     <span class="c1"># We have three outputs</span>
     <span class="n">output_names</span><span class="o">=</span><span class="p">[</span><span class="s2">"w_Trans_b"</span><span class="p">,</span> <span class="s2">"point_t_b"</span><span class="p">,</span> <span class="s2">"point_t_w"</span><span class="p">],</span>
@@ -2275,20 +2587,6 @@ Eigen<span style="color: #666666">::</span>Matrix<span style="color: #666666">&l
      </div>
     </div>
    </div>
-  </div>
- </div>
-</div>
-<div class="cell border-box-sizing text_cell rendered">
- <div class="prompt input_prompt">
- </div>
- <div class="inner_cell">
-  <div class="text_cell_render border-box-sizing rendered_html">
-   <h4 id="Code-generation-using-python-functions">
-    Code generation using python functions
-    <a class="anchor-link" href="#Code-generation-using-python-functions">
-     ¶
-    </a>
-   </h4>
   </div>
  </div>
 </div>
