@@ -86,7 +86,7 @@ tag: Notebook
 <div class="cell border-box-sizing code_cell rendered">
  <div class="input">
   <div class="prompt input_prompt">
-   In [1]:
+   In [2]:
   </div>
   <div class="inner_cell">
    <div class="input_area collapsed">
@@ -101,6 +101,7 @@ tag: Notebook
 <span class="n">symforce</span><span class="o">.</span><span class="n">set_epsilon_to_symbol</span><span class="p">()</span>
 
 <span class="kn">import</span> <span class="nn">symforce.symbolic</span> <span class="k">as</span> <span class="nn">sf</span>
+<span class="kn">from</span> <span class="nn">symforce.notebook_util</span> <span class="kn">import</span> <span class="n">display</span>
 
 <span class="c1">#</span>
 </pre>
@@ -703,6 +704,50 @@ After modifying id: 1024
  ('foo.bar.z', z),
  ('foo2.x', foo2.x),
  ('foo2.bar2.x', bar2.x)]</pre>
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+ <div class="input">
+  <div class="prompt input_prompt">
+   In [92]:
+  </div>
+  <div class="inner_cell">
+   <div class="input_area collapsed">
+    <div class="collapse_expand_button fa fa-1x fa-minus-square-o">
+    </div>
+    <div class="highlight hl-ipython3">
+     <pre><span></span><span class="c1"># Values contains a list</span>
+
+<span class="n">initial_values</span> <span class="o">=</span> <span class="n">Values</span><span class="p">(</span>
+    <span class="c1"># Values key will be distances[0], distances[1]</span>
+    <span class="n">distances</span><span class="o">=</span><span class="p">[</span><span class="n">sf</span><span class="o">.</span><span class="n">V2</span><span class="o">.</span><span class="n">symbolic</span><span class="p">(</span><span class="s2">"t"</span><span class="p">),</span> <span class="n">sf</span><span class="o">.</span><span class="n">V2</span><span class="o">.</span><span class="n">symbolic</span><span class="p">(</span><span class="s2">"t"</span><span class="p">)],</span>
+    <span class="n">epsilon</span><span class="o">=</span><span class="n">sf</span><span class="o">.</span><span class="n">numeric_epsilon</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">initial_values</span><span class="o">.</span><span class="n">items_recursive</span><span class="p">())</span>
+<span class="c1">#</span>
+</pre>
+    </div>
+   </div>
+  </div>
+ </div>
+ <div class="output_wrapper">
+  <div class="output">
+   <div class="output_area">
+    <div class="prompt">
+    </div>
+    <div class="output_text output_subarea">
+     <pre>[('distances[0]',
+  Matrix([
+  [t0],
+  [t1]])),
+ ('distances[1]',
+  Matrix([
+  [t0],
+  [t1]])),
+ ('epsilon', 2.220446049250313e-15)]</pre>
     </div>
    </div>
   </div>
@@ -1612,7 +1657,7 @@ t=ops.LieGroupOps.retract(self.t, vec[3:], epsilon=epsilon))
 <div class="cell border-box-sizing code_cell rendered">
  <div class="input">
   <div class="prompt input_prompt">
-   In [3]:
+   In [4]:
   </div>
   <div class="inner_cell">
    <div class="input_area collapsed">
@@ -1654,14 +1699,15 @@ t=ops.LieGroupOps.retract(self.t, vec[3:], epsilon=epsilon))
 <div class="cell border-box-sizing code_cell rendered">
  <div class="input">
   <div class="prompt input_prompt">
-   In [83]:
+   In [5]:
   </div>
   <div class="inner_cell">
    <div class="input_area">
     <div class="collapse_expand_button fa fa-1x fa-minus-square-o">
     </div>
     <div class="highlight hl-ipython3">
-     <pre><span></span><span class="kn">from</span> <span class="nn">symforce.values</span> <span class="kn">import</span> <span class="n">Values</span>
+     <pre><span></span><span class="c1"># Generate functions</span>
+<span class="kn">from</span> <span class="nn">symforce.values</span> <span class="kn">import</span> <span class="n">Values</span>
 <span class="n">inputs</span> <span class="o">=</span> <span class="n">Values</span><span class="p">(</span>
     <span class="n">w_T_b</span> <span class="o">=</span> <span class="n">sf</span><span class="o">.</span><span class="n">Pose3</span><span class="o">.</span><span class="n">symbolic</span><span class="p">(</span><span class="s2">"T"</span><span class="p">),</span>
     <span class="n">b_t_p</span> <span class="o">=</span> <span class="n">sf</span><span class="o">.</span><span class="n">V3</span><span class="o">.</span><span class="n">symbolic</span><span class="p">(</span><span class="s2">"p"</span><span class="p">)</span>
@@ -1676,7 +1722,9 @@ t=ops.LieGroupOps.retract(self.t, vec[3:], epsilon=epsilon))
     <span class="n">inputs</span><span class="o">=</span><span class="n">input_values</span><span class="p">,</span>
     <span class="n">outputs</span><span class="o">=</span><span class="n">output_values</span><span class="p">,</span>
     <span class="n">config</span><span class="o">=</span><span class="n">codegen</span><span class="o">.</span><span class="n">CppConfig</span><span class="p">(),</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">"point_projection"</span><span class="p">,</span>   
+    <span class="n">name</span><span class="o">=</span><span class="s2">"point_projection"</span><span class="p">,</span>
+    <span class="c1">#  If specified, the output with this key is returned rather than filled in as a named output argument</span>
+    <span class="n">return_key</span><span class="o">=</span><span class="s2">"outputs"</span>
 <span class="p">)</span>
 
 <span class="n">point_projection_condegen_data</span> <span class="o">=</span> <span class="n">point_projection_condegen</span><span class="o">.</span><span class="n">generate_function</span><span class="p">(</span><span class="n">namespace</span><span class="o">=</span><span class="n">namespace</span><span class="p">)</span>
@@ -1685,8 +1733,9 @@ t=ops.LieGroupOps.retract(self.t, vec[3:], epsilon=epsilon))
 <span class="nb">print</span><span class="p">(</span><span class="s2">"Files generated in </span><span class="si">{}</span><span class="s2">:</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">point_projection_condegen_data</span><span class="o">.</span><span class="n">output_dir</span><span class="p">))</span>
 <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">point_projection_condegen_data</span><span class="o">.</span><span class="n">generated_files</span><span class="p">:</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">"  |- </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">point_projection_condegen_data</span><span class="o">.</span><span class="n">output_dir</span><span class="p">)))</span>
-<span class="c1">#display_code_file(point_projection_condegen_data.function_dir / "point_projection.h", "C++")</span>
-<span class="n">display_code_file</span><span class="p">(</span><span class="n">point_projection_condegen_data</span><span class="o">.</span><span class="n">cpp_types_dir</span> <span class="o">/</span> <span class="n">namespace</span> <span class="o">/</span> <span class="s2">"outputs_t.hpp"</span><span class="p">,</span> <span class="s2">"C++"</span><span class="p">)</span>
+<span class="n">display_code_file</span><span class="p">(</span><span class="n">point_projection_condegen_data</span><span class="o">.</span><span class="n">function_dir</span> <span class="o">/</span> <span class="s2">"point_projection.h"</span><span class="p">,</span> <span class="s2">"C++"</span><span class="p">)</span>
+<span class="c1"># display_code_file(point_projection_condegen_data.cpp_types_dir / namespace / "inputs_t.hpp", "C++")</span>
+<span class="c1"># display_code_file(point_projection_condegen_data.cpp_types_dir / namespace / "outputs_t.hpp", "C++")</span>
 </pre>
     </div>
    </div>
@@ -1698,7 +1747,7 @@ t=ops.LieGroupOps.retract(self.t, vec[3:], epsilon=epsilon))
     <div class="prompt">
     </div>
     <div class="output_subarea output_stream output_stdout output_text">
-     <pre>Files generated in /tmp/sf_codegen_point_projection_w_jrccmx:
+     <pre>Files generated in /tmp/sf_codegen_point_projection_z0f7b1t1:
 
   |- lcmtypes/point_projection.lcm
   |- cpp/symforce/my_sym/point_projection.h
@@ -1710,237 +1759,68 @@ t=ops.LieGroupOps.retract(self.t, vec[3:], epsilon=epsilon))
     </div>
     <div class="output_html rendered_html output_subarea">
      <div class="highlight" style="background: #f8f8f8">
-      <pre style="line-height: 125%;"><span></span><span style="color: #3D7B7B; font-style: italic">/** THIS IS AN AUTOMATICALLY GENERATED FILE.  DO NOT MODIFY</span>
-<span style="color: #3D7B7B; font-style: italic"> * BY HAND!!</span>
+      <pre style="line-height: 125%;"><span></span><span style="color: #3D7B7B; font-style: italic">// -----------------------------------------------------------------------------</span>
+<span style="color: #3D7B7B; font-style: italic">// This file was autogenerated by symforce from template:</span>
+<span style="color: #3D7B7B; font-style: italic">//     function/FUNCTION.h.jinja</span>
+<span style="color: #3D7B7B; font-style: italic">// Do NOT modify by hand.</span>
+<span style="color: #3D7B7B; font-style: italic">// -----------------------------------------------------------------------------</span>
+
+<span style="color: #9C6500">#pragma once</span>
+
+<span style="color: #9C6500">#include</span><span style="color: #bbbbbb"> </span><span style="color: #3D7B7B; font-style: italic">&lt;Eigen/Dense&gt;</span><span style="color: #9C6500"></span>
+
+<span style="color: #9C6500">#include</span><span style="color: #bbbbbb"> </span><span style="color: #3D7B7B; font-style: italic">&lt;lcmtypes/my_sym/inputs_t.hpp&gt;</span><span style="color: #9C6500"></span>
+<span style="color: #9C6500">#include</span><span style="color: #bbbbbb"> </span><span style="color: #3D7B7B; font-style: italic">&lt;lcmtypes/my_sym/outputs_t.hpp&gt;</span><span style="color: #9C6500"></span>
+
+<span style="color: #008000; font-weight: bold">namespace</span><span style="color: #bbbbbb"> </span><span style="color: #0000FF; font-weight: bold">my_sym</span><span style="color: #bbbbbb"> </span>{<span style="color: #bbbbbb"></span>
+
+<span style="color: #3D7B7B; font-style: italic">/**</span>
+<span style="color: #3D7B7B; font-style: italic"> * This function was autogenerated. Do not modify by hand.</span>
 <span style="color: #3D7B7B; font-style: italic"> *</span>
-<span style="color: #3D7B7B; font-style: italic"> * Generated by lcm-gen</span>
-<span style="color: #3D7B7B; font-style: italic"> **/</span><span style="color: #bbbbbb"></span>
+<span style="color: #3D7B7B; font-style: italic"> * Args:</span>
+<span style="color: #3D7B7B; font-style: italic"> *     inputs: Values</span>
+<span style="color: #3D7B7B; font-style: italic"> *</span>
+<span style="color: #3D7B7B; font-style: italic"> * Outputs:</span>
+<span style="color: #3D7B7B; font-style: italic"> *     outputs: Values</span>
+<span style="color: #3D7B7B; font-style: italic"> */</span><span style="color: #bbbbbb"></span>
+<span style="color: #008000; font-weight: bold">template</span><span style="color: #bbbbbb"> </span><span style="color: #666666">&lt;</span><span style="color: #008000; font-weight: bold">typename</span><span style="color: #bbbbbb"> </span><span style="color: #0000FF; font-weight: bold">Scalar</span><span style="color: #666666">&gt;</span><span style="color: #bbbbbb"></span>
+my_sym<span style="color: #666666">::</span>outputs_t<span style="color: #bbbbbb"> </span>PointProjection(<span style="color: #008000; font-weight: bold">const</span><span style="color: #bbbbbb"> </span>my_sym<span style="color: #666666">::</span>inputs_t<span style="color: #666666">&amp;</span><span style="color: #bbbbbb"> </span>inputs)<span style="color: #bbbbbb"> </span>{<span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">  </span><span style="color: #3D7B7B; font-style: italic">// Total ops: 52</span>
 
-<span style="color: #9C6500">#include</span><span style="color: #bbbbbb"> </span><span style="color: #3D7B7B; font-style: italic">&lt;lcm/lcm_coretypes.h&gt;</span><span style="color: #9C6500"></span>
+<span style="color: #bbbbbb">  </span><span style="color: #3D7B7B; font-style: italic">// Input arrays</span>
 
-<span style="color: #9C6500">#ifndef __my_sym_inputs_t_hpp__</span>
-<span style="color: #9C6500">#define __my_sym_inputs_t_hpp__</span>
+<span style="color: #bbbbbb">  </span><span style="color: #3D7B7B; font-style: italic">// Intermediate terms (8)</span>
+<span style="color: #bbbbbb">  </span><span style="color: #008000; font-weight: bold">const</span><span style="color: #bbbbbb"> </span>Scalar<span style="color: #bbbbbb"> </span>_tmp0<span style="color: #bbbbbb"> </span><span style="color: #666666">=</span><span style="color: #bbbbbb"> </span><span style="color: #666666">2</span><span style="color: #bbbbbb"> </span><span style="color: #666666">*</span><span style="color: #bbbbbb"> </span>inputs.w_T_b.data()[<span style="color: #666666">3</span>];<span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">  </span><span style="color: #008000; font-weight: bold">const</span><span style="color: #bbbbbb"> </span>Scalar<span style="color: #bbbbbb"> </span>_tmp1<span style="color: #bbbbbb"> </span><span style="color: #666666">=</span><span style="color: #bbbbbb"> </span>_tmp0<span style="color: #bbbbbb"> </span><span style="color: #666666">*</span><span style="color: #bbbbbb"> </span>inputs.w_T_b.data()[<span style="color: #666666">2</span>];<span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">  </span><span style="color: #008000; font-weight: bold">const</span><span style="color: #bbbbbb"> </span>Scalar<span style="color: #bbbbbb"> </span>_tmp2<span style="color: #bbbbbb"> </span><span style="color: #666666">=</span><span style="color: #bbbbbb"> </span>_tmp0<span style="color: #bbbbbb"> </span><span style="color: #666666">*</span><span style="color: #bbbbbb"> </span>inputs.w_T_b.data()[<span style="color: #666666">1</span>];<span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">  </span><span style="color: #008000; font-weight: bold">const</span><span style="color: #bbbbbb"> </span>Scalar<span style="color: #bbbbbb"> </span>_tmp3<span style="color: #bbbbbb"> </span><span style="color: #666666">=</span><span style="color: #bbbbbb"> </span><span style="color: #666666">2</span><span style="color: #bbbbbb"> </span><span style="color: #666666">*</span><span style="color: #bbbbbb"> </span>inputs.w_T_b.data()[<span style="color: #666666">0</span>];<span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">  </span><span style="color: #008000; font-weight: bold">const</span><span style="color: #bbbbbb"> </span>Scalar<span style="color: #bbbbbb"> </span>_tmp4<span style="color: #bbbbbb"> </span><span style="color: #666666">=</span><span style="color: #bbbbbb"> </span><span style="color: #666666">2</span><span style="color: #bbbbbb"> </span><span style="color: #666666">*</span><span style="color: #bbbbbb"> </span>std<span style="color: #666666">::</span>pow(inputs.w_T_b.data()[<span style="color: #666666">1</span>],<span style="color: #bbbbbb"> </span>Scalar(<span style="color: #666666">2</span>));<span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">  </span><span style="color: #008000; font-weight: bold">const</span><span style="color: #bbbbbb"> </span>Scalar<span style="color: #bbbbbb"> </span>_tmp5<span style="color: #bbbbbb"> </span><span style="color: #666666">=</span><span style="color: #bbbbbb"> </span><span style="color: #666666">2</span><span style="color: #bbbbbb"> </span><span style="color: #666666">*</span><span style="color: #bbbbbb"> </span>std<span style="color: #666666">::</span>pow(inputs.w_T_b.data()[<span style="color: #666666">2</span>],<span style="color: #bbbbbb"> </span>Scalar(<span style="color: #666666">2</span>))<span style="color: #bbbbbb"> </span><span style="color: #666666">-</span><span style="color: #bbbbbb"> </span><span style="color: #666666">1</span>;<span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">  </span><span style="color: #008000; font-weight: bold">const</span><span style="color: #bbbbbb"> </span>Scalar<span style="color: #bbbbbb"> </span>_tmp6<span style="color: #bbbbbb"> </span><span style="color: #666666">=</span><span style="color: #bbbbbb"> </span>_tmp0<span style="color: #bbbbbb"> </span><span style="color: #666666">*</span><span style="color: #bbbbbb"> </span>inputs.w_T_b.data()[<span style="color: #666666">0</span>];<span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">  </span><span style="color: #008000; font-weight: bold">const</span><span style="color: #bbbbbb"> </span>Scalar<span style="color: #bbbbbb"> </span>_tmp7<span style="color: #bbbbbb"> </span><span style="color: #666666">=</span><span style="color: #bbbbbb"> </span><span style="color: #666666">2</span><span style="color: #bbbbbb"> </span><span style="color: #666666">*</span><span style="color: #bbbbbb"> </span>std<span style="color: #666666">::</span>pow(inputs.w_T_b.data()[<span style="color: #666666">0</span>],<span style="color: #bbbbbb"> </span>Scalar(<span style="color: #666666">2</span>));<span style="color: #bbbbbb"></span>
 
-<span style="color: #9C6500">#include</span><span style="color: #bbbbbb"> </span><span style="color: #3D7B7B; font-style: italic">&lt;ostream&gt;</span><span style="color: #9C6500"></span>
-<span style="color: #9C6500">#include</span><span style="color: #bbbbbb"> </span><span style="color: #3D7B7B; font-style: italic">"lcmtypes/eigen_lcm/Vector3d.hpp"</span><span style="color: #9C6500"></span>
-<span style="color: #9C6500">#include</span><span style="color: #bbbbbb"> </span><span style="color: #3D7B7B; font-style: italic">"lcmtypes/eigen_lcm/Vector7d.hpp"</span><span style="color: #9C6500"></span>
+<span style="color: #bbbbbb">  </span><span style="color: #3D7B7B; font-style: italic">// Output terms (1)</span>
+<span style="color: #bbbbbb">  </span>my_sym<span style="color: #666666">::</span>outputs_t<span style="color: #bbbbbb"> </span>_outputs;<span style="color: #bbbbbb"></span>
 
-<span style="color: #008000; font-weight: bold">namespace</span><span style="color: #bbbbbb"> </span><span style="color: #0000FF; font-weight: bold">my_sym</span><span style="color: #bbbbbb"></span>
-{<span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">  </span>_outputs.w_t_p.data()[<span style="color: #666666">0</span>]<span style="color: #bbbbbb"> </span><span style="color: #666666">=</span><span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">      </span>inputs.b_t_p.data()[<span style="color: #666666">0</span>]<span style="color: #bbbbbb"> </span><span style="color: #666666">*</span><span style="color: #bbbbbb"> </span>(<span style="color: #666666">-</span>_tmp4<span style="color: #bbbbbb"> </span><span style="color: #666666">-</span><span style="color: #bbbbbb"> </span>_tmp5)<span style="color: #bbbbbb"> </span><span style="color: #666666">+</span><span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">      </span>inputs.b_t_p.data()[<span style="color: #666666">1</span>]<span style="color: #bbbbbb"> </span><span style="color: #666666">*</span><span style="color: #bbbbbb"> </span>(<span style="color: #666666">-</span>_tmp1<span style="color: #bbbbbb"> </span><span style="color: #666666">+</span><span style="color: #bbbbbb"> </span><span style="color: #666666">2</span><span style="color: #bbbbbb"> </span><span style="color: #666666">*</span><span style="color: #bbbbbb"> </span>inputs.w_T_b.data()[<span style="color: #666666">0</span>]<span style="color: #bbbbbb"> </span><span style="color: #666666">*</span><span style="color: #bbbbbb"> </span>inputs.w_T_b.data()[<span style="color: #666666">1</span>])<span style="color: #bbbbbb"> </span><span style="color: #666666">+</span><span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">      </span>inputs.b_t_p.data()[<span style="color: #666666">2</span>]<span style="color: #bbbbbb"> </span><span style="color: #666666">*</span><span style="color: #bbbbbb"> </span>(_tmp2<span style="color: #bbbbbb"> </span><span style="color: #666666">+</span><span style="color: #bbbbbb"> </span>_tmp3<span style="color: #bbbbbb"> </span><span style="color: #666666">*</span><span style="color: #bbbbbb"> </span>inputs.w_T_b.data()[<span style="color: #666666">2</span>])<span style="color: #bbbbbb"> </span><span style="color: #666666">+</span><span style="color: #bbbbbb"> </span>inputs.w_T_b.data()[<span style="color: #666666">4</span>];<span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">  </span>_outputs.w_t_p.data()[<span style="color: #666666">1</span>]<span style="color: #bbbbbb"> </span><span style="color: #666666">=</span><span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">      </span>inputs.b_t_p.data()[<span style="color: #666666">0</span>]<span style="color: #bbbbbb"> </span><span style="color: #666666">*</span><span style="color: #bbbbbb"> </span>(_tmp1<span style="color: #bbbbbb"> </span><span style="color: #666666">+</span><span style="color: #bbbbbb"> </span>_tmp3<span style="color: #bbbbbb"> </span><span style="color: #666666">*</span><span style="color: #bbbbbb"> </span>inputs.w_T_b.data()[<span style="color: #666666">1</span>])<span style="color: #bbbbbb"> </span><span style="color: #666666">+</span><span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">      </span>inputs.b_t_p.data()[<span style="color: #666666">1</span>]<span style="color: #bbbbbb"> </span><span style="color: #666666">*</span><span style="color: #bbbbbb"> </span>(<span style="color: #666666">-</span>_tmp5<span style="color: #bbbbbb"> </span><span style="color: #666666">-</span><span style="color: #bbbbbb"> </span>_tmp7)<span style="color: #bbbbbb"> </span><span style="color: #666666">+</span><span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">      </span>inputs.b_t_p.data()[<span style="color: #666666">2</span>]<span style="color: #bbbbbb"> </span><span style="color: #666666">*</span><span style="color: #bbbbbb"> </span>(<span style="color: #666666">-</span>_tmp6<span style="color: #bbbbbb"> </span><span style="color: #666666">+</span><span style="color: #bbbbbb"> </span><span style="color: #666666">2</span><span style="color: #bbbbbb"> </span><span style="color: #666666">*</span><span style="color: #bbbbbb"> </span>inputs.w_T_b.data()[<span style="color: #666666">1</span>]<span style="color: #bbbbbb"> </span><span style="color: #666666">*</span><span style="color: #bbbbbb"> </span>inputs.w_T_b.data()[<span style="color: #666666">2</span>])<span style="color: #bbbbbb"> </span><span style="color: #666666">+</span><span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">      </span>inputs.w_T_b.data()[<span style="color: #666666">5</span>];<span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">  </span>_outputs.w_t_p.data()[<span style="color: #666666">2</span>]<span style="color: #bbbbbb"> </span><span style="color: #666666">=</span><span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">      </span>inputs.b_t_p.data()[<span style="color: #666666">0</span>]<span style="color: #bbbbbb"> </span><span style="color: #666666">*</span><span style="color: #bbbbbb"> </span>(<span style="color: #666666">-</span>_tmp2<span style="color: #bbbbbb"> </span><span style="color: #666666">+</span><span style="color: #bbbbbb"> </span><span style="color: #666666">2</span><span style="color: #bbbbbb"> </span><span style="color: #666666">*</span><span style="color: #bbbbbb"> </span>inputs.w_T_b.data()[<span style="color: #666666">0</span>]<span style="color: #bbbbbb"> </span><span style="color: #666666">*</span><span style="color: #bbbbbb"> </span>inputs.w_T_b.data()[<span style="color: #666666">2</span>])<span style="color: #bbbbbb"> </span><span style="color: #666666">+</span><span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">      </span>inputs.b_t_p.data()[<span style="color: #666666">1</span>]<span style="color: #bbbbbb"> </span><span style="color: #666666">*</span><span style="color: #bbbbbb"> </span>(_tmp6<span style="color: #bbbbbb"> </span><span style="color: #666666">+</span><span style="color: #bbbbbb"> </span><span style="color: #666666">2</span><span style="color: #bbbbbb"> </span><span style="color: #666666">*</span><span style="color: #bbbbbb"> </span>inputs.w_T_b.data()[<span style="color: #666666">1</span>]<span style="color: #bbbbbb"> </span><span style="color: #666666">*</span><span style="color: #bbbbbb"> </span>inputs.w_T_b.data()[<span style="color: #666666">2</span>])<span style="color: #bbbbbb"> </span><span style="color: #666666">+</span><span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">      </span>inputs.b_t_p.data()[<span style="color: #666666">2</span>]<span style="color: #bbbbbb"> </span><span style="color: #666666">*</span><span style="color: #bbbbbb"> </span>(<span style="color: #666666">-</span>_tmp4<span style="color: #bbbbbb"> </span><span style="color: #666666">-</span><span style="color: #bbbbbb"> </span>_tmp7<span style="color: #bbbbbb"> </span><span style="color: #666666">+</span><span style="color: #bbbbbb"> </span><span style="color: #666666">1</span>)<span style="color: #bbbbbb"> </span><span style="color: #666666">+</span><span style="color: #bbbbbb"> </span>inputs.w_T_b.data()[<span style="color: #666666">6</span>];<span style="color: #bbbbbb"></span>
 
-<span style="color: #008000; font-weight: bold">class</span><span style="color: #bbbbbb"> </span><span style="color: #0000FF; font-weight: bold">inputs_t</span><span style="color: #bbbbbb"></span>
-{<span style="color: #bbbbbb"></span>
-<span style="color: #bbbbbb">    </span><span style="color: #008000; font-weight: bold">public</span><span style="color: #666666">:</span><span style="color: #bbbbbb"></span>
-<span style="color: #bbbbbb">        </span><span style="color: #666666">::</span>eigen_lcm<span style="color: #666666">::</span>Vector7d<span style="color: #bbbbbb"> </span>w_T_b;<span style="color: #bbbbbb"></span>
+<span style="color: #bbbbbb">  </span><span style="color: #008000; font-weight: bold">return</span><span style="color: #bbbbbb"> </span>_outputs;<span style="color: #bbbbbb"></span>
+}<span style="color: #bbbbbb">  </span><span style="color: #3D7B7B; font-style: italic">// NOLINT(readability/fn_size)</span>
 
-<span style="color: #bbbbbb">        </span><span style="color: #666666">::</span>eigen_lcm<span style="color: #666666">::</span>Vector3d<span style="color: #bbbbbb"> </span>b_t_p;<span style="color: #bbbbbb"></span>
-
-<span style="color: #bbbbbb">    </span><span style="color: #008000; font-weight: bold">public</span><span style="color: #666666">:</span><span style="color: #bbbbbb"></span>
-<span style="color: #bbbbbb">        </span>inputs_t()<span style="color: #bbbbbb"> </span><span style="color: #666666">=</span><span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">default</span>;<span style="color: #bbbbbb"></span>
-
-<span style="color: #bbbbbb">        </span><span style="color: #3D7B7B; font-style: italic">/**</span>
-<span style="color: #3D7B7B; font-style: italic">         * Member constructor</span>
-<span style="color: #3D7B7B; font-style: italic">         */</span><span style="color: #bbbbbb"></span>
-<span style="color: #bbbbbb">        </span><span style="color: #008000; font-weight: bold">inline</span><span style="color: #bbbbbb"> </span>inputs_t(<span style="color: #bbbbbb"></span>
-<span style="color: #bbbbbb">            </span><span style="color: #008000; font-weight: bold">const</span><span style="color: #bbbbbb"> </span><span style="color: #666666">::</span>eigen_lcm<span style="color: #666666">::</span>Vector7d<span style="color: #666666">&amp;</span><span style="color: #bbbbbb"> </span>w_T_b_arg,<span style="color: #bbbbbb"></span>
-<span style="color: #bbbbbb">            </span><span style="color: #008000; font-weight: bold">const</span><span style="color: #bbbbbb"> </span><span style="color: #666666">::</span>eigen_lcm<span style="color: #666666">::</span>Vector3d<span style="color: #666666">&amp;</span><span style="color: #bbbbbb"> </span>b_t_p_arg<span style="color: #bbbbbb"></span>
-<span style="color: #bbbbbb">        </span>);<span style="color: #bbbbbb"></span>
-
-<span style="color: #bbbbbb">        </span><span style="color: #3D7B7B; font-style: italic">/**</span>
-<span style="color: #3D7B7B; font-style: italic">         * Encode a message into binary form.</span>
-<span style="color: #3D7B7B; font-style: italic">         *</span>
-<span style="color: #3D7B7B; font-style: italic">         * @param buf The output buffer.</span>
-<span style="color: #3D7B7B; font-style: italic">         * @param offset Encoding starts at thie byte offset into @p buf.</span>
-<span style="color: #3D7B7B; font-style: italic">         * @param maxlen Maximum number of bytes to write.  This should generally be</span>
-<span style="color: #3D7B7B; font-style: italic">         *  equal to getEncodedSize().</span>
-<span style="color: #3D7B7B; font-style: italic">         * @return The number of bytes encoded, or &lt;0 on error.</span>
-<span style="color: #3D7B7B; font-style: italic">         */</span><span style="color: #bbbbbb"></span>
-<span style="color: #bbbbbb">        </span><span style="color: #008000; font-weight: bold">inline</span><span style="color: #bbbbbb"> </span>__lcm_buffer_size<span style="color: #bbbbbb"> </span><span style="color: #0000FF">encode</span>(<span style="color: #B00040">void</span><span style="color: #bbbbbb"> </span><span style="color: #666666">*</span>buf,<span style="color: #bbbbbb"> </span>__lcm_buffer_size<span style="color: #bbbbbb"> </span>offset,<span style="color: #bbbbbb"> </span>__lcm_buffer_size<span style="color: #bbbbbb"> </span>maxlen)<span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">const</span>;<span style="color: #bbbbbb"></span>
-
-<span style="color: #bbbbbb">        </span><span style="color: #3D7B7B; font-style: italic">/**</span>
-<span style="color: #3D7B7B; font-style: italic">         * Check how many bytes are required to encode this message.</span>
-<span style="color: #3D7B7B; font-style: italic">         */</span><span style="color: #bbbbbb"></span>
-<span style="color: #bbbbbb">        </span><span style="color: #008000; font-weight: bold">inline</span><span style="color: #bbbbbb"> </span>__lcm_buffer_size<span style="color: #bbbbbb"> </span><span style="color: #0000FF">getEncodedSize</span>()<span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">const</span>;<span style="color: #bbbbbb"></span>
-
-<span style="color: #bbbbbb">        </span><span style="color: #3D7B7B; font-style: italic">/**</span>
-<span style="color: #3D7B7B; font-style: italic">         * Decode a message from binary form into this instance.</span>
-<span style="color: #3D7B7B; font-style: italic">         *</span>
-<span style="color: #3D7B7B; font-style: italic">         * @param buf The buffer containing the encoded message.</span>
-<span style="color: #3D7B7B; font-style: italic">         * @param offset The byte offset into @p buf where the encoded message starts.</span>
-<span style="color: #3D7B7B; font-style: italic">         * @param maxlen The maximum number of bytes to read while decoding.</span>
-<span style="color: #3D7B7B; font-style: italic">         * @return The number of bytes decoded, or &lt;0 if an error occured.</span>
-<span style="color: #3D7B7B; font-style: italic">         */</span><span style="color: #bbbbbb"></span>
-<span style="color: #bbbbbb">        </span><span style="color: #008000; font-weight: bold">inline</span><span style="color: #bbbbbb"> </span>__lcm_buffer_size<span style="color: #bbbbbb"> </span><span style="color: #0000FF">decode</span>(<span style="color: #008000; font-weight: bold">const</span><span style="color: #bbbbbb"> </span><span style="color: #B00040">void</span><span style="color: #bbbbbb"> </span><span style="color: #666666">*</span>buf,<span style="color: #bbbbbb"> </span>__lcm_buffer_size<span style="color: #bbbbbb"> </span>offset,<span style="color: #bbbbbb"> </span>__lcm_buffer_size<span style="color: #bbbbbb"> </span>maxlen);<span style="color: #bbbbbb"></span>
-
-<span style="color: #bbbbbb">        </span><span style="color: #3D7B7B; font-style: italic">/**</span>
-<span style="color: #3D7B7B; font-style: italic">         * Retrieve the 64-bit fingerprint identifying the structure of the message.</span>
-<span style="color: #3D7B7B; font-style: italic">         * Note that the fingerprint is the same for all instances of the same</span>
-<span style="color: #3D7B7B; font-style: italic">         * message type, and is a fingerprint on the message type definition, not on</span>
-<span style="color: #3D7B7B; font-style: italic">         * the message contents.</span>
-<span style="color: #3D7B7B; font-style: italic">         */</span><span style="color: #bbbbbb"></span>
-<span style="color: #bbbbbb">        </span><span style="color: #008000; font-weight: bold">inline</span><span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">static</span><span style="color: #bbbbbb"> </span><span style="color: #B00040">int64_t</span><span style="color: #bbbbbb"> </span><span style="color: #0000FF">getHash</span>();<span style="color: #bbbbbb"></span>
-
-<span style="color: #bbbbbb">        </span><span style="color: #008000; font-weight: bold">using</span><span style="color: #bbbbbb"> </span>type_name_array_t<span style="color: #bbbbbb"> </span><span style="color: #666666">=</span><span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">const</span><span style="color: #bbbbbb"> </span><span style="color: #B00040">char</span>[<span style="color: #666666">9</span>];<span style="color: #bbbbbb"></span>
-
-<span style="color: #bbbbbb">        </span><span style="color: #008000; font-weight: bold">inline</span><span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">static</span><span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">constexpr</span><span style="color: #bbbbbb"> </span>type_name_array_t<span style="color: #666666">*</span><span style="color: #bbbbbb"> </span><span style="color: #0000FF">getTypeNameArrayPtr</span>();<span style="color: #bbbbbb"></span>
-
-<span style="color: #bbbbbb">        </span><span style="color: #3D7B7B; font-style: italic">/**</span>
-<span style="color: #3D7B7B; font-style: italic">         * Returns "inputs_t"</span>
-<span style="color: #3D7B7B; font-style: italic">         */</span><span style="color: #bbbbbb"></span>
-<span style="color: #bbbbbb">        </span><span style="color: #008000; font-weight: bold">inline</span><span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">static</span><span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">constexpr</span><span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">const</span><span style="color: #bbbbbb"> </span><span style="color: #B00040">char</span><span style="color: #666666">*</span><span style="color: #bbbbbb"> </span><span style="color: #0000FF">getTypeName</span>();<span style="color: #bbbbbb"></span>
-
-<span style="color: #bbbbbb">        </span><span style="color: #3D7B7B; font-style: italic">/**</span>
-<span style="color: #3D7B7B; font-style: italic">         * Returns "my_sym"</span>
-<span style="color: #3D7B7B; font-style: italic">         */</span><span style="color: #bbbbbb"></span>
-<span style="color: #bbbbbb">        </span><span style="color: #008000; font-weight: bold">inline</span><span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">static</span><span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">const</span><span style="color: #bbbbbb"> </span><span style="color: #B00040">char</span><span style="color: #bbbbbb"> </span><span style="color: #666666">*</span><span style="color: #bbbbbb"> </span><span style="color: #0000FF">getPackageName</span>();<span style="color: #bbbbbb"></span>
-
-<span style="color: #bbbbbb">        </span><span style="color: #3D7B7B; font-style: italic">// LCM support functions. Users should not call these</span>
-<span style="color: #bbbbbb">        </span><span style="color: #008000; font-weight: bold">inline</span><span style="color: #bbbbbb"> </span>__lcm_buffer_size<span style="color: #bbbbbb"> </span><span style="color: #0000FF">_encodeNoHash</span>(<span style="color: #B00040">void</span><span style="color: #bbbbbb"> </span><span style="color: #666666">*</span>buf,<span style="color: #bbbbbb"> </span>__lcm_buffer_size<span style="color: #bbbbbb"> </span>offset,<span style="color: #bbbbbb"> </span>__lcm_buffer_size<span style="color: #bbbbbb"> </span>maxlen)<span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">const</span>;<span style="color: #bbbbbb"></span>
-<span style="color: #bbbbbb">        </span><span style="color: #008000; font-weight: bold">inline</span><span style="color: #bbbbbb"> </span>__lcm_buffer_size<span style="color: #bbbbbb"> </span><span style="color: #0000FF">_getEncodedSizeNoHash</span>()<span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">const</span>;<span style="color: #bbbbbb"></span>
-<span style="color: #bbbbbb">        </span><span style="color: #008000; font-weight: bold">inline</span><span style="color: #bbbbbb"> </span>__lcm_buffer_size<span style="color: #bbbbbb"> </span><span style="color: #0000FF">_decodeNoHash</span>(<span style="color: #008000; font-weight: bold">const</span><span style="color: #bbbbbb"> </span><span style="color: #B00040">void</span><span style="color: #bbbbbb"> </span><span style="color: #666666">*</span>buf,<span style="color: #bbbbbb"> </span>__lcm_buffer_size<span style="color: #bbbbbb"> </span>offset,<span style="color: #bbbbbb"> </span>__lcm_buffer_size<span style="color: #bbbbbb"> </span>maxlen);<span style="color: #bbbbbb"></span>
-<span style="color: #9C6500">#if !defined(SKYDIO_DISABLE_LCM_NO_INLINE)</span>
-<span style="color: #bbbbbb">        </span>__attribute__((noinline))<span style="color: #bbbbbb"></span>
-<span style="color: #9C6500">#endif</span>
-<span style="color: #bbbbbb">        </span><span style="color: #008000; font-weight: bold">static</span><span style="color: #bbbbbb"> </span><span style="color: #B00040">uint64_t</span><span style="color: #bbbbbb"> </span>_computeHash(<span style="color: #008000; font-weight: bold">const</span><span style="color: #bbbbbb"> </span>__lcm_hash_ptr<span style="color: #bbbbbb"> </span><span style="color: #666666">*</span>p)<span style="color: #bbbbbb"></span>
-<span style="color: #bbbbbb">        </span>{<span style="color: #bbbbbb"></span>
-<span style="color: #bbbbbb">            </span><span style="color: #008000; font-weight: bold">const</span><span style="color: #bbbbbb"> </span>__lcm_hash_ptr<span style="color: #bbbbbb"> </span><span style="color: #666666">*</span>fp;<span style="color: #bbbbbb"></span>
-<span style="color: #bbbbbb">            </span><span style="color: #008000; font-weight: bold">for</span>(fp<span style="color: #bbbbbb"> </span><span style="color: #666666">=</span><span style="color: #bbbbbb"> </span>p;<span style="color: #bbbbbb"> </span>fp<span style="color: #bbbbbb"> </span><span style="color: #666666">!=</span><span style="color: #bbbbbb"> </span><span style="color: #008000">NULL</span>;<span style="color: #bbbbbb"> </span>fp<span style="color: #bbbbbb"> </span><span style="color: #666666">=</span><span style="color: #bbbbbb"> </span>fp<span style="color: #666666">-&gt;</span>parent)<span style="color: #bbbbbb"></span>
-<span style="color: #bbbbbb">                </span><span style="color: #008000; font-weight: bold">if</span>(fp<span style="color: #666666">-&gt;</span>v<span style="color: #bbbbbb"> </span><span style="color: #666666">==</span><span style="color: #bbbbbb"> </span>inputs_t<span style="color: #666666">::</span>getHash)<span style="color: #bbbbbb"></span>
-<span style="color: #bbbbbb">                    </span><span style="color: #008000; font-weight: bold">return</span><span style="color: #bbbbbb"> </span><span style="color: #666666">0</span>;<span style="color: #bbbbbb"></span>
-<span style="color: #bbbbbb">            </span><span style="color: #008000; font-weight: bold">const</span><span style="color: #bbbbbb"> </span>__lcm_hash_ptr<span style="color: #bbbbbb"> </span>cp<span style="color: #bbbbbb"> </span><span style="color: #666666">=</span><span style="color: #bbbbbb"> </span>{<span style="color: #bbbbbb"> </span>p,<span style="color: #bbbbbb"> </span>inputs_t<span style="color: #666666">::</span>getHash<span style="color: #bbbbbb"> </span>};<span style="color: #bbbbbb"></span>
-
-<span style="color: #bbbbbb">            </span><span style="color: #B00040">uint64_t</span><span style="color: #bbbbbb"> </span>hash<span style="color: #bbbbbb"> </span><span style="color: #666666">=</span><span style="color: #bbbbbb"> </span><span style="color: #666666">0x530a92b1ccf7776aLL</span><span style="color: #bbbbbb"> </span><span style="color: #666666">+</span><span style="color: #bbbbbb"></span>
-<span style="color: #bbbbbb">                </span><span style="color: #666666">::</span>eigen_lcm<span style="color: #666666">::</span>Vector7d<span style="color: #666666">::</span>_computeHash(<span style="color: #666666">&amp;</span>cp)<span style="color: #bbbbbb"> </span><span style="color: #666666">+</span><span style="color: #bbbbbb"></span>
-<span style="color: #bbbbbb">         </span><span style="color: #666666">::</span>eigen_lcm<span style="color: #666666">::</span>Vector3d<span style="color: #666666">::</span>_computeHash(<span style="color: #666666">&amp;</span>cp);<span style="color: #bbbbbb"></span>
-
-<span style="color: #bbbbbb">            </span><span style="color: #008000; font-weight: bold">return</span><span style="color: #bbbbbb"> </span>(hash<span style="color: #666666">&lt;&lt;1</span>)<span style="color: #bbbbbb"> </span><span style="color: #666666">+</span><span style="color: #bbbbbb"> </span>((hash<span style="color: #666666">&gt;&gt;63</span>)<span style="color: #666666">&amp;1</span>);<span style="color: #bbbbbb"></span>
-<span style="color: #bbbbbb">        </span>}<span style="color: #bbbbbb"></span>
-
-<span style="color: #bbbbbb">        </span><span style="color: #3D7B7B; font-style: italic">// Comparison operators.</span>
-<span style="color: #bbbbbb">        </span><span style="color: #008000; font-weight: bold">inline</span><span style="color: #bbbbbb"> </span><span style="color: #B00040">bool</span><span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">operator</span><span style="color: #666666">==</span>(<span style="color: #008000; font-weight: bold">const</span><span style="color: #bbbbbb"> </span>inputs_t<span style="color: #666666">&amp;</span><span style="color: #bbbbbb"> </span>other)<span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">const</span>;<span style="color: #bbbbbb"></span>
-<span style="color: #bbbbbb">        </span><span style="color: #008000; font-weight: bold">inline</span><span style="color: #bbbbbb"> </span><span style="color: #B00040">bool</span><span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">operator</span><span style="color: #666666">!=</span>(<span style="color: #008000; font-weight: bold">const</span><span style="color: #bbbbbb"> </span>inputs_t<span style="color: #666666">&amp;</span><span style="color: #bbbbbb"> </span>other)<span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">const</span>;<span style="color: #bbbbbb"></span>
-
-<span style="color: #bbbbbb">        </span><span style="color: #3D7B7B; font-style: italic">// Ability to print to standard streams as well as the fmt library.</span>
-<span style="color: #bbbbbb">        </span><span style="color: #008000; font-weight: bold">friend</span><span style="color: #bbbbbb"> </span>std<span style="color: #666666">::</span>ostream<span style="color: #666666">&amp;</span><span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">operator</span><span style="color: #666666">&lt;&lt;</span>(std<span style="color: #666666">::</span>ostream<span style="color: #666666">&amp;</span><span style="color: #bbbbbb"> </span>stream,<span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">const</span><span style="color: #bbbbbb"> </span>inputs_t<span style="color: #666666">&amp;</span><span style="color: #bbbbbb"> </span>obj)<span style="color: #bbbbbb"> </span>{<span style="color: #bbbbbb"></span>
-<span style="color: #9C6500">#if defined(SKYMARSHAL_PRINTING_ENABLED)</span>
-<span style="color: #bbbbbb">            </span>stream<span style="color: #bbbbbb"> </span><span style="color: #666666">&lt;&lt;</span><span style="color: #bbbbbb"> </span><span style="color: #BA2121">"inputs_t("</span>;<span style="color: #bbbbbb"></span>
-<span style="color: #bbbbbb">            </span>stream<span style="color: #bbbbbb"> </span><span style="color: #666666">&lt;&lt;</span><span style="color: #bbbbbb"> </span><span style="color: #BA2121">"w_T_b=&lt;EIGEN_LCM TYPE eigen_lcm.Vector7d&gt;"</span><span style="color: #bbbbbb"> </span><span style="color: #666666">&lt;&lt;</span><span style="color: #bbbbbb"> </span><span style="color: #BA2121">", "</span>;<span style="color: #bbbbbb"></span>
-<span style="color: #bbbbbb">            </span>stream<span style="color: #bbbbbb"> </span><span style="color: #666666">&lt;&lt;</span><span style="color: #bbbbbb"> </span><span style="color: #BA2121">"b_t_p=&lt;EIGEN_LCM TYPE eigen_lcm.Vector3d&gt;"</span>;<span style="color: #bbbbbb"></span>
-<span style="color: #bbbbbb">            </span>stream<span style="color: #bbbbbb"> </span><span style="color: #666666">&lt;&lt;</span><span style="color: #bbbbbb"> </span><span style="color: #BA2121">")"</span>;<span style="color: #bbbbbb"></span>
-<span style="color: #9C6500">#else</span>
-<span style="color: #bbbbbb">            </span>stream<span style="color: #bbbbbb"> </span><span style="color: #666666">&lt;&lt;</span><span style="color: #bbbbbb"> </span><span style="color: #BA2121">"&lt;FORMATTING DISABLED&gt;"</span>;<span style="color: #bbbbbb"></span>
-<span style="color: #9C6500">#endif</span>
-<span style="color: #bbbbbb">            </span><span style="color: #008000; font-weight: bold">return</span><span style="color: #bbbbbb"> </span>stream;<span style="color: #bbbbbb"></span>
-<span style="color: #bbbbbb">        </span>}<span style="color: #bbbbbb"></span>
-};<span style="color: #bbbbbb"></span>
-
-inputs_t<span style="color: #666666">::</span>inputs_t(<span style="color: #bbbbbb"></span>
-<span style="color: #bbbbbb">    </span><span style="color: #008000; font-weight: bold">const</span><span style="color: #bbbbbb"> </span><span style="color: #666666">::</span>eigen_lcm<span style="color: #666666">::</span>Vector7d<span style="color: #666666">&amp;</span><span style="color: #bbbbbb"> </span>w_T_b_arg,<span style="color: #bbbbbb"></span>
-<span style="color: #bbbbbb">    </span><span style="color: #008000; font-weight: bold">const</span><span style="color: #bbbbbb"> </span><span style="color: #666666">::</span>eigen_lcm<span style="color: #666666">::</span>Vector3d<span style="color: #666666">&amp;</span><span style="color: #bbbbbb"> </span>b_t_p_arg<span style="color: #bbbbbb"></span>
-)<span style="color: #bbbbbb"> </span><span style="color: #666666">:</span><span style="color: #bbbbbb"> </span>w_T_b(w_T_b_arg),<span style="color: #bbbbbb"></span>
-<span style="color: #bbbbbb">    </span>b_t_p(b_t_p_arg)<span style="color: #bbbbbb"> </span>{}<span style="color: #bbbbbb"></span>
-
-__lcm_buffer_size<span style="color: #bbbbbb"> </span>inputs_t<span style="color: #666666">::</span>encode(<span style="color: #B00040">void</span><span style="color: #bbbbbb"> </span><span style="color: #666666">*</span>buf,<span style="color: #bbbbbb"> </span>__lcm_buffer_size<span style="color: #bbbbbb"> </span>offset,<span style="color: #bbbbbb"> </span>__lcm_buffer_size<span style="color: #bbbbbb"> </span>maxlen)<span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">const</span><span style="color: #bbbbbb"></span>
-{<span style="color: #bbbbbb"></span>
-<span style="color: #bbbbbb">    </span>__lcm_buffer_size<span style="color: #bbbbbb"> </span>pos<span style="color: #bbbbbb"> </span><span style="color: #666666">=</span><span style="color: #bbbbbb"> </span><span style="color: #666666">0</span>,<span style="color: #bbbbbb"> </span>tlen;<span style="color: #bbbbbb"></span>
-<span style="color: #bbbbbb">    </span><span style="color: #B00040">int64_t</span><span style="color: #bbbbbb"> </span>hash<span style="color: #bbbbbb"> </span><span style="color: #666666">=</span><span style="color: #bbbbbb"> </span>(<span style="color: #B00040">int64_t</span>)getHash();<span style="color: #bbbbbb"></span>
-
-<span style="color: #bbbbbb">    </span>tlen<span style="color: #bbbbbb"> </span><span style="color: #666666">=</span><span style="color: #bbbbbb"> </span>__int64_t_encode_array(buf,<span style="color: #bbbbbb"> </span>offset<span style="color: #bbbbbb"> </span><span style="color: #666666">+</span><span style="color: #bbbbbb"> </span>pos,<span style="color: #bbbbbb"> </span>maxlen<span style="color: #bbbbbb"> </span><span style="color: #666666">-</span><span style="color: #bbbbbb"> </span>pos,<span style="color: #bbbbbb"> </span><span style="color: #666666">&amp;</span>hash,<span style="color: #bbbbbb"> </span><span style="color: #666666">1</span>);<span style="color: #bbbbbb"></span>
-<span style="color: #bbbbbb">    </span><span style="color: #008000; font-weight: bold">if</span>(tlen<span style="color: #bbbbbb"> </span><span style="color: #666666">&lt;</span><span style="color: #bbbbbb"> </span><span style="color: #666666">0</span>)<span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">return</span><span style="color: #bbbbbb"> </span>tlen;<span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">else</span><span style="color: #bbbbbb"> </span>pos<span style="color: #bbbbbb"> </span><span style="color: #666666">+=</span><span style="color: #bbbbbb"> </span>tlen;<span style="color: #bbbbbb"></span>
-
-<span style="color: #bbbbbb">    </span>tlen<span style="color: #bbbbbb"> </span><span style="color: #666666">=</span><span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">this</span><span style="color: #666666">-&gt;</span>_encodeNoHash(buf,<span style="color: #bbbbbb"> </span>offset<span style="color: #bbbbbb"> </span><span style="color: #666666">+</span><span style="color: #bbbbbb"> </span>pos,<span style="color: #bbbbbb"> </span>maxlen<span style="color: #bbbbbb"> </span><span style="color: #666666">-</span><span style="color: #bbbbbb"> </span>pos);<span style="color: #bbbbbb"></span>
-<span style="color: #bbbbbb">    </span><span style="color: #008000; font-weight: bold">if</span><span style="color: #bbbbbb"> </span>(tlen<span style="color: #bbbbbb"> </span><span style="color: #666666">&lt;</span><span style="color: #bbbbbb"> </span><span style="color: #666666">0</span>)<span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">return</span><span style="color: #bbbbbb"> </span>tlen;<span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">else</span><span style="color: #bbbbbb"> </span>pos<span style="color: #bbbbbb"> </span><span style="color: #666666">+=</span><span style="color: #bbbbbb"> </span>tlen;<span style="color: #bbbbbb"></span>
-
-<span style="color: #bbbbbb">    </span><span style="color: #008000; font-weight: bold">return</span><span style="color: #bbbbbb"> </span>pos;<span style="color: #bbbbbb"></span>
-}<span style="color: #bbbbbb"></span>
-
-__lcm_buffer_size<span style="color: #bbbbbb"> </span>inputs_t<span style="color: #666666">::</span>decode(<span style="color: #008000; font-weight: bold">const</span><span style="color: #bbbbbb"> </span><span style="color: #B00040">void</span><span style="color: #bbbbbb"> </span><span style="color: #666666">*</span>buf,<span style="color: #bbbbbb"> </span>__lcm_buffer_size<span style="color: #bbbbbb"> </span>offset,<span style="color: #bbbbbb"> </span>__lcm_buffer_size<span style="color: #bbbbbb"> </span>maxlen)<span style="color: #bbbbbb"></span>
-{<span style="color: #bbbbbb"></span>
-<span style="color: #bbbbbb">    </span>__lcm_buffer_size<span style="color: #bbbbbb"> </span>pos<span style="color: #bbbbbb"> </span><span style="color: #666666">=</span><span style="color: #bbbbbb"> </span><span style="color: #666666">0</span>,<span style="color: #bbbbbb"> </span>thislen;<span style="color: #bbbbbb"></span>
-
-<span style="color: #bbbbbb">    </span><span style="color: #B00040">int64_t</span><span style="color: #bbbbbb"> </span>msg_hash;<span style="color: #bbbbbb"></span>
-<span style="color: #bbbbbb">    </span>thislen<span style="color: #bbbbbb"> </span><span style="color: #666666">=</span><span style="color: #bbbbbb"> </span>__int64_t_decode_array(buf,<span style="color: #bbbbbb"> </span>offset<span style="color: #bbbbbb"> </span><span style="color: #666666">+</span><span style="color: #bbbbbb"> </span>pos,<span style="color: #bbbbbb"> </span>maxlen<span style="color: #bbbbbb"> </span><span style="color: #666666">-</span><span style="color: #bbbbbb"> </span>pos,<span style="color: #bbbbbb"> </span><span style="color: #666666">&amp;</span>msg_hash,<span style="color: #bbbbbb"> </span><span style="color: #666666">1</span>);<span style="color: #bbbbbb"></span>
-<span style="color: #bbbbbb">    </span><span style="color: #008000; font-weight: bold">if</span><span style="color: #bbbbbb"> </span>(thislen<span style="color: #bbbbbb"> </span><span style="color: #666666">&lt;</span><span style="color: #bbbbbb"> </span><span style="color: #666666">0</span>)<span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">return</span><span style="color: #bbbbbb"> </span>thislen;<span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">else</span><span style="color: #bbbbbb"> </span>pos<span style="color: #bbbbbb"> </span><span style="color: #666666">+=</span><span style="color: #bbbbbb"> </span>thislen;<span style="color: #bbbbbb"></span>
-<span style="color: #bbbbbb">    </span><span style="color: #008000; font-weight: bold">if</span><span style="color: #bbbbbb"> </span>(msg_hash<span style="color: #bbbbbb"> </span><span style="color: #666666">!=</span><span style="color: #bbbbbb"> </span>getHash())<span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">return</span><span style="color: #bbbbbb"> </span><span style="color: #666666">-1</span>;<span style="color: #bbbbbb"></span>
-
-<span style="color: #bbbbbb">    </span>thislen<span style="color: #bbbbbb"> </span><span style="color: #666666">=</span><span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">this</span><span style="color: #666666">-&gt;</span>_decodeNoHash(buf,<span style="color: #bbbbbb"> </span>offset<span style="color: #bbbbbb"> </span><span style="color: #666666">+</span><span style="color: #bbbbbb"> </span>pos,<span style="color: #bbbbbb"> </span>maxlen<span style="color: #bbbbbb"> </span><span style="color: #666666">-</span><span style="color: #bbbbbb"> </span>pos);<span style="color: #bbbbbb"></span>
-<span style="color: #bbbbbb">    </span><span style="color: #008000; font-weight: bold">if</span><span style="color: #bbbbbb"> </span>(thislen<span style="color: #bbbbbb"> </span><span style="color: #666666">&lt;</span><span style="color: #bbbbbb"> </span><span style="color: #666666">0</span>)<span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">return</span><span style="color: #bbbbbb"> </span>thislen;<span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">else</span><span style="color: #bbbbbb"> </span>pos<span style="color: #bbbbbb"> </span><span style="color: #666666">+=</span><span style="color: #bbbbbb"> </span>thislen;<span style="color: #bbbbbb"></span>
-
-<span style="color: #bbbbbb">    </span><span style="color: #008000; font-weight: bold">return</span><span style="color: #bbbbbb"> </span>pos;<span style="color: #bbbbbb"></span>
-}<span style="color: #bbbbbb"></span>
-
-__lcm_buffer_size<span style="color: #bbbbbb"> </span>inputs_t<span style="color: #666666">::</span>getEncodedSize()<span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">const</span><span style="color: #bbbbbb"></span>
-{<span style="color: #bbbbbb"></span>
-<span style="color: #bbbbbb">    </span><span style="color: #008000; font-weight: bold">return</span><span style="color: #bbbbbb"> </span><span style="color: #666666">8</span><span style="color: #bbbbbb"> </span><span style="color: #666666">+</span><span style="color: #bbbbbb"> </span>_getEncodedSizeNoHash();<span style="color: #bbbbbb"></span>
-}<span style="color: #bbbbbb"></span>
-
-<span style="color: #B00040">int64_t</span><span style="color: #bbbbbb"> </span>inputs_t<span style="color: #666666">::</span>getHash()<span style="color: #bbbbbb"></span>
-{<span style="color: #bbbbbb"></span>
-<span style="color: #bbbbbb">    </span><span style="color: #008000; font-weight: bold">static</span><span style="color: #bbbbbb"> </span><span style="color: #B00040">int64_t</span><span style="color: #bbbbbb"> </span>hash<span style="color: #bbbbbb"> </span><span style="color: #666666">=</span><span style="color: #bbbbbb"> </span>_computeHash(<span style="color: #008000">NULL</span>);<span style="color: #bbbbbb"></span>
-<span style="color: #bbbbbb">    </span><span style="color: #008000; font-weight: bold">return</span><span style="color: #bbbbbb"> </span>hash;<span style="color: #bbbbbb"></span>
-}<span style="color: #bbbbbb"></span>
-
-<span style="color: #008000; font-weight: bold">constexpr</span><span style="color: #bbbbbb"> </span>inputs_t<span style="color: #666666">::</span>type_name_array_t<span style="color: #666666">*</span><span style="color: #bbbbbb"> </span>inputs_t<span style="color: #666666">::</span>getTypeNameArrayPtr()<span style="color: #bbbbbb"> </span>{<span style="color: #bbbbbb"></span>
-<span style="color: #bbbbbb">    </span><span style="color: #008000; font-weight: bold">return</span><span style="color: #bbbbbb"> </span><span style="color: #666666">&amp;</span><span style="color: #BA2121">"inputs_t"</span>;<span style="color: #bbbbbb"></span>
-}<span style="color: #bbbbbb"></span>
-
-<span style="color: #008000; font-weight: bold">constexpr</span><span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">const</span><span style="color: #bbbbbb"> </span><span style="color: #B00040">char</span><span style="color: #666666">*</span><span style="color: #bbbbbb"> </span>inputs_t<span style="color: #666666">::</span>getTypeName()<span style="color: #bbbbbb"></span>
-{<span style="color: #bbbbbb"></span>
-<span style="color: #bbbbbb">    </span><span style="color: #008000; font-weight: bold">return</span><span style="color: #bbbbbb"> </span><span style="color: #666666">*</span>inputs_t<span style="color: #666666">::</span>getTypeNameArrayPtr();<span style="color: #bbbbbb"></span>
-}<span style="color: #bbbbbb"></span>
-
-<span style="color: #008000; font-weight: bold">const</span><span style="color: #bbbbbb"> </span><span style="color: #B00040">char</span><span style="color: #bbbbbb"> </span><span style="color: #666666">*</span><span style="color: #bbbbbb"> </span>inputs_t<span style="color: #666666">::</span>getPackageName()<span style="color: #bbbbbb"></span>
-{<span style="color: #bbbbbb"></span>
-<span style="color: #bbbbbb">    </span><span style="color: #008000; font-weight: bold">return</span><span style="color: #bbbbbb"> </span><span style="color: #BA2121">"my_sym"</span>;<span style="color: #bbbbbb"></span>
-}<span style="color: #bbbbbb"></span>
-
-__lcm_buffer_size<span style="color: #bbbbbb"> </span>inputs_t<span style="color: #666666">::</span>_encodeNoHash(<span style="color: #B00040">void</span><span style="color: #bbbbbb"> </span><span style="color: #666666">*</span>buf,<span style="color: #bbbbbb"> </span>__lcm_buffer_size<span style="color: #bbbbbb"> </span>offset,<span style="color: #bbbbbb"> </span>__lcm_buffer_size<span style="color: #bbbbbb"> </span>maxlen)<span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">const</span><span style="color: #bbbbbb"></span>
-{<span style="color: #bbbbbb"></span>
-<span style="color: #bbbbbb">    </span>__lcm_buffer_size<span style="color: #bbbbbb"> </span>pos<span style="color: #bbbbbb"> </span><span style="color: #666666">=</span><span style="color: #bbbbbb"> </span><span style="color: #666666">0</span>,<span style="color: #bbbbbb"> </span>tlen;<span style="color: #bbbbbb"></span>
-
-<span style="color: #bbbbbb">    </span>tlen<span style="color: #bbbbbb"> </span><span style="color: #666666">=</span><span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">this</span><span style="color: #666666">-&gt;</span>w_T_b._encodeNoHash(buf,<span style="color: #bbbbbb"> </span>offset<span style="color: #bbbbbb"> </span><span style="color: #666666">+</span><span style="color: #bbbbbb"> </span>pos,<span style="color: #bbbbbb"> </span>maxlen<span style="color: #bbbbbb"> </span><span style="color: #666666">-</span><span style="color: #bbbbbb"> </span>pos);<span style="color: #bbbbbb"></span>
-<span style="color: #bbbbbb">    </span><span style="color: #008000; font-weight: bold">if</span>(tlen<span style="color: #bbbbbb"> </span><span style="color: #666666">&lt;</span><span style="color: #bbbbbb"> </span><span style="color: #666666">0</span>)<span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">return</span><span style="color: #bbbbbb"> </span>tlen;<span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">else</span><span style="color: #bbbbbb"> </span>pos<span style="color: #bbbbbb"> </span><span style="color: #666666">+=</span><span style="color: #bbbbbb"> </span>tlen;<span style="color: #bbbbbb"></span>
-
-<span style="color: #bbbbbb">    </span>tlen<span style="color: #bbbbbb"> </span><span style="color: #666666">=</span><span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">this</span><span style="color: #666666">-&gt;</span>b_t_p._encodeNoHash(buf,<span style="color: #bbbbbb"> </span>offset<span style="color: #bbbbbb"> </span><span style="color: #666666">+</span><span style="color: #bbbbbb"> </span>pos,<span style="color: #bbbbbb"> </span>maxlen<span style="color: #bbbbbb"> </span><span style="color: #666666">-</span><span style="color: #bbbbbb"> </span>pos);<span style="color: #bbbbbb"></span>
-<span style="color: #bbbbbb">    </span><span style="color: #008000; font-weight: bold">if</span>(tlen<span style="color: #bbbbbb"> </span><span style="color: #666666">&lt;</span><span style="color: #bbbbbb"> </span><span style="color: #666666">0</span>)<span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">return</span><span style="color: #bbbbbb"> </span>tlen;<span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">else</span><span style="color: #bbbbbb"> </span>pos<span style="color: #bbbbbb"> </span><span style="color: #666666">+=</span><span style="color: #bbbbbb"> </span>tlen;<span style="color: #bbbbbb"></span>
-
-<span style="color: #bbbbbb">    </span><span style="color: #008000; font-weight: bold">return</span><span style="color: #bbbbbb"> </span>pos;<span style="color: #bbbbbb"></span>
-}<span style="color: #bbbbbb"></span>
-
-__lcm_buffer_size<span style="color: #bbbbbb"> </span>inputs_t<span style="color: #666666">::</span>_decodeNoHash(<span style="color: #008000; font-weight: bold">const</span><span style="color: #bbbbbb"> </span><span style="color: #B00040">void</span><span style="color: #bbbbbb"> </span><span style="color: #666666">*</span>buf,<span style="color: #bbbbbb"> </span>__lcm_buffer_size<span style="color: #bbbbbb"> </span>offset,<span style="color: #bbbbbb"> </span>__lcm_buffer_size<span style="color: #bbbbbb"> </span>maxlen)<span style="color: #bbbbbb"></span>
-{<span style="color: #bbbbbb"></span>
-<span style="color: #bbbbbb">    </span>__lcm_buffer_size<span style="color: #bbbbbb"> </span>pos<span style="color: #bbbbbb"> </span><span style="color: #666666">=</span><span style="color: #bbbbbb"> </span><span style="color: #666666">0</span>,<span style="color: #bbbbbb"> </span>tlen;<span style="color: #bbbbbb"></span>
-
-<span style="color: #bbbbbb">    </span>tlen<span style="color: #bbbbbb"> </span><span style="color: #666666">=</span><span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">this</span><span style="color: #666666">-&gt;</span>w_T_b._decodeNoHash(buf,<span style="color: #bbbbbb"> </span>offset<span style="color: #bbbbbb"> </span><span style="color: #666666">+</span><span style="color: #bbbbbb"> </span>pos,<span style="color: #bbbbbb"> </span>maxlen<span style="color: #bbbbbb"> </span><span style="color: #666666">-</span><span style="color: #bbbbbb"> </span>pos);<span style="color: #bbbbbb"></span>
-<span style="color: #bbbbbb">    </span><span style="color: #008000; font-weight: bold">if</span>(tlen<span style="color: #bbbbbb"> </span><span style="color: #666666">&lt;</span><span style="color: #bbbbbb"> </span><span style="color: #666666">0</span>)<span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">return</span><span style="color: #bbbbbb"> </span>tlen;<span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">else</span><span style="color: #bbbbbb"> </span>pos<span style="color: #bbbbbb"> </span><span style="color: #666666">+=</span><span style="color: #bbbbbb"> </span>tlen;<span style="color: #bbbbbb"></span>
-
-<span style="color: #bbbbbb">    </span>tlen<span style="color: #bbbbbb"> </span><span style="color: #666666">=</span><span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">this</span><span style="color: #666666">-&gt;</span>b_t_p._decodeNoHash(buf,<span style="color: #bbbbbb"> </span>offset<span style="color: #bbbbbb"> </span><span style="color: #666666">+</span><span style="color: #bbbbbb"> </span>pos,<span style="color: #bbbbbb"> </span>maxlen<span style="color: #bbbbbb"> </span><span style="color: #666666">-</span><span style="color: #bbbbbb"> </span>pos);<span style="color: #bbbbbb"></span>
-<span style="color: #bbbbbb">    </span><span style="color: #008000; font-weight: bold">if</span>(tlen<span style="color: #bbbbbb"> </span><span style="color: #666666">&lt;</span><span style="color: #bbbbbb"> </span><span style="color: #666666">0</span>)<span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">return</span><span style="color: #bbbbbb"> </span>tlen;<span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">else</span><span style="color: #bbbbbb"> </span>pos<span style="color: #bbbbbb"> </span><span style="color: #666666">+=</span><span style="color: #bbbbbb"> </span>tlen;<span style="color: #bbbbbb"></span>
-
-<span style="color: #bbbbbb">    </span><span style="color: #008000; font-weight: bold">return</span><span style="color: #bbbbbb"> </span>pos;<span style="color: #bbbbbb"></span>
-}<span style="color: #bbbbbb"></span>
-
-__lcm_buffer_size<span style="color: #bbbbbb"> </span>inputs_t<span style="color: #666666">::</span>_getEncodedSizeNoHash()<span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">const</span><span style="color: #bbbbbb"></span>
-{<span style="color: #bbbbbb"></span>
-<span style="color: #bbbbbb">    </span>__lcm_buffer_size<span style="color: #bbbbbb"> </span>enc_size<span style="color: #bbbbbb"> </span><span style="color: #666666">=</span><span style="color: #bbbbbb"> </span><span style="color: #666666">0</span>;<span style="color: #bbbbbb"></span>
-<span style="color: #bbbbbb">    </span>enc_size<span style="color: #bbbbbb"> </span><span style="color: #666666">+=</span><span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">this</span><span style="color: #666666">-&gt;</span>w_T_b._getEncodedSizeNoHash();<span style="color: #bbbbbb"></span>
-<span style="color: #bbbbbb">    </span>enc_size<span style="color: #bbbbbb"> </span><span style="color: #666666">+=</span><span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">this</span><span style="color: #666666">-&gt;</span>b_t_p._getEncodedSizeNoHash();<span style="color: #bbbbbb"></span>
-<span style="color: #bbbbbb">    </span><span style="color: #008000; font-weight: bold">return</span><span style="color: #bbbbbb"> </span>enc_size;<span style="color: #bbbbbb"></span>
-}<span style="color: #bbbbbb"></span>
-
-<span style="color: #B00040">bool</span><span style="color: #bbbbbb"> </span>inputs_t<span style="color: #666666">::</span><span style="color: #008000; font-weight: bold">operator</span><span style="color: #666666">==</span>(<span style="color: #008000; font-weight: bold">const</span><span style="color: #bbbbbb"> </span>inputs_t<span style="color: #666666">&amp;</span><span style="color: #bbbbbb"> </span>other)<span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">const</span><span style="color: #bbbbbb"> </span>{<span style="color: #bbbbbb"></span>
-<span style="color: #bbbbbb">  </span><span style="color: #008000; font-weight: bold">return</span><span style="color: #bbbbbb"> </span>(<span style="color: #bbbbbb"></span>
-<span style="color: #bbbbbb">          </span>(w_T_b<span style="color: #666666">==</span>other.w_T_b)<span style="color: #bbbbbb"> </span><span style="color: #666666">&amp;&amp;</span><span style="color: #bbbbbb"> </span>
-<span style="color: #bbbbbb">          </span>(b_t_p<span style="color: #666666">==</span>other.b_t_p));<span style="color: #bbbbbb"></span>
-}<span style="color: #bbbbbb"></span>
-
-<span style="color: #B00040">bool</span><span style="color: #bbbbbb"> </span>inputs_t<span style="color: #666666">::</span><span style="color: #008000; font-weight: bold">operator</span><span style="color: #666666">!=</span>(<span style="color: #008000; font-weight: bold">const</span><span style="color: #bbbbbb"> </span>inputs_t<span style="color: #666666">&amp;</span><span style="color: #bbbbbb"> </span>other)<span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">const</span><span style="color: #bbbbbb"> </span>{<span style="color: #bbbbbb"></span>
-<span style="color: #bbbbbb">  </span><span style="color: #008000; font-weight: bold">return</span><span style="color: #bbbbbb"> </span><span style="color: #666666">!</span>(<span style="color: #666666">*</span><span style="color: #008000; font-weight: bold">this</span><span style="color: #666666">==</span>other);<span style="color: #bbbbbb"></span>
-}<span style="color: #bbbbbb"></span>
-
-}<span style="color: #bbbbbb"></span>
-
-<span style="color: #9C6500">#endif</span>
+<span style="color: #3D7B7B; font-style: italic">// NOLINTNEXTLINE(readability/fn_size)</span>
+}<span style="color: #bbbbbb">  </span><span style="color: #3D7B7B; font-style: italic">// namespace my_sym</span>
 </pre>
      </div>
     </div>
@@ -1965,14 +1845,14 @@ __lcm_buffer_size<span style="color: #bbbbbb"> </span>inputs_t<span style="color
 <div class="cell border-box-sizing code_cell rendered">
  <div class="input">
   <div class="prompt input_prompt">
-   In [30]:
+   In [6]:
   </div>
   <div class="inner_cell">
    <div class="input_area collapsed">
     <div class="collapse_expand_button fa fa-1x fa-minus-square-o">
     </div>
     <div class="highlight hl-ipython3">
-     <pre><span></span><span class="c1"># Generate function</span>
+     <pre><span></span><span class="c1"># Generate functions</span>
 <span class="k">def</span> <span class="nf">transform_point</span><span class="p">(</span><span class="n">w_T_b</span><span class="p">:</span> <span class="n">sf</span><span class="o">.</span><span class="n">Pose3</span><span class="p">,</span> <span class="n">b_t_p</span><span class="p">:</span> <span class="n">sf</span><span class="o">.</span><span class="n">V3</span><span class="p">,</span> <span class="n">epsilon</span><span class="p">:</span> <span class="n">sf</span><span class="o">.</span><span class="n">Scalar</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">sf</span><span class="o">.</span><span class="n">V3</span><span class="p">:</span>
     <span class="sd">"""</span>
 <span class="sd">    Transform a point from body frame into world frame.</span>
@@ -2011,7 +1891,7 @@ __lcm_buffer_size<span style="color: #bbbbbb"> </span>inputs_t<span style="color
     <div class="prompt">
     </div>
     <div class="output_subarea output_stream output_stdout output_text">
-     <pre>Files generated in /tmp/sf_codegen_transform_point_57khvfbn:
+     <pre>Files generated in /tmp/sf_codegen_transform_point_gs4gbo19:
 
   |- cpp/symforce/sym/transform_point.h
 </pre>
@@ -2585,6 +2465,815 @@ Eigen<span style="color: #666666">::</span>Matrix<span style="color: #666666">&l
 }<span style="color: #bbbbbb">  </span><span style="color: #3D7B7B; font-style: italic">// namespace sym</span>
 </pre>
      </div>
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h3 id="Optimization">
+    Optimization
+    <a class="anchor-link" href="#Optimization">
+     ¶
+    </a>
+   </h3>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    Let's walk through solving a simplified
+    <a href="https://en.wikipedia.org/wiki/Point-set_registration">
+     point cloud registration problem
+    </a>
+    with Symforce. In this example, we know the correspondences between two point clouds and we would like to find a
+    <code>
+     sf.Pose3
+    </code>
+    to align two point clouds.
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h4 id="Symforce-setup">
+    Symforce setup
+    <a class="anchor-link" href="#Symforce-setup">
+     ¶
+    </a>
+   </h4>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    In this example, we will use symbolic variables to define our residual function so we need to import
+    <code>
+     symforce.symbolic
+    </code>
+    .
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+ <div class="input">
+  <div class="prompt input_prompt">
+   In [254]:
+  </div>
+  <div class="inner_cell">
+   <div class="input_area">
+    <div class="collapse_expand_button fa fa-1x fa-minus-square-o">
+    </div>
+    <div class="highlight hl-ipython3">
+     <pre><span></span><span class="kn">import</span> <span class="nn">symforce.symbolic</span> <span class="k">as</span> <span class="nn">sf</span>
+</pre>
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    We build up input
+    <code>
+     Values
+    </code>
+    using runtime types, e.g.
+    <code>
+     sym.pose3
+    </code>
+    ,
+    <code>
+     np.ndarray
+    </code>
+    instead of symbolic types.
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+ <div class="input">
+  <div class="prompt input_prompt">
+   In [ ]:
+  </div>
+  <div class="inner_cell">
+   <div class="input_area">
+    <div class="collapse_expand_button fa fa-1x fa-minus-square-o">
+    </div>
+    <div class="highlight hl-ipython3">
+     <pre><span></span><span class="kn">from</span> <span class="nn">symforce.values</span> <span class="kn">import</span> <span class="n">Values</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">sym</span>
+</pre>
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    For building a factor graph and solve the problem, we need to import
+    <code>
+     Factor
+    </code>
+    and
+    <code>
+     Optimizer
+    </code>
+    .
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+ <div class="input">
+  <div class="prompt input_prompt">
+   In [ ]:
+  </div>
+  <div class="inner_cell">
+   <div class="input_area">
+    <div class="collapse_expand_button fa fa-1x fa-minus-square-o">
+    </div>
+    <div class="highlight hl-ipython3">
+     <pre><span></span><span class="kn">from</span> <span class="nn">symforce.opt.factor</span> <span class="kn">import</span> <span class="n">Factor</span>
+<span class="kn">from</span> <span class="nn">symforce.opt.optimizer</span> <span class="kn">import</span> <span class="n">Optimizer</span>
+</pre>
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    In this example, we will also show the usage of customized cost functions for computing residuals.
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+ <div class="input">
+  <div class="prompt input_prompt">
+   In [ ]:
+  </div>
+  <div class="inner_cell">
+   <div class="input_area">
+    <div class="collapse_expand_button fa fa-1x fa-minus-square-o">
+    </div>
+    <div class="highlight hl-ipython3">
+     <pre><span></span><span class="kn">from</span> <span class="nn">symforce.opt.noise_models</span> <span class="kn">import</span> <span class="n">IsotropicNoiseModel</span>
+</pre>
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h4 id="Set-up-the-problem">
+    Set up the problem
+    <a class="anchor-link" href="#Set-up-the-problem">
+     ¶
+    </a>
+   </h4>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    We first generate 30 points in robot body frame.
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+ <div class="input">
+  <div class="prompt input_prompt">
+   In [255]:
+  </div>
+  <div class="inner_cell">
+   <div class="input_area">
+    <div class="collapse_expand_button fa fa-1x fa-minus-square-o">
+    </div>
+    <div class="highlight hl-ipython3">
+     <pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">1024</span><span class="p">)</span>
+<span class="n">num_points</span> <span class="o">=</span> <span class="mi">30</span>
+<span class="n">points_b</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_points</span><span class="p">):</span>
+    <span class="n">points_b</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,)))</span>
+</pre>
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    We create a ground truth
+    <code>
+     w_T_b_GT
+    </code>
+    , and use it to transform the 30 points in body frame to world frame.
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+ <div class="input">
+  <div class="prompt input_prompt">
+   In [256]:
+  </div>
+  <div class="inner_cell">
+   <div class="input_area">
+    <div class="collapse_expand_button fa fa-1x fa-minus-square-o">
+    </div>
+    <div class="highlight hl-ipython3">
+     <pre><span></span><span class="n">pose_tangent_delta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">])</span>
+<span class="n">w_T_b_GT</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">Pose3</span><span class="o">.</span><span class="n">identity</span><span class="p">()</span><span class="o">.</span><span class="n">retract</span><span class="p">(</span><span class="n">pose_tangent_delta</span><span class="p">)</span>
+<span class="n">points_w</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_points</span><span class="p">):</span>
+    <span class="n">points_w</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">w_T_b_GT</span> <span class="o">*</span> <span class="n">points_b</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+</pre>
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h4 id="Build-an-optimization-problem">
+    Build an optimization problem
+    <a class="anchor-link" href="#Build-an-optimization-problem">
+     ¶
+    </a>
+   </h4>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    We define a simple residual function which simply calculates the difference between two corresponded points in the aligned point clouds. Note that we apply a
+    <code>
+     IsotropicNoiseModel
+    </code>
+    to whiten the residual. It doesn't really affect the optimization results but you can see the final total error is scaled by the
+    <code>
+     sigma
+    </code>
+    .
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+ <div class="input">
+  <div class="prompt input_prompt">
+   In [264]:
+  </div>
+  <div class="inner_cell">
+   <div class="input_area">
+    <div class="collapse_expand_button fa fa-1x fa-minus-square-o">
+    </div>
+    <div class="highlight hl-ipython3">
+     <pre><span></span><span class="k">def</span> <span class="nf">projection_residual</span><span class="p">(</span><span class="n">w_T_b</span><span class="p">:</span> <span class="n">sf</span><span class="o">.</span><span class="n">Pose3</span><span class="p">,</span> <span class="n">b_t_p</span><span class="p">:</span> <span class="n">sf</span><span class="o">.</span><span class="n">V3</span><span class="p">,</span> <span class="n">w_t_p</span><span class="p">:</span> <span class="n">sf</span><span class="o">.</span><span class="n">V3</span><span class="p">,</span> <span class="n">sigma</span><span class="p">:</span> <span class="n">sf</span><span class="o">.</span><span class="n">Scalar</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">sf</span><span class="o">.</span><span class="n">V3</span><span class="p">:</span>
+    <span class="n">noise_model</span> <span class="o">=</span> <span class="n">IsotropicNoiseModel</span><span class="o">.</span><span class="n">from_sigma</span><span class="p">(</span><span class="n">sigma</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">noise_model</span><span class="o">.</span><span class="n">whiten</span><span class="p">(</span><span class="n">w_T_b</span><span class="o">*</span><span class="n">b_t_p</span> <span class="o">-</span> <span class="n">w_t_p</span><span class="p">)</span>
+</pre>
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    We build up the inputs to the optimization problem using symforce runtime types. Note that the initial pose value is
+    <code>
+     sym.Pose3.identity()
+    </code>
+    which is different from
+    <code>
+     w_T_b_GT
+    </code>
+    . We hope the optimizer can give us a solution very close to
+    <code>
+     w_T_b_GT
+    </code>
+    .
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+ <div class="input">
+  <div class="prompt input_prompt">
+   In [265]:
+  </div>
+  <div class="inner_cell">
+   <div class="input_area">
+    <div class="collapse_expand_button fa fa-1x fa-minus-square-o">
+    </div>
+    <div class="highlight hl-ipython3">
+     <pre><span></span><span class="n">inputs</span> <span class="o">=</span> <span class="n">Values</span><span class="p">(</span>
+    <span class="n">w_T_b</span><span class="o">=</span><span class="n">sym</span><span class="o">.</span><span class="n">Pose3</span><span class="o">.</span><span class="n">identity</span><span class="p">(),</span>
+    <span class="n">points_b</span><span class="o">=</span><span class="n">points_b</span><span class="p">,</span>
+    <span class="n">points_w</span><span class="o">=</span><span class="n">points_w</span><span class="p">,</span>
+    <span class="n">sigma</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span>
+<span class="p">)</span>
+</pre>
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    Create
+    <code>
+     Factor
+    </code>
+    s  from the residual functions and a set of keys.
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+ <div class="input">
+  <div class="prompt input_prompt">
+   In [266]:
+  </div>
+  <div class="inner_cell">
+   <div class="input_area">
+    <div class="collapse_expand_button fa fa-1x fa-minus-square-o">
+    </div>
+    <div class="highlight hl-ipython3">
+     <pre><span></span><span class="n">factors</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_points</span><span class="p">):</span>
+    <span class="n">factors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+        <span class="n">Factor</span><span class="p">(</span>
+            <span class="n">residual</span><span class="o">=</span><span class="n">projection_residual</span><span class="p">,</span>
+            <span class="n">keys</span><span class="o">=</span><span class="p">[</span><span class="s2">"w_T_b"</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"points_b[</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">]"</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"points_w[</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">]"</span><span class="p">,</span> <span class="s2">"sigma"</span><span class="p">],</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+</pre>
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h4 id="Solve-the-optimization-problem">
+    Solve the optimization problem
+    <a class="anchor-link" href="#Solve-the-optimization-problem">
+     ¶
+    </a>
+   </h4>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    We create an Optimizer with factors and tell it to only optimize the pose key (the rest are held constant). Here we show lots of configure parameters for the optimizer you can tune.
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+ <div class="input">
+  <div class="prompt input_prompt">
+   In [268]:
+  </div>
+  <div class="inner_cell">
+   <div class="input_area">
+    <div class="collapse_expand_button fa fa-1x fa-minus-square-o">
+    </div>
+    <div class="highlight hl-ipython3">
+     <pre><span></span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">Optimizer</span><span class="p">(</span>
+    <span class="n">factors</span><span class="o">=</span><span class="n">factors</span><span class="p">,</span>
+    <span class="n">optimized_keys</span><span class="o">=</span><span class="p">[</span><span class="s2">"w_T_b"</span><span class="p">],</span>
+    <span class="n">debug_stats</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">params</span><span class="o">=</span><span class="n">Optimizer</span><span class="o">.</span><span class="n">Params</span><span class="p">(</span>
+        <span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">initial_lambda</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+        <span class="n">lambda_up_factor</span> <span class="o">=</span> <span class="mf">4.0</span><span class="p">,</span>
+        <span class="n">lambda_down_factor</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="mf">4.0</span><span class="p">,</span>
+        <span class="n">lambda_lower_bound</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">lambda_upper_bound</span> <span class="o">=</span> <span class="mf">10000.0</span><span class="p">,</span>
+        <span class="n">use_diagonal_damping</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">use_unit_damping</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">keep_max_diagonal_damping</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">diagonal_damping_min</span> <span class="o">=</span> <span class="mf">1e-6</span><span class="p">,</span>
+        <span class="n">iterations</span> <span class="o">=</span> <span class="mi">500</span><span class="p">,</span>
+        <span class="n">early_exit_min_reduction</span> <span class="o">=</span> <span class="mf">1e-6</span><span class="p">,</span>
+        <span class="n">enable_bold_updates</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+</pre>
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    Run the optimization! This returns an
+    <code>
+     Optimizer.Result
+    </code>
+    object that contains the optimized values and many other things.
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+ <div class="input">
+  <div class="prompt input_prompt">
+   In [269]:
+  </div>
+  <div class="inner_cell">
+   <div class="input_area">
+    <div class="collapse_expand_button fa fa-1x fa-minus-square-o">
+    </div>
+    <div class="highlight hl-ipython3">
+     <pre><span></span><span class="n">results</span> <span class="o">=</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">optimize</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
+</pre>
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    We can print out the pose before and after the optimization and compare it against our
+    <code>
+     w_T_b_GT
+    </code>
+    .
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+ <div class="input">
+  <div class="prompt input_prompt">
+   In [272]:
+  </div>
+  <div class="inner_cell">
+   <div class="input_area">
+    <div class="collapse_expand_button fa fa-1x fa-minus-square-o">
+    </div>
+    <div class="highlight hl-ipython3">
+     <pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Early exist? : </span><span class="si">{</span><span class="n">results</span><span class="o">.</span><span class="n">early_exited</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"w_T_b_GT: "</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">w_T_b_GT</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Initial w_T_b: "</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">initial_values</span><span class="o">.</span><span class="n">attr</span><span class="o">.</span><span class="n">w_T_b</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Optimized w_T_b: "</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">optimized_values</span><span class="o">.</span><span class="n">attr</span><span class="o">.</span><span class="n">w_T_b</span><span class="p">)</span>
+</pre>
+    </div>
+   </div>
+  </div>
+ </div>
+ <div class="output_wrapper">
+  <div class="output">
+   <div class="output_area">
+    <div class="prompt">
+    </div>
+    <div class="output_subarea output_stream output_stdout output_text">
+     <pre>Early exist? : True
+w_T_b_GT: 
+</pre>
+    </div>
+   </div>
+   <div class="output_area">
+    <div class="prompt">
+    </div>
+    <div class="output_text output_subarea">
+     <pre>&lt;Pose3 [0.04995834374876001, 0.04995834374876001, 0.0, 0.9975010414930711, 0.0, 0.0, 10.0]&gt;</pre>
+    </div>
+   </div>
+   <div class="output_area">
+    <div class="prompt">
+    </div>
+    <div class="output_subarea output_stream output_stdout output_text">
+     <pre>Initial w_T_b: 
+</pre>
+    </div>
+   </div>
+   <div class="output_area">
+    <div class="prompt">
+    </div>
+    <div class="output_text output_subarea">
+     <pre>&lt;Pose3 [0, 0, 0, 1, 0, 0, 0]&gt;</pre>
+    </div>
+   </div>
+   <div class="output_area">
+    <div class="prompt">
+    </div>
+    <div class="output_subarea output_stream output_stdout output_text">
+     <pre>Optimized w_T_b: 
+</pre>
+    </div>
+   </div>
+   <div class="output_area">
+    <div class="prompt">
+    </div>
+    <div class="output_text output_subarea">
+     <pre>&lt;Pose3 [0.049958343748759994, 0.04995834374875999, 5.6387511044753574e-18, 0.997501041493071, 3.670711373690943e-17, -4.4328076914926344e-17, 10.0]&gt;</pre>
+    </div>
+   </div>
+   <div class="output_area">
+    <div class="prompt">
+    </div>
+    <div class="output_subarea output_stream output_stdout output_text">
+     <pre>initial error: 14.95341695550227
+final error: 1.2710806613746568e-31
+</pre>
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    We can also print out t
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+ <div class="input">
+  <div class="prompt input_prompt">
+   In [ ]:
+  </div>
+  <div class="inner_cell">
+   <div class="input_area">
+    <div class="collapse_expand_button fa fa-1x fa-minus-square-o">
+    </div>
+    <div class="highlight hl-ipython3">
+     <pre><span></span><span class="n">initial_linearization</span> <span class="o">=</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">linearize</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">initial_values</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"initial error: </span><span class="si">{</span><span class="n">initial_linearization</span><span class="o">.</span><span class="n">error</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+<span class="n">optimized_linearization</span> <span class="o">=</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">linearize</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">optimized_values</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"final error: </span><span class="si">{</span><span class="n">optimized_linearization</span><span class="o">.</span><span class="n">error</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre>
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h3 id="Cameras">
+    Cameras
+    <a class="anchor-link" href="#Cameras">
+     ¶
+    </a>
+   </h3>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h4 id="Camera-Calibrations">
+    Camera Calibrations
+    <a class="anchor-link" href="#Camera-Calibrations">
+     ¶
+    </a>
+   </h4>
+   <p>
+    Symforce implements several different calibration models, such as linear model(
+    <code>
+     LinearCameraCal
+    </code>
+    ), polynomial model(
+    <code>
+     PolynomialCameraCal
+    </code>
+    ), Kannala-Brandt camera model(
+    <code>
+     SphericalCameraCal
+    </code>
+    ), etc. They basically contains 1) linear model + distortion coeffs 2) projection and un-projection methods could be used by Camera class.
+   </p>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+ <div class="input">
+  <div class="prompt input_prompt">
+   In [57]:
+  </div>
+  <div class="inner_cell">
+   <div class="input_area">
+    <div class="collapse_expand_button fa fa-1x fa-minus-square-o">
+    </div>
+    <div class="highlight hl-ipython3">
+     <pre><span></span><span class="c1"># Linear model</span>
+
+<span class="n">linear_camera_cal</span> <span class="o">=</span> <span class="n">sf</span><span class="o">.</span><span class="n">LinearCameraCal</span><span class="o">.</span><span class="n">symbolic</span><span class="p">(</span><span class="s2">"cal"</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">linear_camera_cal</span><span class="p">)</span>
+
+<span class="n">camera_pixel</span> <span class="o">=</span> <span class="n">sf</span><span class="o">.</span><span class="n">V2</span><span class="o">.</span><span class="n">symbolic</span><span class="p">(</span><span class="s2">"uv"</span><span class="p">)</span>
+<span class="n">camera_ray</span><span class="p">,</span> <span class="n">valid</span> <span class="o">=</span> <span class="n">linear_camera_cal</span><span class="o">.</span><span class="n">camera_ray_from_pixel</span><span class="p">(</span><span class="n">camera_pixel</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"camera_ray_from_pixel: "</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">camera_ray</span><span class="p">)</span>
+<span class="c1">#print(f"Is valid? {valid == 1}")</span>
+
+<span class="n">camera_point</span> <span class="o">=</span> <span class="n">sf</span><span class="o">.</span><span class="n">V3</span><span class="o">.</span><span class="n">symbolic</span><span class="p">(</span><span class="s2">"p"</span><span class="p">)</span>
+<span class="n">camera_point_reprojected</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">linear_camera_cal</span><span class="o">.</span><span class="n">pixel_from_camera_point</span><span class="p">(</span>
+    <span class="n">camera_point</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"pixel_from_camera_point: "</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">camera_point_reprojected</span><span class="p">)</span>
+
+<span class="c1"># Jacobians</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Jacobians: "</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">camera_point_reprojected</span><span class="o">.</span><span class="n">jacobian</span><span class="p">(</span><span class="n">linear_camera_cal</span><span class="o">.</span><span class="n">focal_length</span><span class="p">))</span>
+<span class="n">display</span><span class="p">(</span><span class="n">camera_point_reprojected</span><span class="o">.</span><span class="n">jacobian</span><span class="p">(</span><span class="n">linear_camera_cal</span><span class="o">.</span><span class="n">principal_point</span><span class="p">))</span>
+
+
+<span class="n">linear_camera_cal_num</span> <span class="o">=</span> <span class="n">sf</span><span class="o">.</span><span class="n">LinearCameraCal</span><span class="p">(</span>
+    <span class="n">focal_length</span><span class="o">=</span><span class="p">(</span><span class="mi">440</span><span class="p">,</span> <span class="mi">400</span><span class="p">),</span>
+    <span class="n">principal_point</span><span class="o">=</span><span class="p">(</span><span class="mi">320</span><span class="p">,</span> <span class="mi">240</span><span class="p">),</span>
+<span class="p">)</span>
+
+<span class="c1"># Numerical substitution for fun...</span>
+<span class="n">linear_camera_cal</span> <span class="o">=</span> <span class="n">linear_camera_cal</span><span class="o">.</span><span class="n">subs</span><span class="p">(</span><span class="n">linear_camera_cal</span><span class="p">,</span> <span class="n">linear_camera_cal_num</span><span class="p">)</span>
+
+<span class="n">linear_camera</span> <span class="o">=</span> <span class="n">sf</span><span class="o">.</span><span class="n">Camera</span><span class="p">(</span>
+    <span class="n">calibration</span><span class="o">=</span><span class="n">linear_camera_cal</span><span class="p">,</span>
+    <span class="n">image_size</span><span class="o">=</span><span class="p">(</span><span class="mi">640</span><span class="p">,</span> <span class="mi">480</span><span class="p">),</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Linear Camera: "</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">linear_camera</span><span class="p">)</span>
+</pre>
+    </div>
+   </div>
+  </div>
+ </div>
+ <div class="output_wrapper">
+  <div class="output">
+   <div class="output_area">
+    <div class="prompt">
+    </div>
+    <div class="output_text output_subarea">
+     <pre>&lt;LinearCameraCal
+  focal_length=[cal.f_x, cal.f_y],
+  principal_point=[cal.c_x, cal.c_y],
+  distortion_coeffs=[]&gt;</pre>
+    </div>
+   </div>
+   <div class="output_area">
+    <div class="prompt">
+    </div>
+    <div class="output_subarea output_stream output_stdout output_text">
+     <pre>camera_ray_from_pixel: 
+</pre>
+    </div>
+   </div>
+   <div class="output_area">
+    <div class="prompt">
+    </div>
+    <div class="output_latex output_subarea">
+     $\displaystyle \left[\begin{matrix}\frac{- cal.c_{x} + uv_{0}}{cal.f_{x}}\\\frac{- cal.c_{y} + uv_{1}}{cal.f_{y}}\\1\end{matrix}\right]$
+    </div>
+   </div>
+   <div class="output_area">
+    <div class="prompt">
+    </div>
+    <div class="output_subarea output_stream output_stdout output_text">
+     <pre>pixel_from_camera_point: 
+</pre>
+    </div>
+   </div>
+   <div class="output_area">
+    <div class="prompt">
+    </div>
+    <div class="output_latex output_subarea">
+     $\displaystyle \left[\begin{matrix}cal.c_{x} + \frac{cal.f_{x} p_{0}}{\max\left(\epsilon, p_{2}\right)}\\cal.c_{y} + \frac{cal.f_{y} p_{1}}{\max\left(\epsilon, p_{2}\right)}\end{matrix}\right]$
+    </div>
+   </div>
+   <div class="output_area">
+    <div class="prompt">
+    </div>
+    <div class="output_subarea output_stream output_stdout output_text">
+     <pre>Jacobians: 
+</pre>
+    </div>
+   </div>
+   <div class="output_area">
+    <div class="prompt">
+    </div>
+    <div class="output_latex output_subarea">
+     $\displaystyle \left[\begin{matrix}\frac{p_{0}}{\max\left(\epsilon, p_{2}\right)} &amp; 0\\0 &amp; \frac{p_{1}}{\max\left(\epsilon, p_{2}\right)}\end{matrix}\right]$
+    </div>
+   </div>
+   <div class="output_area">
+    <div class="prompt">
+    </div>
+    <div class="output_latex output_subarea">
+     $\displaystyle \left[\begin{matrix}1 &amp; 0\\0 &amp; 1\end{matrix}\right]$
+    </div>
+   </div>
+   <div class="output_area">
+    <div class="prompt">
+    </div>
+    <div class="output_subarea output_stream output_stdout output_text">
+     <pre>Linear Camera: 
+</pre>
+    </div>
+   </div>
+   <div class="output_area">
+    <div class="prompt">
+    </div>
+    <div class="output_text output_subarea">
+     <pre>&lt;Camera
+  CameraCal=&lt;LinearCameraCal
+  focal_length=[440, 400],
+  principal_point=[320, 240],
+  distortion_coeffs=[]&gt;
+  image_size=[640, 480]&gt;</pre>
     </div>
    </div>
   </div>
