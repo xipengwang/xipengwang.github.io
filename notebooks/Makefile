@@ -45,7 +45,13 @@ paper-reading-mixture-models-for-least-square-optimization:
 
 blog: expectation–maximization factor-graph grid-mapping mutual-information inertial-navigation rigid-body-transformation \
 	stereo-rectification gaussian-distribution-marginalization lie-theory torque continuous-time-estimation c_plus_plus \
-	docker imap camera gaussian-process
+	docker imap camera gaussian-process lvm
+
+
+lvm:
+	$(CONVERTER) --nbpath language-vision-model.ipynb --date 2023-04-01 \
+		--description "Language vision model" --tag Notebook
+
 
 gaussian-process:
 	$(CONVERTER) --nbpath gaussian_process.ipynb --date 2022-04-01 \
