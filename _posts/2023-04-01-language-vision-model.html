@@ -5,15 +5,20 @@ description: Language vision model
 tag: Notebook
 ---
 
-<div class="cell border-box-sizing text_cell rendered">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=acce74ae">
  <div class="prompt input_prompt">
  </div>
  <div class="inner_cell">
   <div class="text_cell_render border-box-sizing rendered_html">
+   <p>
+    <a href="https://docs.google.com/presentation/d/1A64W7qUGUvVhfOHneNiIdDr-rC55IZr0DWJGR6NmVkI/edit?usp=sharing">
+     Course Slides
+    </a>
+   </p>
   </div>
  </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=d74120ac">
  <div class="prompt input_prompt">
  </div>
  <div class="inner_cell">
@@ -27,35 +32,82 @@ tag: Notebook
   </div>
  </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=90c6a731">
  <div class="prompt input_prompt">
  </div>
  <div class="inner_cell">
   <div class="text_cell_render border-box-sizing rendered_html">
    <ul>
     <li>
-     <p>
-      <a href="https://dl.acm.org/doi/pdf/10.1145/3065386">
-       AlexNet
-      </a>
-     </p>
+     <a href="https://dl.acm.org/doi/pdf/10.1145/3065386">
+      AlexNet
+     </a>
     </li>
+   </ul>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=1a4c1d30">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <ul>
     <li>
-     <p>
-      ResNet
-     </p>
+     ResNet
     </li>
+   </ul>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=3962565b">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <ul>
     <li>
-     <p>
-      Transformer
-     </p>
+     Transformer (Gives a way for feature extraction with self-attention mechanism)
+     <ul>
+      <li>
+       $Attention(Q, K, V) = Softmax_{row}(\frac{Q_{NxD_k} K_{MxD_k}^T}{\sqrt{D_k}}) * V_{MxD_k}$
+       <ul>
+        <li>
+         $Q_{NxD_k}$ is query,  $K_{MxD_k}$ and  $V_{MxD_k}$ are keys and values which have the same dimension.
+        </li>
+        <li>
+         Each row in $\frac{Q_{NxD_k} K_{MxD_k}^T}{\sqrt{D_k}}$ contains individual weight($M$ weights) for each value ($M$ values).
+        </li>
+       </ul>
+      </li>
+      <li>
+       It uses self-attention. This means keys, values and queries are the same for encoder module.
+      </li>
+      <li>
+       It can be used as feature extraction block. The input and output will have the same dimension.
+       <ul>
+        <li>
+         It uses multi-heads so it can have things to learn since attention is just a dot products for key and query.
+        </li>
+       </ul>
+      </li>
+     </ul>
     </li>
+   </ul>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=04a33808">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <ul>
     <li>
-     <p>
-      <a href="https://arxiv.org/abs/1810.04805">
-       BERT
-      </a>
-     </p>
+     <a href="https://arxiv.org/abs/1810.04805">
+      BERT
+     </a>
+     (Gives a way for pre-training LLM with masked words)
      <ul>
       <li>
        It is used as a pre-trained model on large language dataset
@@ -68,14 +120,35 @@ tag: Notebook
       </li>
      </ul>
     </li>
+   </ul>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=da8055dd">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <ul>
     <li>
-     <p>
+     <a href="https://arxiv.org/abs/2010.11929">
       ViT
-     </p>
+     </a>
+     (Gives a way for using image patches as input for transformer blocks)
     </li>
+   </ul>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=abce11f7">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <ul>
     <li>
      <p>
-      MAE
+      MAE (Gives a way for contrastive learning based LLM without running out memory)
      </p>
     </li>
     <li>
@@ -95,7 +168,7 @@ tag: Notebook
     </li>
     <li>
      <p>
-      DALL-E
+      DALL-E2(unCLIP)
      </p>
     </li>
     <li>
@@ -114,7 +187,7 @@ tag: Notebook
   </div>
  </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=e1f67181">
  <div class="prompt input_prompt">
  </div>
  <div class="inner_cell">
@@ -130,7 +203,7 @@ tag: Notebook
   </div>
  </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=b647b422">
  <div class="prompt input_prompt">
  </div>
  <div class="inner_cell">
@@ -143,6 +216,86 @@ tag: Notebook
      ¶
     </a>
    </h2>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=ae958ddf">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <h2 id="DALL-E2">
+    <a href="https://cdn.openai.com/papers/dall-e-2.pdf">
+     DALL-E2
+    </a>
+    <a class="anchor-link" href="#DALL-E2">
+     ¶
+    </a>
+   </h2>
+  </div>
+ </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=3b5d99d6">
+ <div class="prompt input_prompt">
+ </div>
+ <div class="inner_cell">
+  <div class="text_cell_render border-box-sizing rendered_html">
+   <ul>
+    <li>
+     Auto Encoder(AE)
+     <ul>
+      <li>
+       An encoder for encoding an image, which can be decoded to original image by a decoder.
+      </li>
+     </ul>
+    </li>
+    <li>
+     De-noise Auto Encoder (DAE)
+     <ul>
+      <li>
+       Add noises to input image while the target is still the original image.
+      </li>
+     </ul>
+    </li>
+    <li>
+     Masked Auto Encoder (MAE)
+     <ul>
+      <li>
+       Add masks to input image while the target is still the original image.
+      </li>
+     </ul>
+    </li>
+    <li>
+     Variational Auto Encoder (VAE)
+     <ul>
+      <li>
+       An encoder to generate a Gaussian Distribution ($\mu, \Sigma$)
+      </li>
+     </ul>
+    </li>
+    <li>
+     Vector Quantised-Variational AutoEncoder (VQ-VAE)
+     <ul>
+      <li>
+       An encoder to generate a feature index map (features are in a $KxD$ matrix codebook) instead of a continuous distribution.
+      </li>
+     </ul>
+    </li>
+    <li>
+     Diffusion Model
+     <ul>
+      <li>
+       Add noises and then de-noise.
+      </li>
+      <li>
+       DNN is used to predict noise instead of image.
+      </li>
+      <li>
+       Uses U-Net with skip connection + time embedding (which de-noising step) + attention(transformer)
+      </li>
+     </ul>
+    </li>
+   </ul>
   </div>
  </div>
 </div>
