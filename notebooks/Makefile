@@ -134,3 +134,7 @@ autonomous-robots-summary:
 autobot-linear-algebra:
 	$(CONVERTER) --nbpath autobot-linear-algebra.ipynb --date 2021-05-28 \
 		--description "Autonomous robots - Linear algebra" --tag Book
+
+hand-eye:
+	$(CONVERTER) --nbpath hand_eye.ipynb --date 2025-02-02 \
+		--description "Hand-eye Calibration" --tag Notebook
